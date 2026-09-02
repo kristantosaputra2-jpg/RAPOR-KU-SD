@@ -205,6 +205,51 @@ export type Database = {
           },
         ]
       }
+      teacher_profiles: {
+        Row: {
+          created_at: string
+          created_by: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          nip: string | null
+          nuptk: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          updated_by: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          email: string
+          full_name: string
+          id?: string
+          is_active?: boolean
+          nip?: string | null
+          nuptk?: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          updated_by: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          nip?: string | null
+          nuptk?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          updated_by?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

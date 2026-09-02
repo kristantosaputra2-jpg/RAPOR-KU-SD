@@ -30,13 +30,14 @@ type AdminDashboardProps = Readonly<{
   onLogout: () => Promise<void>
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
+  onOpenTeachers: () => void
 }>
 
 type NavigationItem = Readonly<{
   label: string
   icon: LucideIcon
   isActive?: boolean
-  action?: "school-settings" | "academic-periods"
+  action?: "school-settings" | "academic-periods" | "teachers"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -61,7 +62,7 @@ const navigationGroups: ReadonlyArray<
   {
     label: "Data Master",
     items: [
-      { label: "Data Guru", icon: UserCheck },
+      { label: "Data Guru", icon: UserCheck, action: "teachers" },
       { label: "Data Kelas", icon: GraduationCap },
       { label: "Data Siswa", icon: Users },
       { label: "Mata Pelajaran", icon: BookOpen },
@@ -138,9 +139,11 @@ function Brand({ schoolName }: Readonly<{ schoolName?: string }>) {
 function DashboardNavigation({
   onOpenSchoolSettings,
   onOpenAcademicPeriods,
+  onOpenTeachers,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
+  onOpenTeachers: () => void
 }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
@@ -167,11 +170,15 @@ function DashboardNavigation({
                     <button
                       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-semibold text-[var(--rapotku-muted)] transition hover:bg-[var(--rapotku-canvas)] hover:text-[var(--rapotku-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
                       type="button"
-                      onClick={
-                        item.action === "school-settings"
-                          ? onOpenSchoolSettings
-                          : onOpenAcademicPeriods
-                      }
+                      onClick={() => {
+                        if (item.action === "school-settings") {
+                          onOpenSchoolSettings()
+                        } else if (item.action === "academic-periods") {
+                          onOpenAcademicPeriods()
+                        } else {
+                          onOpenTeachers()
+                        }
+                      }}
                     >
                       <Icon aria-hidden="true" size={19} />
                       <span>{item.label}</span>
@@ -237,6 +244,7 @@ export function AdminDashboard({
   onLogout,
   onOpenSchoolSettings,
   onOpenAcademicPeriods,
+  onOpenTeachers,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -290,6 +298,7 @@ export function AdminDashboard({
         <DashboardNavigation
           onOpenSchoolSettings={onOpenSchoolSettings}
           onOpenAcademicPeriods={onOpenAcademicPeriods}
+          onOpenTeachers={onOpenTeachers}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -570,6 +579,10 @@ export function AdminDashboard({
               onOpenAcademicPeriods={() => {
                 setIsMenuOpen(false)
                 onOpenAcademicPeriods()
+              }}
+              onOpenTeachers={() => {
+                setIsMenuOpen(false)
+                onOpenTeachers()
               }}
             />
             <div className="mt-auto pt-6">

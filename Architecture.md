@@ -417,6 +417,27 @@ report_templates
 
 Schema final masih TBD.
 
+## Implementasi Data Guru MVP
+
+`teacher_profiles` menyimpan master guru secara terpisah dari akun autentikasi.
+
+Field utama yang sudah diterapkan:
+
+```text
+id
+user_id (nullable)
+full_name
+nip (nullable)
+nuptk (nullable)
+email
+role
+is_active
+created_by / updated_by
+created_at / updated_at
+```
+
+`user_id` tetap kosong sampai akun Supabase Auth benar-benar dibuat melalui alur Admin yang aman. Menambahkan guru tidak meminta atau mengarang kata sandi. Role pada master guru adalah peran utama, sedangkan akses aktual ke kelas dan mata pelajaran tetap berasal dari `teacher_assignments` pada tahap berikutnya.
+
 ---
 
 # 15. Data Ownership

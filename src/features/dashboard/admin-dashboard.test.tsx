@@ -33,6 +33,7 @@ describe("AdminDashboard", () => {
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
         onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
       />,
     )
 
@@ -57,6 +58,7 @@ describe("AdminDashboard", () => {
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
         onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
       />,
     )
 
@@ -78,6 +80,7 @@ describe("AdminDashboard", () => {
         onLogout={onLogout}
         onOpenSchoolSettings={vi.fn()}
         onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
       />,
     )
 
@@ -98,11 +101,31 @@ describe("AdminDashboard", () => {
         onLogout={vi.fn()}
         onOpenSchoolSettings={onOpenSchoolSettings}
         onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
       />,
     )
 
     await user.click(screen.getByRole("button", { name: "Atur" }))
 
     expect(onOpenSchoolSettings).toHaveBeenCalledOnce()
+  })
+
+  it("membuka Data Guru dari navigasi", async () => {
+    const user = userEvent.setup()
+    const onOpenTeachers = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={onOpenTeachers}
+      />,
+    )
+
+    await user.click(screen.getAllByRole("button", { name: "Data Guru" })[0])
+
+    expect(onOpenTeachers).toHaveBeenCalledOnce()
   })
 })

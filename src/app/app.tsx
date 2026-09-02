@@ -16,6 +16,7 @@ import {
   type SchoolIdentity,
 } from "@/features/schools/school-identity.service"
 import { SchoolSettingsPage } from "@/features/schools/school-settings-page"
+import { TeacherPage } from "@/features/teachers/teacher-page"
 
 type AppState =
   | { status: "loading" }
@@ -25,7 +26,7 @@ type AppState =
 export function App() {
   const [appState, setAppState] = useState<AppState>({ status: "loading" })
   const [adminView, setAdminView] = useState<
-    "dashboard" | "school-settings" | "academic-periods"
+    "dashboard" | "school-settings" | "academic-periods" | "teachers"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -115,6 +116,18 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "teachers") {
+      return (
+        <TeacherPage
+          userId={appState.account.user.id}
+          userName={profile.full_name}
+          schoolName={schoolIdentity?.schoolName}
+          onBack={() => setAdminView("dashboard")}
+          onLogout={handleLogout}
+        />
+      )
+    }
+
     if (adminView === "academic-periods") {
       return (
         <AcademicPeriodsPage
@@ -152,6 +165,7 @@ export function App() {
         onLogout={handleLogout}
         onOpenSchoolSettings={() => setAdminView("school-settings")}
         onOpenAcademicPeriods={() => setAdminView("academic-periods")}
+        onOpenTeachers={() => setAdminView("teachers")}
       />
     )
   }

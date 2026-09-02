@@ -25,6 +25,10 @@ const academicPeriodMocks = vi.hoisted(() => ({
   getAcademicPeriods: vi.fn(),
 }))
 
+const teacherMocks = vi.hoisted(() => ({
+  getTeachers: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
@@ -43,6 +47,13 @@ vi.mock(
     return { ...original, ...schoolMocks }
   },
 )
+
+vi.mock("@/features/teachers/teacher.service", async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import("@/features/teachers/teacher.service")>()
+
+  return { ...original, ...teacherMocks }
+})
 
 vi.mock(
   "@/features/academic-periods/academic-periods.service",
@@ -100,6 +111,8 @@ describe("App", () => {
       academicYears: [],
       semesters: [],
     })
+    teacherMocks.getTeachers.mockReset()
+    teacherMocks.getTeachers.mockResolvedValue([])
   })
 
   it("menampilkan login ketika tidak ada sesi aktif", async () => {
@@ -192,6 +205,26 @@ describe("App", () => {
     )
     expect(
       await screen.findByRole("heading", { name: "Tahun Ajaran & Semester" }),
+    ).toBeInTheDocument()
+  })
+
+  it("membuka Data Guru lalu kembali ke dashboard", async () => {
+    const user = userEvent.setup()
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue(account)
+    render(<App />)
+
+    await user.click(
+      (await screen.findAllByRole("button", { name: "Data Guru" }))[0],
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Data Guru" }),
+    ).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole("button", { name: "Kembali ke Dashboard" }),
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Ringkasan hari ini" }),
     ).toBeInTheDocument()
   })
 })

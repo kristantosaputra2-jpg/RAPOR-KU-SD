@@ -50,6 +50,9 @@ async function openAuthenticatedDashboard(page: Page) {
   await page.route("**/rest/v1/semesters*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/teacher_profiles*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -139,6 +142,20 @@ async function openAcademicPeriods(page: Page, width: number) {
   await expect(
     page.getByRole("heading", { name: "Tahun Ajaran & Semester" }),
   ).toBeVisible()
+}
+
+async function openTeachers(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Data Guru" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Data Guru" }).click()
+  }
+
+  await expect(page.getByRole("heading", { name: "Data Guru" })).toBeVisible()
 }
 
 const mobileViewports = [
@@ -232,6 +249,28 @@ for (const viewport of settingsViewports) {
     await expect(
       page.getByRole("button", { name: "Simpan pengaturan" }),
     ).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Data Guru nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page)
+    await openTeachers(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Cari guru")).toBeVisible()
+    await expect(page.getByText("Belum ada data guru")).toBeVisible()
+
+    await page.getByRole("button", { name: "Tambah Guru" }).first().click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await expect(page.getByLabel(/Nama Lengkap/)).toBeVisible()
+    await expect(page.getByLabel(/Peran Utama/)).toBeVisible()
   })
 }
 

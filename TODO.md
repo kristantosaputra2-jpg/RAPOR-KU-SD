@@ -104,10 +104,11 @@ Fungsinya:
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, dan `semesters`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, `semesters`, dan `teacher_profiles`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
-- [ ] Tambahkan test permission
+- [/] Tambahkan test permission
+  - Uji database langsung sudah membuktikan Admin aktif dapat menambah guru dan Guru Mapel ditolak. Suite permission menyeluruh tetap menunggu assignment kelas/mapel.
 - [ ] Audit seluruh query Supabase sebelum production
 
 ---
@@ -149,15 +150,20 @@ Fungsinya:
 
 ## Guru
 
-- [ ] Buat halaman Data Guru
-- [ ] Tambah guru
-- [ ] Edit guru
-- [ ] Nonaktifkan guru
-- [ ] Assign role
+- [x] Buat halaman Data Guru
+  - Daftar berupa tabel pada desktop dan kartu pada HP, dilengkapi pencarian, filter status, loading, retry, serta empty state.
+- [x] Tambah guru
+  - Form menyimpan nama, email, NIP/NUPTK opsional, dan peran utama tanpa membuat akun login otomatis.
+- [x] Edit guru
+- [x] Nonaktifkan guru
+  - Data tidak dihapus dan dapat diaktifkan kembali; nonaktifkan memakai dialog konfirmasi.
+- [x] Assign role
+  - Peran utama dibatasi menjadi `homeroom_teacher` atau `subject_teacher`; akses aktual tetap menunggu assignment.
 - [ ] Assign mata pelajaran
 - [ ] Assign kelas
 - [ ] Assign wali kelas
-- [ ] Validasi permission guru
+- [/] Validasi permission guru
+  - CRUD `teacher_profiles` dibatasi untuk Admin aktif melalui RLS. Permission berdasarkan kelas/mapel diselesaikan setelah tabel assignment tersedia.
 
 ## Kelas
 
@@ -572,12 +578,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 85% | Auth, sekolah, tahun ajaran, semester, audit, dan RLS Admin terkait sudah tersedia |
-| Master Data | In Progress | 20% | Identitas sekolah dan periode akademik selesai; guru, kelas, siswa, dan mapel belum dibuat |
+| Supabase | In Progress | 90% | Auth, sekolah, periode akademik, guru, audit, dan RLS Admin terkait sudah tersedia |
+| Master Data | In Progress | 35% | Identitas sekolah, periode akademik, dan Data Guru selesai; kelas, siswa, mapel, dan assignment belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 20% | 53 unit/integration test dan 14 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah/Periode Akademik lulus |
+| Testing | In Progress | 25% | 66 unit/integration test dan 18 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah/Periode Akademik/Data Guru lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -668,6 +674,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat halaman Tahun Ajaran & Semester yang mobile-first dengan loading, retry, validasi, empty state, success/error feedback, dan navigasi Dashboard Admin.
 - [x] Tampilkan ringkasan periode aktif pada Dashboard Admin tanpa mengarang tahun ajaran atau semester sekolah.
 - [x] Verifikasi 53 unit/integration test dan 14 E2E responsif lulus setelah tahap Tahun Ajaran dan Semester.
+- [x] Buat tabel `teacher_profiles` dengan audit, identitas opsional, status aktif, tautan akun Auth opsional, constraint, explicit grants, dan RLS.
+- [x] Verifikasi Admin aktif dapat menambah guru, Guru Mapel ditolak, anonymous tidak memiliki akses, dan data uji keamanan dibersihkan.
+- [x] Buat halaman Data Guru mobile-first dengan pencarian, filter, tambah, edit, nonaktifkan/aktifkan kembali, loading, error, success, dan empty state.
+- [x] Pisahkan data guru dari pembuatan akun login; akun Auth dan password/invitasi tidak dibuat atau dikarang pada tahap ini.
+- [x] Verifikasi 66 unit/integration test dan 18 E2E responsif lulus setelah tahap Data Guru.
 
 ---
 
