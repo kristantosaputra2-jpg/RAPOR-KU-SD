@@ -41,6 +41,9 @@ async function openAuthenticatedDashboard(page: Page) {
       },
     })
   })
+  await page.route("**/rest/v1/schools*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
 
   await page.addInitScript(
     ({ projectRef, user }) => {
@@ -64,6 +67,22 @@ async function openAuthenticatedDashboard(page: Page) {
   await page.goto("/")
   await expect(
     page.getByRole("heading", { name: "Ringkasan hari ini" }),
+  ).toBeVisible()
+}
+
+async function openSchoolSettings(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Pengaturan Sekolah" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Pengaturan Sekolah" }).click()
+  }
+
+  await expect(
+    page.getByRole("heading", { name: "Pengaturan Sekolah" }),
   ).toBeVisible()
 }
 
@@ -111,3 +130,30 @@ test("dashboard nyaman pada desktop 1280px", async ({ page }) => {
     page.getByRole("navigation", { name: "Menu utama" }),
   ).toBeVisible()
 })
+
+const settingsViewports = [
+  ...mobileViewports,
+  { width: 1280, height: 900 },
+] as const
+
+for (const viewport of settingsViewports) {
+  test(`pengaturan sekolah nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page)
+    await openSchoolSettings(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel(/Nama sekolah/)).toBeVisible()
+    await expect(page.getByLabel("Nama kepala sekolah")).toBeVisible()
+    await expect(
+      page.getByRole("button", { name: "Simpan pengaturan" }),
+    ).toBeVisible()
+  })
+}

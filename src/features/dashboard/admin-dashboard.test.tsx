@@ -6,7 +6,13 @@ import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
 
 describe("AdminDashboard", () => {
   it("menampilkan ringkasan tanpa mengarang data sekolah", () => {
-    render(<AdminDashboard userName="Admin Sekolah" onLogout={vi.fn()} />)
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+      />,
+    )
 
     expect(
       screen.getByRole("heading", { name: "Ringkasan hari ini" }),
@@ -20,7 +26,13 @@ describe("AdminDashboard", () => {
 
   it("membuka dan menutup menu pada tampilan mobile", async () => {
     const user = userEvent.setup()
-    render(<AdminDashboard userName="Admin Sekolah" onLogout={vi.fn()} />)
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+      />,
+    )
 
     await user.click(screen.getByRole("button", { name: "Buka menu" }))
     expect(screen.getByLabelText("Menu Admin")).toBeInTheDocument()
@@ -33,12 +45,34 @@ describe("AdminDashboard", () => {
   it("menampilkan pesan aman ketika logout gagal", async () => {
     const user = userEvent.setup()
     const onLogout = vi.fn().mockRejectedValue(new Error("network error"))
-    render(<AdminDashboard userName="Admin Sekolah" onLogout={onLogout} />)
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        onLogout={onLogout}
+        onOpenSchoolSettings={vi.fn()}
+      />,
+    )
 
     await user.click(screen.getByRole("button", { name: "Keluar" }))
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Belum dapat keluar. Periksa koneksi internet lalu coba lagi.",
     )
+  })
+
+  it("membuka pengaturan sekolah dari langkah pertama", async () => {
+    const user = userEvent.setup()
+    const onOpenSchoolSettings = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={onOpenSchoolSettings}
+      />,
+    )
+
+    await user.click(screen.getByRole("button", { name: "Buka" }))
+
+    expect(onOpenSchoolSettings).toHaveBeenCalledOnce()
   })
 })

@@ -6,7 +6,7 @@ Repository GitHub: [kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei](https://git
 
 ## Status
 
-Project Foundation, autentikasi, dan Dashboard Admin awal telah disiapkan. Fitur berikutnya akan dikerjakan bertahap berdasarkan `prd.md`, `AGENTS.md`, `Architecture.md`, `TODO.md`, `SKILL.md`, dan `workflow.md`.
+Project Foundation, autentikasi, Dashboard Admin awal, dan Pengaturan Sekolah telah disiapkan. Fitur berikutnya akan dikerjakan bertahap berdasarkan `prd.md`, `AGENTS.md`, `Architecture.md`, `TODO.md`, `SKILL.md`, dan `workflow.md`.
 
 ## Stack
 
@@ -47,6 +47,6 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
 
 Legacy `VITE_SUPABASE_ANON_KEY` masih dibaca sementara untuk kompatibilitas proyek lama. Jangan pernah menaruh secret key atau service-role key Supabase di frontend.
 
-Project Supabase cloud terpisah sudah dibuat pada paket Free di region Singapore. Fondasi Auth kini memiliki tabel `profiles`, tiga role MVP, RLS profil, UI login responsif, serta akun Admin awal yang aktif. Pendaftaran umum pada Auth cloud sudah dinonaktifkan; tabel akademik belum dibuat.
+Project Supabase cloud terpisah sudah dibuat pada paket Free di region Singapore. Fondasi Auth kini memiliki tabel `profiles`, tiga role MVP, RLS profil, UI login responsif, serta akun Admin awal yang aktif. Tabel `schools` dan halaman Pengaturan Sekolah juga tersedia dengan RLS Admin. Pendaftaran umum pada Auth cloud sudah dinonaktifkan; tabel akademik belum dibuat.
 
 Migration database disimpan di `supabase/migrations/`. Supabase CLI dipasang sebagai development dependency agar setiap perubahan schema tetap tercatat di repository.

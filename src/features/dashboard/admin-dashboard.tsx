@@ -21,12 +21,14 @@ import {
 type AdminDashboardProps = Readonly<{
   userName: string
   onLogout: () => Promise<void>
+  onOpenSchoolSettings: () => void
 }>
 
 type NavigationItem = Readonly<{
   label: string
   icon: LucideIcon
   isActive?: boolean
+  action?: "school-settings"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -36,7 +38,11 @@ const navigationGroups: ReadonlyArray<
     label: "Utama",
     items: [
       { label: "Dashboard", icon: LayoutDashboard, isActive: true },
-      { label: "Pengaturan Sekolah", icon: School },
+      {
+        label: "Pengaturan Sekolah",
+        icon: School,
+        action: "school-settings",
+      },
       { label: "Tahun & Semester", icon: CalendarDays },
     ],
   },
@@ -117,7 +123,9 @@ function Brand() {
   )
 }
 
-function DashboardNavigation() {
+function DashboardNavigation({
+  onOpenSchoolSettings,
+}: Readonly<{ onOpenSchoolSettings: () => void }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
       {navigationGroups.map((group) => (
@@ -139,6 +147,15 @@ function DashboardNavigation() {
                       <Icon aria-hidden="true" size={19} />
                       <span>{item.label}</span>
                     </div>
+                  ) : item.action === "school-settings" ? (
+                    <button
+                      className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-semibold text-[var(--rapotku-muted)] transition hover:bg-[var(--rapotku-canvas)] hover:text-[var(--rapotku-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
+                      type="button"
+                      onClick={onOpenSchoolSettings}
+                    >
+                      <Icon aria-hidden="true" size={19} />
+                      <span>{item.label}</span>
+                    </button>
                   ) : (
                     <div
                       aria-disabled="true"
@@ -194,7 +211,11 @@ function AccountPanel({
   )
 }
 
-export function AdminDashboard({ userName, onLogout }: AdminDashboardProps) {
+export function AdminDashboard({
+  userName,
+  onLogout,
+  onOpenSchoolSettings,
+}: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState("")
@@ -217,7 +238,7 @@ export function AdminDashboard({ userName, onLogout }: AdminDashboardProps) {
     <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
         <Brand />
-        <DashboardNavigation />
+        <DashboardNavigation onOpenSchoolSettings={onOpenSchoolSettings} />
         <div className="mt-auto pt-6">
           <AccountPanel
             userName={userName}
@@ -382,15 +403,25 @@ export function AdminDashboard({ userName, onLogout }: AdminDashboardProps) {
                         {step.description}
                       </p>
                     </div>
-                    <span className="mt-1 shrink-0 rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
-                      Segera
-                    </span>
+                    {index === 0 ? (
+                      <button
+                        className="min-h-11 shrink-0 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
+                        type="button"
+                        onClick={onOpenSchoolSettings}
+                      >
+                        Buka
+                      </button>
+                    ) : (
+                      <span className="mt-1 shrink-0 rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
+                        Segera
+                      </span>
+                    )}
                   </li>
                 ))}
               </ol>
               <p className="mt-5 rounded-xl bg-[#f7f8fa] px-4 py-3 text-sm leading-6 text-[var(--rapotku-muted)]">
-                Menu pengaturan akan dibuka satu per satu sesuai tahapan
-                pembangunan.
+                Pengaturan identitas sekolah sudah tersedia. Menu berikutnya
+                akan dibuka satu per satu sesuai tahapan pembangunan.
               </p>
             </section>
 
@@ -442,7 +473,12 @@ export function AdminDashboard({ userName, onLogout }: AdminDashboardProps) {
                 <X aria-hidden="true" size={20} />
               </button>
             </div>
-            <DashboardNavigation />
+            <DashboardNavigation
+              onOpenSchoolSettings={() => {
+                setIsMenuOpen(false)
+                onOpenSchoolSettings()
+              }}
+            />
             <div className="mt-auto pt-6">
               <AccountPanel
                 userName={userName}

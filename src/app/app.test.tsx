@@ -12,12 +12,29 @@ const authMocks = vi.hoisted(() => ({
   signOut: vi.fn(),
 }))
 
+const schoolMocks = vi.hoisted(() => ({
+  getSchoolSettings: vi.fn(),
+  saveSchoolSettings: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
 
   return { ...original, ...authMocks }
 })
+
+vi.mock(
+  "@/features/schools/school-settings.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/schools/school-settings.service")
+      >()
+
+    return { ...original, ...schoolMocks }
+  },
+)
 
 const account = {
   user: { id: "admin-1", email: "admin@example.com" } as User,
@@ -37,6 +54,9 @@ describe("App", () => {
     authMocks.signOut.mockReset()
     authMocks.getCurrentAuthenticatedUser.mockResolvedValue(null)
     authMocks.signOut.mockResolvedValue(undefined)
+    schoolMocks.getSchoolSettings.mockReset()
+    schoolMocks.saveSchoolSettings.mockReset()
+    schoolMocks.getSchoolSettings.mockResolvedValue(null)
   })
 
   it("menampilkan login ketika tidak ada sesi aktif", async () => {
@@ -92,6 +112,24 @@ describe("App", () => {
     expect(authMocks.signOut).toHaveBeenCalledOnce()
     expect(
       await screen.findByRole("heading", { name: "Masuk ke akun Anda" }),
+    ).toBeInTheDocument()
+  })
+
+  it("membuka pengaturan sekolah lalu kembali ke dashboard", async () => {
+    const user = userEvent.setup()
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue(account)
+    render(<App />)
+
+    await user.click(await screen.findByRole("button", { name: "Buka" }))
+    expect(
+      await screen.findByRole("heading", { name: "Pengaturan Sekolah" }),
+    ).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole("button", { name: "Kembali ke Dashboard" }),
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Ringkasan hari ini" }),
     ).toBeInTheDocument()
   })
 })

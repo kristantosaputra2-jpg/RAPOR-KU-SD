@@ -10,6 +10,7 @@ import {
 import { LoginPage } from "@/features/auth/login-page"
 import { USER_ROLE_LABELS } from "@/features/auth/auth.types"
 import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
+import { SchoolSettingsPage } from "@/features/schools/school-settings-page"
 
 type AppState =
   | { status: "loading" }
@@ -18,6 +19,9 @@ type AppState =
 
 export function App() {
   const [appState, setAppState] = useState<AppState>({ status: "loading" })
+  const [adminView, setAdminView] = useState<"dashboard" | "school-settings">(
+    "dashboard",
+  )
 
   useEffect(() => {
     let isMounted = true
@@ -50,6 +54,7 @@ export function App() {
 
   async function handleLogout() {
     await signOut()
+    setAdminView("dashboard")
     setAppState({ status: "signed_out" })
   }
 
@@ -73,8 +78,23 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "school-settings") {
+      return (
+        <SchoolSettingsPage
+          userId={appState.account.user.id}
+          userName={profile.full_name}
+          onBack={() => setAdminView("dashboard")}
+          onLogout={handleLogout}
+        />
+      )
+    }
+
     return (
-      <AdminDashboard userName={profile.full_name} onLogout={handleLogout} />
+      <AdminDashboard
+        userName={profile.full_name}
+        onLogout={handleLogout}
+        onOpenSchoolSettings={() => setAdminView("school-settings")}
+      />
     )
   }
 

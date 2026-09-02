@@ -86,7 +86,8 @@ Fungsinya:
   - RLS aktif pada `profiles`; setiap tabel baru tetap wajib memiliki policy sendiri.
 - [x] Buat migration dasar
 - [ ] Buat seed development
-- [ ] Buat data sekolah
+- [x] Buat data sekolah
+  - Konfigurasi satu sekolah per deployment tersedia dengan audit, migration tercatat, dan RLS Admin.
 - [ ] Buat tahun ajaran
 - [ ] Buat semester
 - [x] Test login/logout
@@ -96,11 +97,12 @@ Fungsinya:
 
 ## Security
 
-- [ ] Buat RLS untuk Admin
+- [/] Buat RLS untuk Admin
+  - Policy Admin telah diterapkan pada `schools`; tabel berikutnya tetap harus memiliki policy masing-masing.
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki SELECT pada `profiles`; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada `profiles` dan `schools`; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [ ] Tambahkan test permission
@@ -126,20 +128,22 @@ Fungsinya:
 
 ## Data Sekolah
 
-- [ ] Buat halaman Pengaturan Sekolah
-- [ ] Nama sekolah editable
-- [ ] NPSN editable
-- [ ] Alamat editable
-- [ ] Desa/Kelurahan editable
-- [ ] Kecamatan editable
-- [ ] Kabupaten/Kota editable
-- [ ] Provinsi editable
-- [ ] Kode pos editable
-- [ ] Email editable
-- [ ] Kepala sekolah editable
-- [ ] NIP kepala sekolah editable
+- [x] Buat halaman Pengaturan Sekolah
+  - Form mobile-first terhubung ke Dashboard Admin dan Supabase, dengan loading, success, error aman, serta tombol simpan yang mudah dijangkau.
+- [x] Nama sekolah editable
+- [x] NPSN editable
+- [x] Alamat editable
+- [x] Desa/Kelurahan editable
+- [x] Kecamatan editable
+- [x] Kabupaten/Kota editable
+- [x] Provinsi editable
+- [x] Kode pos editable
+- [x] Email editable
+- [x] Kepala sekolah editable
+- [x] NIP kepala sekolah editable
 - [ ] Logo sekolah upload
-- [ ] Pastikan tidak ada data sekolah yang hardcoded
+  - Ditunda sebagai tahap Storage terpisah; `logo_url` sudah disiapkan tanpa memaksa upload pada tahap ini.
+- [x] Pastikan tidak ada data sekolah yang hardcoded
 
 ## Guru
 
@@ -561,12 +565,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 75% | Project, client, migration Auth/role, RLS profil, service/UI Auth, Admin awal, signup cloud aman, serta login/logout/session persistence nyata sudah terverifikasi |
-| Master Data | Todo | 0% | Belum coding |
+| Supabase | In Progress | 80% | Fondasi Auth ditambah tabel konfigurasi sekolah dengan audit dan RLS Admin sudah tersedia |
+| Master Data | In Progress | 10% | Pengaturan identitas sekolah selesai; periode, guru, kelas, siswa, dan mapel belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 10% | 23 unit/integration test dan 4 E2E responsif Dashboard Admin lulus |
+| Testing | In Progress | 15% | 35 unit/integration test dan 8 E2E responsif Dashboard Admin/Pengaturan Sekolah lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -637,6 +641,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi session persistence: akun Admin tetap masuk setelah server preview dimulai ulang dan halaman dimuat ulang.
 - [x] Buat Dashboard Admin mobile-first dengan navigasi responsif dan empty state tanpa data rekaan.
 - [x] Tambahkan konfigurasi Playwright dan verifikasi Dashboard Admin pada viewport 360px, 390px, 768px, dan 1280px tanpa horizontal overflow.
+- [x] Buat migration `schools` untuk satu sekolah per deployment dengan audit perubahan dan RLS khusus Admin.
+- [x] Verifikasi anonymous tidak memiliki akses ke `schools` serta Admin aktif memiliki izin baca/tambah/ubah tanpa izin hapus dari frontend.
+- [x] Buat halaman Pengaturan Sekolah berisi seluruh field identitas wajib MVP selain upload logo yang ditunda sebagai tahap Storage terpisah.
+- [x] Hubungkan Pengaturan Sekolah ke navigasi Dashboard Admin tanpa menambah dependency routing.
+- [x] Verifikasi form Pengaturan Sekolah pada preview nyata yang sudah login tanpa mengisi atau mengarang data sekolah.
+- [x] Tambahkan unit/integration dan E2E responsif; total 35 test unit/integration dan 8 test E2E lulus.
 
 ---
 
