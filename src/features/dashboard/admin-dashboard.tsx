@@ -31,13 +31,14 @@ type AdminDashboardProps = Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
   onOpenTeachers: () => void
+  onOpenClasses: () => void
 }>
 
 type NavigationItem = Readonly<{
   label: string
   icon: LucideIcon
   isActive?: boolean
-  action?: "school-settings" | "academic-periods" | "teachers"
+  action?: "school-settings" | "academic-periods" | "teachers" | "classes"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -63,7 +64,7 @@ const navigationGroups: ReadonlyArray<
     label: "Data Master",
     items: [
       { label: "Data Guru", icon: UserCheck, action: "teachers" },
-      { label: "Data Kelas", icon: GraduationCap },
+      { label: "Data Kelas", icon: GraduationCap, action: "classes" },
       { label: "Data Siswa", icon: Users },
       { label: "Mata Pelajaran", icon: BookOpen },
     ],
@@ -140,10 +141,12 @@ function DashboardNavigation({
   onOpenSchoolSettings,
   onOpenAcademicPeriods,
   onOpenTeachers,
+  onOpenClasses,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
   onOpenTeachers: () => void
+  onOpenClasses: () => void
 }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
@@ -175,8 +178,10 @@ function DashboardNavigation({
                           onOpenSchoolSettings()
                         } else if (item.action === "academic-periods") {
                           onOpenAcademicPeriods()
-                        } else {
+                        } else if (item.action === "teachers") {
                           onOpenTeachers()
+                        } else {
+                          onOpenClasses()
                         }
                       }}
                     >
@@ -245,6 +250,7 @@ export function AdminDashboard({
   onOpenSchoolSettings,
   onOpenAcademicPeriods,
   onOpenTeachers,
+  onOpenClasses,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -299,6 +305,7 @@ export function AdminDashboard({
           onOpenSchoolSettings={onOpenSchoolSettings}
           onOpenAcademicPeriods={onOpenAcademicPeriods}
           onOpenTeachers={onOpenTeachers}
+          onOpenClasses={onOpenClasses}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -583,6 +590,10 @@ export function AdminDashboard({
               onOpenTeachers={() => {
                 setIsMenuOpen(false)
                 onOpenTeachers()
+              }}
+              onOpenClasses={() => {
+                setIsMenuOpen(false)
+                onOpenClasses()
               }}
             />
             <div className="mt-auto pt-6">

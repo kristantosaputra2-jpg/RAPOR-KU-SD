@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 
 import {
   getCurrentAuthenticatedUser,
@@ -9,24 +9,61 @@ import {
 } from "@/features/auth/auth.service"
 import { LoginPage } from "@/features/auth/login-page"
 import { USER_ROLE_LABELS } from "@/features/auth/auth.types"
-import { AcademicPeriodsPage } from "@/features/academic-periods/academic-periods-page"
 import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
 import {
   getPublicSchoolIdentity,
   type SchoolIdentity,
 } from "@/features/schools/school-identity.service"
-import { SchoolSettingsPage } from "@/features/schools/school-settings-page"
-import { TeacherPage } from "@/features/teachers/teacher-page"
+
+const AcademicPeriodsPage = lazy(() =>
+  import("@/features/academic-periods/academic-periods-page").then(
+    (module) => ({
+      default: module.AcademicPeriodsPage,
+    }),
+  ),
+)
+const ClassPage = lazy(() =>
+  import("@/features/classes/class-page").then((module) => ({
+    default: module.ClassPage,
+  })),
+)
+const SchoolSettingsPage = lazy(() =>
+  import("@/features/schools/school-settings-page").then((module) => ({
+    default: module.SchoolSettingsPage,
+  })),
+)
+const TeacherPage = lazy(() =>
+  import("@/features/teachers/teacher-page").then((module) => ({
+    default: module.TeacherPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
   | { status: "signed_out" }
   | { status: "signed_in"; account: AuthenticatedUser }
 
+function PageLoadingState() {
+  return (
+    <main className="grid min-h-screen place-items-center bg-[var(--rapotku-canvas)] p-6">
+      <div className="text-center" role="status" aria-live="polite">
+        <span className="mx-auto mb-4 block size-8 animate-spin rounded-full border-4 border-[var(--rapotku-brand-soft)] border-t-[var(--rapotku-brand)]" />
+        <p className="font-medium text-[var(--rapotku-text)]">
+          Membuka halaman...
+        </p>
+      </div>
+    </main>
+  )
+}
+
 export function App() {
   const [appState, setAppState] = useState<AppState>({ status: "loading" })
   const [adminView, setAdminView] = useState<
-    "dashboard" | "school-settings" | "academic-periods" | "teachers"
+    | "dashboard"
+    | "school-settings"
+    | "academic-periods"
+    | "teachers"
+    | "classes"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -116,45 +153,66 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "classes") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ClassPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+            onOpenAcademicPeriods={() => setAdminView("academic-periods")}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "teachers") {
       return (
-        <TeacherPage
-          userId={appState.account.user.id}
-          userName={profile.full_name}
-          schoolName={schoolIdentity?.schoolName}
-          onBack={() => setAdminView("dashboard")}
-          onLogout={handleLogout}
-        />
+        <Suspense fallback={<PageLoadingState />}>
+          <TeacherPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
       )
     }
 
     if (adminView === "academic-periods") {
       return (
-        <AcademicPeriodsPage
-          userId={appState.account.user.id}
-          userName={profile.full_name}
-          schoolName={schoolIdentity?.schoolName}
-          onBack={() => setAdminView("dashboard")}
-          onLogout={handleLogout}
-        />
+        <Suspense fallback={<PageLoadingState />}>
+          <AcademicPeriodsPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
       )
     }
 
     if (adminView === "school-settings") {
       return (
-        <SchoolSettingsPage
-          userId={appState.account.user.id}
-          userName={profile.full_name}
-          schoolName={schoolIdentity?.schoolName}
-          onBack={() => setAdminView("dashboard")}
-          onLogout={handleLogout}
-          onSchoolNameChange={(schoolName) =>
-            setSchoolIdentity((current) => ({
-              schoolName,
-              logoUrl: current?.logoUrl ?? null,
-            }))
-          }
-        />
+        <Suspense fallback={<PageLoadingState />}>
+          <SchoolSettingsPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+            onSchoolNameChange={(schoolName) =>
+              setSchoolIdentity((current) => ({
+                schoolName,
+                logoUrl: current?.logoUrl ?? null,
+              }))
+            }
+          />
+        </Suspense>
       )
     }
 
@@ -166,6 +224,7 @@ export function App() {
         onOpenSchoolSettings={() => setAdminView("school-settings")}
         onOpenAcademicPeriods={() => setAdminView("academic-periods")}
         onOpenTeachers={() => setAdminView("teachers")}
+        onOpenClasses={() => setAdminView("classes")}
       />
     )
   }

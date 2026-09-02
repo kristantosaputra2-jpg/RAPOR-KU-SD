@@ -53,6 +53,73 @@ export type Database = {
           },
         ]
       }
+      classes: {
+        Row: {
+          academic_year_id: string
+          created_at: string
+          created_by: string
+          grade_level: number
+          homeroom_teacher_id: string | null
+          id: string
+          name: string
+          semester_id: string
+          template_group:
+            Database["public"]["Enums"]["class_template_group"] | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          academic_year_id: string
+          created_at?: string
+          created_by: string
+          grade_level: number
+          homeroom_teacher_id?: string | null
+          id?: string
+          name: string
+          semester_id: string
+          template_group?:
+            Database["public"]["Enums"]["class_template_group"] | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          academic_year_id?: string
+          created_at?: string
+          created_by?: string
+          grade_level?: number
+          homeroom_teacher_id?: string | null
+          id?: string
+          name?: string
+          semester_id?: string
+          template_group?:
+            Database["public"]["Enums"]["class_template_group"] | null
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_academic_year_id_fkey"
+            columns: ["academic_year_id"]
+            isOneToOne: false
+            referencedRelation: "academic_years"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_homeroom_teacher_id_fkey"
+            columns: ["homeroom_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teacher_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_semester_academic_year_fkey"
+            columns: ["semester_id", "academic_year_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id", "academic_year_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -265,6 +332,7 @@ export type Database = {
       }
     }
     Enums: {
+      class_template_group: "lower_primary" | "upper_primary"
       user_role: "admin" | "homeroom_teacher" | "subject_teacher"
     }
     CompositeTypes: {
@@ -324,6 +392,7 @@ export type Enums<
 export const Constants = {
   public: {
     Enums: {
+      class_template_group: ["lower_primary", "upper_primary"],
       user_role: ["admin", "homeroom_teacher", "subject_teacher"],
     },
   },

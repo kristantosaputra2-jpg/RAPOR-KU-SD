@@ -104,7 +104,7 @@ Fungsinya:
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, `semesters`, dan `teacher_profiles`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, `semesters`, `teacher_profiles`, dan `classes`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [/] Tambahkan test permission
@@ -161,20 +161,25 @@ Fungsinya:
   - Peran utama dibatasi menjadi `homeroom_teacher` atau `subject_teacher`; akses aktual tetap menunggu assignment.
 - [ ] Assign mata pelajaran
 - [ ] Assign kelas
-- [ ] Assign wali kelas
+- [x] Assign wali kelas
+  - Penetapan wali kelas tersedia melalui form Data Kelas; aktivasi hak akses akun menunggu tahap assignment.
 - [/] Validasi permission guru
   - CRUD `teacher_profiles` dibatasi untuk Admin aktif melalui RLS. Permission berdasarkan kelas/mapel diselesaikan setelah tabel assignment tersedia.
 
 ## Kelas
 
-- [ ] Buat halaman Data Kelas
-- [ ] Tambah kelas 1–6
-- [ ] Tambah rombel
-- [ ] Assign wali kelas
-- [ ] Assign template `lower_primary`
-- [ ] Assign template `upper_primary`
-- [ ] Hubungkan tahun ajaran
-- [ ] Hubungkan semester
+- [x] Buat halaman Data Kelas
+  - Daftar kelas berupa kartu responsif dengan pencarian, filter periode, loading, retry, dan empty state.
+- [x] Tambah kelas 1–6
+- [x] Tambah rombel
+- [x] Assign wali kelas
+  - Wali kelas boleh ditentukan saat tambah/edit kelas atau dibiarkan kosong sampai guru tersedia.
+- [x] Assign template `lower_primary`
+- [x] Assign template `upper_primary`
+  - Template diturunkan otomatis dan dikunci database: kelas 1–3 `lower_primary`, kelas 4–6 `upper_primary`.
+- [x] Hubungkan tahun ajaran
+- [x] Hubungkan semester
+  - Foreign key gabungan memastikan semester selalu berasal dari tahun ajaran yang dipilih.
 
 ## Siswa
 
@@ -578,12 +583,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 90% | Auth, sekolah, periode akademik, guru, audit, dan RLS Admin terkait sudah tersedia |
-| Master Data | In Progress | 35% | Identitas sekolah, periode akademik, dan Data Guru selesai; kelas, siswa, mapel, dan assignment belum dibuat |
+| Supabase | In Progress | 92% | Auth, sekolah, periode akademik, guru, kelas, audit, dan RLS Admin terkait sudah tersedia |
+| Master Data | In Progress | 50% | Identitas sekolah, periode akademik, guru, dan kelas selesai; siswa, mapel, dan assignment mapel belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 25% | 66 unit/integration test dan 18 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah/Periode Akademik/Data Guru lulus |
+| Testing | In Progress | 30% | 78 unit/integration test dan 22 E2E responsif termasuk Data Guru dan Data Kelas lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -679,6 +684,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat halaman Data Guru mobile-first dengan pencarian, filter, tambah, edit, nonaktifkan/aktifkan kembali, loading, error, success, dan empty state.
 - [x] Pisahkan data guru dari pembuatan akun login; akun Auth dan password/invitasi tidak dibuat atau dikarang pada tahap ini.
 - [x] Verifikasi 66 unit/integration test dan 18 E2E responsif lulus setelah tahap Data Guru.
+- [x] Buat tabel `classes` yang terikat ke tahun ajaran dan semester, mendukung kelas 1–6, rombel, wali kelas opsional, audit, constraint, indeks, explicit grants, dan RLS.
+- [x] Otomatiskan `lower_primary` untuk kelas 1–3 dan `upper_primary` untuk kelas 4–6 melalui kolom database yang dihasilkan otomatis.
+- [x] Verifikasi Admin dapat menambah kelas, Guru Mapel ditolak, anonymous tidak memiliki akses, dan seluruh data uji di-rollback.
+- [x] Buat halaman Data Kelas mobile-first dengan pencarian, filter periode, tambah/edit, assignment wali kelas, loading, error, success, dan empty state.
+- [x] Verifikasi 78 unit/integration test dan 22 E2E responsif lulus setelah tahap Data Kelas.
 
 ---
 

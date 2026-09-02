@@ -438,6 +438,24 @@ created_at / updated_at
 
 `user_id` tetap kosong sampai akun Supabase Auth benar-benar dibuat melalui alur Admin yang aman. Menambahkan guru tidak meminta atau mengarang kata sandi. Role pada master guru adalah peran utama, sedangkan akses aktual ke kelas dan mata pelajaran tetap berasal dari `teacher_assignments` pada tahap berikutnya.
 
+## Implementasi Data Kelas MVP
+
+`classes` menyimpan rombel per periode akademik dengan struktur:
+
+```text
+id
+academic_year_id
+semester_id
+grade_level (1–6)
+name
+homeroom_teacher_id (nullable)
+template_group (generated)
+created_by / updated_by
+created_at / updated_at
+```
+
+Relasi gabungan `semester_id + academic_year_id` mencegah semester terhubung ke tahun ajaran yang salah. `template_group` dihasilkan otomatis oleh database: kelas 1–3 menggunakan `lower_primary` dan kelas 4–6 menggunakan `upper_primary`. Wali kelas dapat dipilih dari master guru, sedangkan permission akun tetap diselesaikan melalui assignment pada tahap authorization berikutnya.
+
 ---
 
 # 15. Data Ownership

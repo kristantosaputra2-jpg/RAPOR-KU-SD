@@ -14,7 +14,7 @@ const adminUser = {
   updated_at: "2026-09-02T00:00:00.000Z",
 }
 
-async function openAuthenticatedDashboard(page: Page) {
+async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
   const supabaseUrl = process.env.RAPOTKU_E2E_SUPABASE_URL
 
   if (!supabaseUrl) {
@@ -42,15 +42,49 @@ async function openAuthenticatedDashboard(page: Page) {
     })
   })
   await page.route("**/rest/v1/schools*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withClassPeriod ? [{ id: "school-1" }] : [],
+    })
   })
   await page.route("**/rest/v1/academic_years*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withClassPeriod
+        ? [
+            {
+              id: "year-1",
+              school_id: "school-1",
+              name: "2026/2027",
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
   })
   await page.route("**/rest/v1/semesters*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withClassPeriod
+        ? [
+            {
+              id: "semester-1",
+              academic_year_id: "year-1",
+              number: 1,
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
   })
   await page.route("**/rest/v1/teacher_profiles*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
+  await page.route("**/rest/v1/classes*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
@@ -156,6 +190,20 @@ async function openTeachers(page: Page, width: number) {
   }
 
   await expect(page.getByRole("heading", { name: "Data Guru" })).toBeVisible()
+}
+
+async function openClasses(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Data Kelas" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Data Kelas" }).click()
+  }
+
+  await expect(page.getByRole("heading", { name: "Data Kelas" })).toBeVisible()
 }
 
 const mobileViewports = [
@@ -271,6 +319,29 @@ for (const viewport of settingsViewports) {
     await expect(page.getByRole("dialog")).toBeVisible()
     await expect(page.getByLabel(/Nama Lengkap/)).toBeVisible()
     await expect(page.getByLabel(/Peran Utama/)).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Data Kelas nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true)
+    await openClasses(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Cari kelas")).toBeVisible()
+    await expect(page.getByText("Belum ada data kelas")).toBeVisible()
+
+    await page.getByRole("button", { name: "Tambah Kelas" }).click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await expect(page.getByLabel(/Tingkat Kelas/)).toBeVisible()
+    await expect(page.getByLabel(/Nama Rombel/)).toBeVisible()
+    await expect(page.getByText(/lower_primary/)).toBeVisible()
   })
 }
 
