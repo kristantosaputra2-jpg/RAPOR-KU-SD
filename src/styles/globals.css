@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  font-family:
+    "Plus Jakarta Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --rapotku-brand: #c91d24;
+  --rapotku-brand-strong: #99151a;
+  --rapotku-brand-soft: #fff0f1;
+  --rapotku-surface: #ffffff;
+  --rapotku-canvas: #f7f8fa;
+  --rapotku-text: #1d222b;
+  --rapotku-muted: #667085;
+  --rapotku-border: #e6e8ec;
+  --rapotku-success: #0f633e;
+  --rapotku-warning: #854b00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--rapotku-canvas);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
