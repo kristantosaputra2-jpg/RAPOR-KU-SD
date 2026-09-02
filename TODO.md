@@ -112,7 +112,8 @@ Fungsinya:
 
 ## Dashboard
 
-- [ ] Buat dashboard Admin
+- [x] Buat dashboard Admin
+  - Dashboard mobile-first memiliki sidebar/drawer, status akun, ringkasan tanpa data rekaan, panduan pengaturan awal, dan empty state aktivitas.
 - [ ] Buat dashboard Wali Kelas
 - [ ] Buat dashboard Guru Mapel
 - [ ] Tampilkan tahun ajaran aktif
@@ -559,13 +560,13 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Architecture | Done | 100% | Arsitektur awal tersedia |
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
-| Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
+| Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
 | Supabase | In Progress | 75% | Project, client, migration Auth/role, RLS profil, service/UI Auth, Admin awal, signup cloud aman, serta login/logout/session persistence nyata sudah terverifikasi |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 5% | Vitest, Testing Library, dan Playwright sudah dikonfigurasi |
+| Testing | In Progress | 10% | 23 unit/integration test dan 4 E2E responsif Dashboard Admin lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -634,6 +635,8 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Nonaktifkan public signup pada Auth cloud dan verifikasi pengaturan tetap nonaktif setelah halaman dimuat ulang.
 - [x] Verifikasi login dan logout nyata dengan akun Admin pada preview lokal yang terhubung ke Supabase cloud.
 - [x] Verifikasi session persistence: akun Admin tetap masuk setelah server preview dimulai ulang dan halaman dimuat ulang.
+- [x] Buat Dashboard Admin mobile-first dengan navigasi responsif dan empty state tanpa data rekaan.
+- [x] Tambahkan konfigurasi Playwright dan verifikasi Dashboard Admin pada viewport 360px, 390px, 768px, dan 1280px tanpa horizontal overflow.
 
 ---
 

@@ -1,0 +1,458 @@
+import { useState } from "react"
+import {
+  AlertCircle,
+  BookOpen,
+  BookOpenCheck,
+  CalendarDays,
+  ClipboardCheck,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  School,
+  Settings,
+  UserCheck,
+  Users,
+  X,
+  type LucideIcon,
+} from "lucide-react"
+
+type AdminDashboardProps = Readonly<{
+  userName: string
+  onLogout: () => Promise<void>
+}>
+
+type NavigationItem = Readonly<{
+  label: string
+  icon: LucideIcon
+  isActive?: boolean
+}>
+
+const navigationGroups: ReadonlyArray<
+  Readonly<{ label: string; items: ReadonlyArray<NavigationItem> }>
+> = [
+  {
+    label: "Utama",
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, isActive: true },
+      { label: "Pengaturan Sekolah", icon: School },
+      { label: "Tahun & Semester", icon: CalendarDays },
+    ],
+  },
+  {
+    label: "Data Master",
+    items: [
+      { label: "Data Guru", icon: UserCheck },
+      { label: "Data Kelas", icon: GraduationCap },
+      { label: "Data Siswa", icon: Users },
+      { label: "Mata Pelajaran", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Rapor",
+    items: [
+      { label: "Monitoring", icon: ClipboardCheck },
+      { label: "Laporan", icon: FileText },
+      { label: "Pengaturan Rapor", icon: Settings },
+    ],
+  },
+]
+
+const summaryCards = [
+  {
+    label: "Siswa Aktif",
+    icon: Users,
+    color: "bg-[#fff0f1] text-[var(--rapotku-brand)]",
+  },
+  {
+    label: "Kelas",
+    icon: GraduationCap,
+    color: "bg-[#fff7e8] text-[#9a5a00]",
+  },
+  {
+    label: "Guru",
+    icon: UserCheck,
+    color: "bg-[#eef6ff] text-[#245da8]",
+  },
+  {
+    label: "Rapor Siap Cetak",
+    icon: ClipboardCheck,
+    color: "bg-[#ecf8f2] text-[var(--rapotku-success)]",
+  },
+] as const
+
+const setupSteps = [
+  {
+    title: "Lengkapi identitas sekolah",
+    description: "Nama sekolah, alamat, kepala sekolah, dan logo.",
+  },
+  {
+    title: "Atur tahun ajaran dan semester",
+    description: "Pilih periode yang sedang aktif digunakan.",
+  },
+  {
+    title: "Tambahkan guru dan kelas",
+    description: "Siapkan data guru, rombel, dan wali kelas.",
+  },
+  {
+    title: "Tambahkan siswa dan mata pelajaran",
+    description: "Data ini akan menjadi dasar pengisian nilai.",
+  },
+] as const
+
+function Brand() {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--rapotku-brand)] text-white shadow-[0_8px_20px_rgba(201,29,36,0.2)]">
+        <BookOpenCheck aria-hidden="true" size={23} />
+      </span>
+      <div>
+        <p className="font-bold leading-tight">RapotKu</p>
+        <p className="mt-0.5 text-xs text-[var(--rapotku-muted)]">
+          Admin Sekolah
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function DashboardNavigation() {
+  return (
+    <nav aria-label="Menu utama" className="mt-8 space-y-7">
+      {navigationGroups.map((group) => (
+        <div key={group.label}>
+          <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#98a2b3]">
+            {group.label}
+          </p>
+          <ul className="space-y-1">
+            {group.items.map((item) => {
+              const Icon = item.icon
+
+              return (
+                <li key={item.label}>
+                  {item.isActive ? (
+                    <div
+                      aria-current="page"
+                      className="flex min-h-11 items-center gap-3 rounded-xl bg-[var(--rapotku-brand-soft)] px-3 font-semibold text-[var(--rapotku-brand)]"
+                    >
+                      <Icon aria-hidden="true" size={19} />
+                      <span>{item.label}</span>
+                    </div>
+                  ) : (
+                    <div
+                      aria-disabled="true"
+                      className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-[var(--rapotku-muted)]"
+                    >
+                      <Icon aria-hidden="true" size={19} />
+                      <span className="flex-1">{item.label}</span>
+                      <span className="rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
+                        Segera
+                      </span>
+                    </div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+function AccountPanel({
+  userName,
+  isLoggingOut,
+  onLogout,
+}: Readonly<{
+  userName: string
+  isLoggingOut: boolean
+  onLogout: () => void
+}>) {
+  return (
+    <div className="rounded-2xl border border-[var(--rapotku-border)] bg-[#fafafa] p-3">
+      <div className="flex items-center gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--rapotku-brand-soft)] font-bold text-[var(--rapotku-brand)]">
+          {userName.trim().charAt(0).toUpperCase() || "A"}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-bold">{userName}</p>
+          <p className="text-xs text-[var(--rapotku-muted)]">Admin</p>
+        </div>
+      </div>
+      <button
+        className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-3 text-sm font-semibold transition hover:bg-[var(--rapotku-canvas)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)] disabled:cursor-not-allowed disabled:opacity-60"
+        type="button"
+        onClick={onLogout}
+        disabled={isLoggingOut}
+      >
+        <LogOut aria-hidden="true" size={17} />
+        {isLoggingOut ? "Sedang keluar..." : "Keluar"}
+      </button>
+    </div>
+  )
+}
+
+export function AdminDashboard({ userName, onLogout }: AdminDashboardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [logoutError, setLogoutError] = useState("")
+
+  async function handleLogout() {
+    setLogoutError("")
+    setIsLoggingOut(true)
+
+    try {
+      await onLogout()
+    } catch {
+      setLogoutError(
+        "Belum dapat keluar. Periksa koneksi internet lalu coba lagi.",
+      )
+      setIsLoggingOut(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
+      <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
+        <Brand />
+        <DashboardNavigation />
+        <div className="mt-auto pt-6">
+          <AccountPanel
+            userName={userName}
+            isLoggingOut={isLoggingOut}
+            onLogout={() => void handleLogout()}
+          />
+        </div>
+      </aside>
+
+      <div className="min-w-0">
+        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-[var(--rapotku-border)] bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+          <div className="lg:hidden">
+            <Brand />
+          </div>
+          <div className="hidden lg:block">
+            <p className="text-sm text-[var(--rapotku-muted)]">
+              Ruang kerja Admin
+            </p>
+          </div>
+          <button
+            className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)] bg-white lg:hidden"
+            type="button"
+            aria-label="Buka menu"
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen(true)}
+          >
+            <Menu aria-hidden="true" size={21} />
+          </button>
+          <div className="hidden items-center gap-3 lg:flex">
+            <span className="grid size-9 place-items-center rounded-xl bg-[var(--rapotku-brand-soft)] text-sm font-bold text-[var(--rapotku-brand)]">
+              {userName.trim().charAt(0).toUpperCase() || "A"}
+            </span>
+            <div>
+              <p className="text-sm font-bold leading-tight">{userName}</p>
+              <p className="text-xs text-[var(--rapotku-muted)]">Admin</p>
+            </div>
+          </div>
+        </header>
+
+        <main className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[var(--rapotku-brand)]">
+                Dashboard Admin
+              </p>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+                Selamat datang, {userName}
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-[var(--rapotku-muted)] sm:text-base">
+                Lihat kondisi data sekolah dan lanjutkan pengaturan dari satu
+                tempat.
+              </p>
+            </div>
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#b9e3ce] bg-[#ecf8f2] px-3 py-2 text-xs font-bold text-[var(--rapotku-success)]">
+              <span className="size-2 rounded-full bg-[var(--rapotku-success)]" />
+              Akun Admin aktif
+            </span>
+          </section>
+
+          {logoutError ? (
+            <div
+              className="mt-5 rounded-2xl border border-[#f5b7ba] bg-[var(--rapotku-brand-soft)] p-4 text-sm text-[var(--rapotku-brand-strong)]"
+              role="alert"
+            >
+              {logoutError}
+            </div>
+          ) : null}
+
+          <section
+            aria-labelledby="setup-warning-title"
+            className="mt-6 flex flex-col gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#9f151b_0%,#c91d24_62%,#e33d44_100%)] p-5 text-white shadow-[0_16px_40px_rgba(130,18,23,0.16)] sm:flex-row sm:items-center sm:p-6"
+          >
+            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/15">
+              <AlertCircle aria-hidden="true" size={25} />
+            </span>
+            <div className="flex-1">
+              <h2 id="setup-warning-title" className="text-lg font-bold">
+                Pengaturan awal belum lengkap
+              </h2>
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-white/80">
+                Ringkasan akan terisi setelah identitas sekolah, periode aktif,
+                guru, kelas, siswa, dan mata pelajaran ditambahkan pada tahap
+                berikutnya.
+              </p>
+            </div>
+          </section>
+
+          <section aria-labelledby="summary-title" className="mt-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 id="summary-title" className="text-lg font-bold">
+                Ringkasan hari ini
+              </h2>
+              <span className="text-xs font-medium text-[var(--rapotku-muted)]">
+                Belum ada data sekolah
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+              {summaryCards.map((card) => {
+                const Icon = card.icon
+
+                return (
+                  <article
+                    className="rounded-2xl border border-[var(--rapotku-border)] bg-white p-4 shadow-[0_8px_24px_rgba(24,31,45,0.04)] sm:p-5"
+                    key={card.label}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold leading-5 text-[var(--rapotku-muted)] sm:text-sm">
+                          {card.label}
+                        </p>
+                        <p
+                          className="mt-2 text-3xl font-bold"
+                          aria-label="Belum ada data"
+                        >
+                          —
+                        </p>
+                      </div>
+                      <span
+                        className={`grid size-10 shrink-0 place-items-center rounded-xl ${card.color}`}
+                      >
+                        <Icon aria-hidden="true" size={20} />
+                      </span>
+                    </div>
+                    <p className="mt-3 text-xs text-[#8a93a2]">Menunggu data</p>
+                  </article>
+                )
+              })}
+            </div>
+          </section>
+
+          <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
+            <section
+              aria-labelledby="setup-title"
+              className="rounded-3xl border border-[var(--rapotku-border)] bg-white p-5 shadow-[0_8px_28px_rgba(24,31,45,0.04)] sm:p-6"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
+                    Langkah berikutnya
+                  </p>
+                  <h2 id="setup-title" className="mt-1 text-xl font-bold">
+                    Siapkan data dasar sekolah
+                  </h2>
+                </div>
+                <span className="rounded-full bg-[#f0f1f3] px-3 py-1 text-xs font-semibold text-[var(--rapotku-muted)]">
+                  0 dari 4
+                </span>
+              </div>
+
+              <ol className="mt-5 divide-y divide-[var(--rapotku-border)]">
+                {setupSteps.map((step, index) => (
+                  <li
+                    className="flex items-start gap-3 py-4 first:pt-0 last:pb-0"
+                    key={step.title}
+                  >
+                    <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-[var(--rapotku-brand-soft)] text-sm font-bold text-[var(--rapotku-brand)]">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold">{step.title}</p>
+                      <p className="mt-1 text-sm leading-5 text-[var(--rapotku-muted)]">
+                        {step.description}
+                      </p>
+                    </div>
+                    <span className="mt-1 shrink-0 rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
+                      Segera
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-5 rounded-xl bg-[#f7f8fa] px-4 py-3 text-sm leading-6 text-[var(--rapotku-muted)]">
+                Menu pengaturan akan dibuka satu per satu sesuai tahapan
+                pembangunan.
+              </p>
+            </section>
+
+            <section
+              aria-labelledby="activity-title"
+              className="rounded-3xl border border-[var(--rapotku-border)] bg-white p-5 shadow-[0_8px_28px_rgba(24,31,45,0.04)] sm:p-6"
+            >
+              <h2 id="activity-title" className="text-xl font-bold">
+                Aktivitas terbaru
+              </h2>
+              <div className="grid min-h-64 place-items-center py-8 text-center">
+                <div>
+                  <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#f2f3f5] text-[#8a93a2]">
+                    <FileText aria-hidden="true" size={25} />
+                  </span>
+                  <p className="mt-4 font-bold">Belum ada aktivitas</p>
+                  <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-[var(--rapotku-muted)]">
+                    Perubahan data sekolah dan rapor akan muncul di sini.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+
+      {isMenuOpen ? (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button
+            className="absolute inset-0 bg-[#1d222b]/45"
+            type="button"
+            aria-label="Tutup menu"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <aside
+            aria-label="Menu Admin"
+            aria-modal="true"
+            role="dialog"
+            className="relative flex h-full w-[min(88vw,320px)] flex-col overflow-y-auto bg-white p-5 shadow-2xl"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <Brand />
+              <button
+                className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
+                type="button"
+                aria-label="Tutup menu"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <X aria-hidden="true" size={20} />
+              </button>
+            </div>
+            <DashboardNavigation />
+            <div className="mt-auto pt-6">
+              <AccountPanel
+                userName={userName}
+                isLoggingOut={isLoggingOut}
+                onLogout={() => void handleLogout()}
+              />
+            </div>
+          </aside>
+        </div>
+      ) : null}
+    </div>
+  )
+}

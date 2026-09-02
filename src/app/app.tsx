@@ -9,6 +9,7 @@ import {
 } from "@/features/auth/auth.service"
 import { LoginPage } from "@/features/auth/login-page"
 import { USER_ROLE_LABELS } from "@/features/auth/auth.types"
+import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
 
 type AppState =
   | { status: "loading" }
@@ -71,6 +72,12 @@ export function App() {
 
   const { profile } = appState.account
 
+  if (profile.role === "admin") {
+    return (
+      <AdminDashboard userName={profile.full_name} onLogout={handleLogout} />
+    )
+  }
+
   return (
     <main className="grid min-h-screen place-items-center bg-[var(--rapotku-canvas)] p-4 text-[var(--rapotku-text)]">
       <section className="w-full max-w-lg rounded-3xl border border-[var(--rapotku-border)] bg-white p-6 shadow-[0_24px_64px_rgba(66,20,23,0.09)] sm:p-8">
@@ -81,8 +88,8 @@ export function App() {
           Selamat datang, {profile.full_name}
         </h1>
         <p className="mt-3 text-[var(--rapotku-muted)]">
-          Anda masuk sebagai {USER_ROLE_LABELS[profile.role]}. Dashboard akan
-          dibangun pada tahap berikutnya.
+          Anda masuk sebagai {USER_ROLE_LABELS[profile.role]}. Dashboard untuk
+          peran Anda akan dibangun pada tahap berikutnya.
         </p>
         <button
           className="mt-8 min-h-12 w-full rounded-xl border border-[var(--rapotku-border)] bg-white px-4 font-semibold transition hover:bg-[var(--rapotku-canvas)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"

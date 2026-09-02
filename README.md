@@ -6,7 +6,7 @@ Repository GitHub: [kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei](https://git
 
 ## Status
 
-Project Foundation telah disiapkan. Fitur bisnis belum dibangun dan akan dikerjakan bertahap berdasarkan `prd.md`, `AGENTS.md`, `Architecture.md`, `TODO.md`, `SKILL.md`, dan `workflow.md`.
+Project Foundation, autentikasi, dan Dashboard Admin awal telah disiapkan. Fitur berikutnya akan dikerjakan bertahap berdasarkan `prd.md`, `AGENTS.md`, `Architecture.md`, `TODO.md`, `SKILL.md`, dan `workflow.md`.
 
 ## Stack
 
@@ -32,6 +32,7 @@ pnpm typecheck
 pnpm lint
 pnpm format:check
 pnpm test
+pnpm test:e2e
 pnpm build
 ```
 

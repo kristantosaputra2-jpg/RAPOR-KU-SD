@@ -56,7 +56,10 @@ describe("App", () => {
     expect(
       await screen.findByText("Selamat datang, Admin Sekolah"),
     ).toBeInTheDocument()
-    expect(screen.getByText(/masuk sebagai Admin/)).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "Ringkasan hari ini" }),
+    ).toBeInTheDocument()
+    expect(screen.getByText("Akun Admin aktif")).toBeInTheDocument()
   })
 
   it("masuk menggunakan email dan kata sandi dari form", async () => {
