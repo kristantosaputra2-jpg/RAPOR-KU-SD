@@ -78,8 +78,8 @@ Fungsinya:
 - [x] Buat project Supabase
 - [x] Konfigurasi environment development
 - [x] Konfigurasi Supabase client
-- [/] Buat auth flow
-  - Service email/password, UI login responsif, pemulihan session, logout lokal, loading, dan pesan error aman sudah tersedia; pengujian akun nyata menunggu admin awal.
+- [x] Buat auth flow
+  - Service email/password, UI login responsif, pemulihan session, logout lokal, loading, dan pesan error aman sudah tersedia serta terverifikasi dengan akun Admin nyata.
 - [x] Buat role pengguna
   - Identifier/label TypeScript dan enum database menggunakan `admin`, `homeroom_teacher`, dan `subject_teacher`.
 - [/] Aktifkan Row Level Security
@@ -89,10 +89,10 @@ Fungsinya:
 - [ ] Buat data sekolah
 - [ ] Buat tahun ajaran
 - [ ] Buat semester
-- [/] Test login/logout
-  - Unit dan UI test lulus; pengujian dengan akun nyata menunggu admin awal.
-- [/] Test session persistence
-  - Unit test pemulihan session lulus; pengujian browser nyata menunggu admin awal.
+- [x] Test login/logout
+  - Unit dan UI test lulus; login dan logout nyata terverifikasi pada preview lokal dengan Supabase cloud.
+- [x] Test session persistence
+  - Unit test lulus; sesi Admin tetap aktif setelah preview dimulai ulang dan halaman dimuat ulang.
 
 ## Security
 
@@ -497,7 +497,7 @@ Fungsinya:
 - [ ] Supabase production ready
 - [ ] Migration applied
 - [ ] RLS verified
-- [ ] Admin account verified
+- [x] Admin account verified
 - [ ] Identitas sekolah verified
 - [ ] Tahun ajaran verified
 - [ ] Semester verified
@@ -560,7 +560,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
-| Supabase | In Progress | 65% | Project, client, migration Auth/role, RLS profil, service/UI Auth, Admin awal, dan signup cloud aman; uji login nyata belum selesai |
+| Supabase | In Progress | 75% | Project, client, migration Auth/role, RLS profil, service/UI Auth, Admin awal, signup cloud aman, serta login/logout/session persistence nyata sudah terverifikasi |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
@@ -632,7 +632,8 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tambahkan 7 UI/integration test Auth; total seluruh test saat ini 20 dan lulus.
 - [x] Buat dan aktifkan akun Admin awal untuk Kristanto Saputra menggunakan akun Supabase Auth yang dikonfirmasi.
 - [x] Nonaktifkan public signup pada Auth cloud dan verifikasi pengaturan tetap nonaktif setelah halaman dimuat ulang.
-- [ ] Pengujian login/logout nyata menunggu Admin memasukkan kata sandinya sendiri pada preview RapotKu.
+- [x] Verifikasi login dan logout nyata dengan akun Admin pada preview lokal yang terhubung ke Supabase cloud.
+- [x] Verifikasi session persistence: akun Admin tetap masuk setelah server preview dimulai ulang dan halaman dimuat ulang.
 
 ---
 
