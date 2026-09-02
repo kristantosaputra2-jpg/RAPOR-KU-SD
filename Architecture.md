@@ -586,6 +586,15 @@ Historical data harus tetap terbaca.
 
 Perubahan semester aktif tidak boleh menghapus data lama.
 
+Implementasi saat ini:
+
+- `academic_years` menyimpan riwayat tahun ajaran per sekolah;
+- `semesters` menyimpan Semester 1 dan 2 per tahun ajaran;
+- hanya satu tahun ajaran dan satu semester yang dapat aktif;
+- aktivasi semester juga menyelaraskan tahun ajaran aktif dalam satu transaksi;
+- data lama tidak memiliki aksi hapus dari frontend;
+- pengguna aktif boleh membaca periode, sedangkan hanya Admin aktif yang boleh menambah atau mengubahnya melalui RLS.
+
 ---
 
 # 23. Learning Outcome Architecture

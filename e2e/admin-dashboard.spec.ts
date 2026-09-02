@@ -44,6 +44,12 @@ async function openAuthenticatedDashboard(page: Page) {
   await page.route("**/rest/v1/schools*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/academic_years*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
+  await page.route("**/rest/v1/semesters*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -116,6 +122,22 @@ async function openSchoolSettings(page: Page, width: number) {
 
   await expect(
     page.getByRole("heading", { name: "Pengaturan Sekolah" }),
+  ).toBeVisible()
+}
+
+async function openAcademicPeriods(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Tahun & Semester" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Tahun & Semester" }).click()
+  }
+
+  await expect(
+    page.getByRole("heading", { name: "Tahun Ajaran & Semester" }),
   ).toBeVisible()
 }
 
@@ -210,5 +232,25 @@ for (const viewport of settingsViewports) {
     await expect(
       page.getByRole("button", { name: "Simpan pengaturan" }),
     ).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`tahun ajaran dan semester nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page)
+    await openAcademicPeriods(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Nama tahun ajaran")).toBeVisible()
+    await expect(page.getByText("Belum ada tahun ajaran")).toBeVisible()
+    await expect(page.getByRole("button", { name: "Tambah" })).toBeVisible()
   })
 }

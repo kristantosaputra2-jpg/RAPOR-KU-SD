@@ -88,8 +88,10 @@ Fungsinya:
 - [ ] Buat seed development
 - [x] Buat data sekolah
   - Konfigurasi satu sekolah per deployment tersedia dengan audit, migration tercatat, dan RLS Admin.
-- [ ] Buat tahun ajaran
-- [ ] Buat semester
+- [x] Buat tahun ajaran
+  - Admin dapat menambah periode berformat `YYYY/YYYY`, melihat riwayat, dan memilih satu tahun ajaran aktif tanpa menghapus data lama.
+- [x] Buat semester
+  - Semester 1 dan 2 dapat ditambahkan per tahun ajaran; aktivasi semester sekaligus menyelaraskan tahun ajaran aktif secara atomik.
 - [x] Test login/logout
   - Unit dan UI test lulus; login dan logout nyata terverifikasi pada preview lokal dengan Supabase cloud.
 - [x] Test session persistence
@@ -98,11 +100,11 @@ Fungsinya:
 ## Security
 
 - [/] Buat RLS untuk Admin
-  - Policy Admin telah diterapkan pada `schools`; tabel berikutnya tetap harus memiliki policy masing-masing.
+  - Policy Admin telah diterapkan pada `schools`, `academic_years`, dan `semesters`; tabel berikutnya tetap harus memiliki policy masing-masing.
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki akses pada `profiles` dan `schools`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, dan `semesters`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [ ] Tambahkan test permission
@@ -118,8 +120,8 @@ Fungsinya:
   - Dashboard mobile-first memiliki sidebar/drawer, status akun, ringkasan tanpa data rekaan, panduan pengaturan awal, dan empty state aktivitas.
 - [ ] Buat dashboard Wali Kelas
 - [ ] Buat dashboard Guru Mapel
-- [ ] Tampilkan tahun ajaran aktif
-- [ ] Tampilkan semester aktif
+- [x] Tampilkan tahun ajaran aktif
+- [x] Tampilkan semester aktif
 - [ ] Tampilkan jumlah siswa
 - [ ] Tampilkan jumlah kelas
 - [ ] Tampilkan status kelengkapan nilai
@@ -570,12 +572,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 80% | Fondasi Auth ditambah tabel konfigurasi sekolah dengan audit dan RLS Admin sudah tersedia |
-| Master Data | In Progress | 10% | Pengaturan identitas sekolah selesai; periode, guru, kelas, siswa, dan mapel belum dibuat |
+| Supabase | In Progress | 85% | Auth, sekolah, tahun ajaran, semester, audit, dan RLS Admin terkait sudah tersedia |
+| Master Data | In Progress | 20% | Identitas sekolah dan periode akademik selesai; guru, kelas, siswa, dan mapel belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 15% | 39 unit/integration test dan 10 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah lulus |
+| Testing | In Progress | 20% | 53 unit/integration test dan 14 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah/Periode Akademik lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -659,6 +661,13 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Gunakan gambar referensi sekolah sebagai ilustrasi login dan hero Dashboard Admin.
 - [x] Verifikasi ilustrasi login tidak terpotong pada viewport HP 360px dan 390px.
 - [x] Verifikasi 39 unit/integration test dan 10 E2E responsif lulus untuk dua tahap identitas serta visual baru.
+- [x] Buat tabel `academic_years` dan `semesters` yang historical-safe, memakai audit, constraint, indeks periode aktif tunggal, dan RLS.
+- [x] Tambahkan operasi database atomik untuk mengganti tahun ajaran atau semester aktif tanpa kondisi periode ganda.
+- [x] Tambahkan validasi database agar tahun ajaran selalu berurutan dan semester aktif selalu berada pada tahun ajaran aktif, termasuk saat frontend dimanipulasi.
+- [x] Verifikasi Admin dapat membuat serta mengaktifkan periode dalam transaksi uji, Guru Mapel ditolak RLS, anonymous tidak memiliki grant, dan seluruh data uji berhasil di-rollback.
+- [x] Buat halaman Tahun Ajaran & Semester yang mobile-first dengan loading, retry, validasi, empty state, success/error feedback, dan navigasi Dashboard Admin.
+- [x] Tampilkan ringkasan periode aktif pada Dashboard Admin tanpa mengarang tahun ajaran atau semester sekolah.
+- [x] Verifikasi 53 unit/integration test dan 14 E2E responsif lulus setelah tahap Tahun Ajaran dan Semester.
 
 ---
 

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   AlertCircle,
   BookOpen,
@@ -18,18 +18,25 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import {
+  getAcademicPeriods,
+  getActiveAcademicPeriod,
+  type ActiveAcademicPeriod,
+} from "@/features/academic-periods/academic-periods.service"
+
 type AdminDashboardProps = Readonly<{
   userName: string
   schoolName?: string
   onLogout: () => Promise<void>
   onOpenSchoolSettings: () => void
+  onOpenAcademicPeriods: () => void
 }>
 
 type NavigationItem = Readonly<{
   label: string
   icon: LucideIcon
   isActive?: boolean
-  action?: "school-settings"
+  action?: "school-settings" | "academic-periods"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -44,7 +51,11 @@ const navigationGroups: ReadonlyArray<
         icon: School,
         action: "school-settings",
       },
-      { label: "Tahun & Semester", icon: CalendarDays },
+      {
+        label: "Tahun & Semester",
+        icon: CalendarDays,
+        action: "academic-periods",
+      },
     ],
   },
   {
@@ -126,7 +137,11 @@ function Brand({ schoolName }: Readonly<{ schoolName?: string }>) {
 
 function DashboardNavigation({
   onOpenSchoolSettings,
-}: Readonly<{ onOpenSchoolSettings: () => void }>) {
+  onOpenAcademicPeriods,
+}: Readonly<{
+  onOpenSchoolSettings: () => void
+  onOpenAcademicPeriods: () => void
+}>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
       {navigationGroups.map((group) => (
@@ -148,11 +163,15 @@ function DashboardNavigation({
                       <Icon aria-hidden="true" size={19} />
                       <span>{item.label}</span>
                     </div>
-                  ) : item.action === "school-settings" ? (
+                  ) : item.action ? (
                     <button
                       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-semibold text-[var(--rapotku-muted)] transition hover:bg-[var(--rapotku-canvas)] hover:text-[var(--rapotku-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
                       type="button"
-                      onClick={onOpenSchoolSettings}
+                      onClick={
+                        item.action === "school-settings"
+                          ? onOpenSchoolSettings
+                          : onOpenAcademicPeriods
+                      }
                     >
                       <Icon aria-hidden="true" size={19} />
                       <span>{item.label}</span>
@@ -217,10 +236,33 @@ export function AdminDashboard({
   schoolName,
   onLogout,
   onOpenSchoolSettings,
+  onOpenAcademicPeriods,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState("")
+  const [activePeriod, setActivePeriod] = useState<ActiveAcademicPeriod>({
+    academicYear: null,
+    semester: null,
+  })
+
+  useEffect(() => {
+    let isMounted = true
+
+    void getAcademicPeriods()
+      .then((periods) => {
+        if (isMounted) {
+          setActivePeriod(getActiveAcademicPeriod(periods))
+        }
+      })
+      .catch(() => {
+        // The dashboard stays usable when the period summary cannot be loaded.
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   async function handleLogout() {
     setLogoutError("")
@@ -236,11 +278,19 @@ export function AdminDashboard({
     }
   }
 
+  const hasActivePeriod = Boolean(
+    activePeriod.academicYear && activePeriod.semester,
+  )
+  const completedSetupSteps = (schoolName ? 1 : 0) + (hasActivePeriod ? 1 : 0)
+
   return (
     <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
         <Brand schoolName={schoolName} />
-        <DashboardNavigation onOpenSchoolSettings={onOpenSchoolSettings} />
+        <DashboardNavigation
+          onOpenSchoolSettings={onOpenSchoolSettings}
+          onOpenAcademicPeriods={onOpenAcademicPeriods}
+        />
         <div className="mt-auto pt-6">
           <AccountPanel
             userName={userName}
@@ -294,10 +344,26 @@ export function AdminDashboard({
                 tempat.
               </p>
             </div>
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#b9e3ce] bg-[#ecf8f2] px-3 py-2 text-xs font-bold text-[var(--rapotku-success)]">
-              <span className="size-2 rounded-full bg-[var(--rapotku-success)]" />
-              Akun Admin aktif
-            </span>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#b9e3ce] bg-[#ecf8f2] px-3 py-2 text-xs font-bold text-[var(--rapotku-success)]">
+                <span className="size-2 rounded-full bg-[var(--rapotku-success)]" />
+                Akun Admin aktif
+              </span>
+              <button
+                className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--rapotku-border)] bg-white px-3 text-xs font-bold text-[var(--rapotku-muted)]"
+                type="button"
+                onClick={onOpenAcademicPeriods}
+              >
+                <CalendarDays aria-hidden="true" size={15} />
+                {activePeriod.academicYear
+                  ? `${activePeriod.academicYear.name}${
+                      activePeriod.semester
+                        ? ` · Semester ${activePeriod.semester.number}`
+                        : " · Semester belum aktif"
+                    }`
+                  : "Periode belum aktif"}
+              </button>
+            </div>
           </section>
 
           {logoutError ? (
@@ -333,8 +399,9 @@ export function AdminDashboard({
                   Pengaturan awal belum lengkap
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/85">
-                  Identitas sekolah sudah dimulai. Lengkapi periode aktif, guru,
-                  kelas, siswa, dan mata pelajaran pada tahap berikutnya.
+                  {hasActivePeriod
+                    ? "Identitas dan periode aktif sudah tersedia. Lanjutkan data guru, kelas, siswa, dan mata pelajaran."
+                    : "Identitas sekolah sudah dimulai. Lengkapi periode aktif, guru, kelas, siswa, dan mata pelajaran."}
                 </p>
               </div>
             </div>
@@ -398,7 +465,7 @@ export function AdminDashboard({
                   </h2>
                 </div>
                 <span className="rounded-full bg-[#f0f1f3] px-3 py-1 text-xs font-semibold text-[var(--rapotku-muted)]">
-                  0 dari 4
+                  {completedSetupSteps} dari 4
                 </span>
               </div>
 
@@ -417,13 +484,21 @@ export function AdminDashboard({
                         {step.description}
                       </p>
                     </div>
-                    {index === 0 ? (
+                    {index <= 1 ? (
                       <button
                         className="min-h-11 shrink-0 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
                         type="button"
-                        onClick={onOpenSchoolSettings}
+                        onClick={
+                          index === 0
+                            ? onOpenSchoolSettings
+                            : onOpenAcademicPeriods
+                        }
                       >
-                        Buka
+                        {index === 0 && schoolName
+                          ? "Atur"
+                          : index === 1 && hasActivePeriod
+                            ? "Atur"
+                            : "Buka"}
                       </button>
                     ) : (
                       <span className="mt-1 shrink-0 rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
@@ -434,8 +509,8 @@ export function AdminDashboard({
                 ))}
               </ol>
               <p className="mt-5 rounded-xl bg-[#f7f8fa] px-4 py-3 text-sm leading-6 text-[var(--rapotku-muted)]">
-                Pengaturan identitas sekolah sudah tersedia. Menu berikutnya
-                akan dibuka satu per satu sesuai tahapan pembangunan.
+                Pengaturan identitas dan periode akademik sudah tersedia. Data
+                berikutnya akan dibuka satu per satu sesuai tahapan pembangunan.
               </p>
             </section>
 
@@ -491,6 +566,10 @@ export function AdminDashboard({
               onOpenSchoolSettings={() => {
                 setIsMenuOpen(false)
                 onOpenSchoolSettings()
+              }}
+              onOpenAcademicPeriods={() => {
+                setIsMenuOpen(false)
+                onOpenAcademicPeriods()
               }}
             />
             <div className="mt-auto pt-6">

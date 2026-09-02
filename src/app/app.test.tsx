@@ -21,6 +21,10 @@ const identityMocks = vi.hoisted(() => ({
   getPublicSchoolIdentity: vi.fn(),
 }))
 
+const academicPeriodMocks = vi.hoisted(() => ({
+  getAcademicPeriods: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
@@ -37,6 +41,18 @@ vi.mock(
       >()
 
     return { ...original, ...schoolMocks }
+  },
+)
+
+vi.mock(
+  "@/features/academic-periods/academic-periods.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/academic-periods/academic-periods.service")
+      >()
+
+    return { ...original, ...academicPeriodMocks }
   },
 )
 
@@ -77,6 +93,12 @@ describe("App", () => {
     identityMocks.getPublicSchoolIdentity.mockResolvedValue({
       schoolName: "SD Negeri Tumbang Kawei",
       logoUrl: null,
+    })
+    academicPeriodMocks.getAcademicPeriods.mockReset()
+    academicPeriodMocks.getAcademicPeriods.mockResolvedValue({
+      schoolId: "school-1",
+      academicYears: [],
+      semesters: [],
     })
   })
 
@@ -147,7 +169,7 @@ describe("App", () => {
     authMocks.getCurrentAuthenticatedUser.mockResolvedValue(account)
     render(<App />)
 
-    await user.click(await screen.findByRole("button", { name: "Buka" }))
+    await user.click(await screen.findByRole("button", { name: "Atur" }))
     expect(
       await screen.findByRole("heading", { name: "Pengaturan Sekolah" }),
     ).toBeInTheDocument()
@@ -157,6 +179,19 @@ describe("App", () => {
     )
     expect(
       await screen.findByRole("heading", { name: "Ringkasan hari ini" }),
+    ).toBeInTheDocument()
+  })
+
+  it("membuka pengaturan tahun ajaran dan semester", async () => {
+    const user = userEvent.setup()
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue(account)
+    render(<App />)
+
+    await user.click(
+      await screen.findByRole("button", { name: "Periode belum aktif" }),
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Tahun Ajaran & Semester" }),
     ).toBeInTheDocument()
   })
 })

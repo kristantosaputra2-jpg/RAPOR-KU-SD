@@ -12,6 +12,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_years: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          name: string
+          school_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          name: string
+          school_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          school_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_years_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -123,12 +164,60 @@ export type Database = {
         }
         Relationships: []
       }
+      semesters: {
+        Row: {
+          academic_year_id: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          number: number
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          academic_year_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          number: number
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          academic_year_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          number?: number
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "semesters_academic_year_id_fkey"
+            columns: ["academic_year_id"]
+            isOneToOne: false
+            referencedRelation: "academic_years"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_active_academic_year: {
+        Args: { p_academic_year_id: string }
+        Returns: undefined
+      }
+      set_active_semester: {
+        Args: { p_semester_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       user_role: "admin" | "homeroom_teacher" | "subject_teacher"

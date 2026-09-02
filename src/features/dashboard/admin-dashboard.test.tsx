@@ -4,6 +4,26 @@ import { describe, expect, it, vi } from "vitest"
 
 import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
 
+const academicPeriodMocks = vi.hoisted(() => ({
+  getAcademicPeriods: vi.fn().mockResolvedValue({
+    schoolId: "school-1",
+    academicYears: [],
+    semesters: [],
+  }),
+}))
+
+vi.mock(
+  "@/features/academic-periods/academic-periods.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/academic-periods/academic-periods.service")
+      >()
+
+    return { ...original, ...academicPeriodMocks }
+  },
+)
+
 describe("AdminDashboard", () => {
   it("menampilkan ringkasan tanpa mengarang data sekolah", () => {
     render(
@@ -12,6 +32,7 @@ describe("AdminDashboard", () => {
         schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
       />,
     )
 
@@ -35,6 +56,7 @@ describe("AdminDashboard", () => {
         schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
       />,
     )
 
@@ -55,6 +77,7 @@ describe("AdminDashboard", () => {
         schoolName="SD Negeri Tumbang Kawei"
         onLogout={onLogout}
         onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
       />,
     )
 
@@ -74,10 +97,11 @@ describe("AdminDashboard", () => {
         schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={onOpenSchoolSettings}
+        onOpenAcademicPeriods={vi.fn()}
       />,
     )
 
-    await user.click(screen.getByRole("button", { name: "Buka" }))
+    await user.click(screen.getByRole("button", { name: "Atur" }))
 
     expect(onOpenSchoolSettings).toHaveBeenCalledOnce()
   })
