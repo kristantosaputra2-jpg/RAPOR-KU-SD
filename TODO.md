@@ -79,7 +79,7 @@ Fungsinya:
 - [x] Konfigurasi environment development
 - [x] Konfigurasi Supabase client
 - [/] Buat auth flow
-  - Service email/password, pemulihan session, logout lokal, dan pesan error aman sudah tersedia; UI serta pengujian akun nyata belum dibuat.
+  - Service email/password, UI login responsif, pemulihan session, logout lokal, loading, dan pesan error aman sudah tersedia; pengujian akun nyata menunggu admin awal.
 - [x] Buat role pengguna
   - Identifier/label TypeScript dan enum database menggunakan `admin`, `homeroom_teacher`, dan `subject_teacher`.
 - [/] Aktifkan Row Level Security
@@ -90,7 +90,7 @@ Fungsinya:
 - [ ] Buat tahun ajaran
 - [ ] Buat semester
 - [/] Test login/logout
-  - Unit test service lulus; pengujian dengan akun nyata menunggu admin awal.
+  - Unit dan UI test lulus; pengujian dengan akun nyata menunggu admin awal.
 - [/] Test session persistence
   - Unit test pemulihan session lulus; pengujian browser nyata menunggu admin awal.
 
@@ -560,7 +560,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
-| Supabase | In Progress | 45% | Project, client, migration Auth/role, RLS profil, dan service Auth siap; admin awal serta UI login belum dibuat |
+| Supabase | In Progress | 55% | Project, client, migration Auth/role, RLS profil, service Auth, dan UI login siap; admin awal belum dibuat |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
@@ -627,7 +627,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat `profiles`, tiga role MVP, trigger profil gagal-aman, dan RLS baca profil sendiri.
 - [x] Verifikasi anonymous tidak dapat membaca `profiles` serta security/performance advisor tidak menemukan masalah.
 - [x] Tambahkan database types dan service login, logout lokal, serta session persistence dengan 6 unit test.
-- [ ] Akun admin awal, UI login, dan pengujian autentikasi nyata belum dibuat.
+- [x] Buat UI login merah-dominan untuk desktop/mobile dengan loading, error, tampil/sembunyikan kata sandi, dan tanpa public signup.
+- [x] Verifikasi UI pada viewport 360px, 390px, 768px, dan 1280px tanpa horizontal overflow.
+- [x] Tambahkan 7 UI/integration test Auth; total seluruh test saat ini 20 dan lulus.
+- [ ] Akun admin awal dan pengujian autentikasi nyata belum dibuat; menunggu login pemilik ke Dashboard Supabase.
 
 ---
 

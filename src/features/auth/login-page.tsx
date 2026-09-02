@@ -1,0 +1,203 @@
+import { useState, type FormEvent } from "react"
+import {
+  BookOpenCheck,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  LockKeyhole,
+  ShieldCheck,
+} from "lucide-react"
+
+import {
+  AuthFlowError,
+  type LoginCredentials,
+} from "@/features/auth/auth.service"
+
+type LoginPageProps = Readonly<{
+  onLogin: (credentials: LoginCredentials) => Promise<void>
+}>
+
+export function LoginPage({ onLogin }: LoginPageProps) {
+  const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setErrorMessage("")
+    setIsSubmitting(true)
+
+    const formData = new FormData(event.currentTarget)
+
+    try {
+      await onLogin({
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+      })
+    } catch (error) {
+      setErrorMessage(
+        error instanceof AuthFlowError
+          ? error.message
+          : "Belum dapat masuk. Periksa koneksi internet lalu coba lagi.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="relative hidden min-h-screen overflow-hidden bg-[linear-gradient(145deg,#8f1118_0%,#c91d24_55%,#ea4a50_100%)] p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
+        <div className="absolute -right-28 top-20 size-80 rounded-full border-[48px] border-white/10" />
+        <div className="absolute -bottom-32 -left-20 size-96 rounded-full bg-white/10" />
+
+        <div className="relative flex items-center gap-3">
+          <span className="grid size-12 place-items-center rounded-2xl bg-white text-[var(--rapotku-brand)] shadow-lg">
+            <BookOpenCheck aria-hidden="true" size={25} />
+          </span>
+          <div>
+            <p className="text-xl font-bold">RapotKu</p>
+            <p className="text-sm text-white/75">Rapor sekolah lebih mudah</p>
+          </div>
+        </div>
+
+        <div className="relative max-w-xl">
+          <span className="mb-6 grid size-20 place-items-center rounded-3xl border border-white/20 bg-white/15 backdrop-blur-sm">
+            <GraduationCap aria-hidden="true" size={42} strokeWidth={1.8} />
+          </span>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/75">
+            Sederhana untuk guru
+          </p>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight xl:text-5xl">
+            Kelola rapor dengan tenang, dari mana saja.
+          </h1>
+          <p className="mt-5 max-w-lg text-lg leading-8 text-white/80">
+            Masuk untuk melanjutkan pekerjaan sesuai tugas dan kelas Anda.
+          </p>
+        </div>
+
+        <div className="relative flex flex-wrap gap-5 text-sm text-white/85">
+          <span className="flex items-center gap-2">
+            <CheckCircle2 aria-hidden="true" size={18} /> Mudah digunakan
+          </span>
+          <span className="flex items-center gap-2">
+            <ShieldCheck aria-hidden="true" size={18} /> Data terlindungi
+          </span>
+        </div>
+      </section>
+
+      <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
+        <div className="w-full max-w-md">
+          <div className="mb-10 flex items-center gap-3 lg:hidden">
+            <span className="grid size-11 place-items-center rounded-xl bg-[var(--rapotku-brand)] text-white shadow-sm">
+              <BookOpenCheck aria-hidden="true" size={22} />
+            </span>
+            <div>
+              <p className="font-bold">RapotKu</p>
+              <p className="text-xs text-[var(--rapotku-muted)]">
+                Rapor sekolah lebih mudah
+              </p>
+            </div>
+          </div>
+
+          <p className="mb-2 text-sm font-semibold text-[var(--rapotku-brand)]">
+            Selamat datang kembali
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Masuk ke akun Anda
+          </h1>
+          <p className="mt-3 leading-7 text-[var(--rapotku-muted)]">
+            Gunakan email dan kata sandi yang diberikan oleh admin sekolah.
+          </p>
+
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            <div>
+              <label
+                className="mb-2 block text-sm font-semibold"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <input
+                className="min-h-12 w-full rounded-xl border border-[var(--rapotku-border)] bg-white px-4 outline-none transition placeholder:text-[#98a2b3] focus:border-[var(--rapotku-brand)] focus:ring-4 focus:ring-[var(--rapotku-brand-soft)]"
+                id="email"
+                name="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="nama@email.com"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <label
+                className="mb-2 block text-sm font-semibold"
+                htmlFor="password"
+              >
+                Kata sandi
+              </label>
+              <div className="relative">
+                <LockKeyhole
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--rapotku-muted)]"
+                  size={19}
+                />
+                <input
+                  className="min-h-12 w-full rounded-xl border border-[var(--rapotku-border)] bg-white py-3 pl-11 pr-12 outline-none transition placeholder:text-[#98a2b3] focus:border-[var(--rapotku-brand)] focus:ring-4 focus:ring-[var(--rapotku-brand-soft)]"
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="Masukkan kata sandi"
+                  required
+                  disabled={isSubmitting}
+                />
+                <button
+                  className="absolute right-1 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-lg text-[var(--rapotku-muted)] hover:bg-[var(--rapotku-canvas)] focus-visible:outline-2 focus-visible:outline-[var(--rapotku-brand)]"
+                  type="button"
+                  aria-label={
+                    showPassword
+                      ? "Sembunyikan kata sandi"
+                      : "Tampilkan kata sandi"
+                  }
+                  onClick={() => setShowPassword((current) => !current)}
+                  disabled={isSubmitting}
+                >
+                  {showPassword ? (
+                    <EyeOff aria-hidden="true" size={20} />
+                  ) : (
+                    <Eye aria-hidden="true" size={20} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {errorMessage ? (
+              <div
+                className="rounded-xl border border-[#f5b7ba] bg-[var(--rapotku-brand-soft)] p-4 text-sm leading-6 text-[var(--rapotku-brand-strong)]"
+                role="alert"
+              >
+                {errorMessage}
+              </div>
+            ) : null}
+
+            <button
+              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--rapotku-brand)] px-5 font-semibold text-white shadow-[0_10px_24px_rgba(201,29,36,0.22)] transition hover:bg-[var(--rapotku-brand-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)] disabled:cursor-not-allowed disabled:opacity-65"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Sedang masuk..." : "Masuk"}
+            </button>
+          </form>
+
+          <p className="mt-7 text-center text-sm leading-6 text-[var(--rapotku-muted)]">
+            Belum memiliki akun? Hubungi admin sekolah.
+          </p>
+        </div>
+      </section>
+    </main>
+  )
+}
