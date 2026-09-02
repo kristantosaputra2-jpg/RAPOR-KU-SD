@@ -75,7 +75,7 @@ Fungsinya:
 
 ## Supabase Foundation
 
-- [ ] Buat project Supabase
+- [x] Buat project Supabase
 - [x] Konfigurasi environment development
 - [x] Konfigurasi Supabase client
 - [ ] Buat auth flow
@@ -554,7 +554,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
-| Supabase | In Progress | 15% | Client lokal dan environment aman siap; project cloud, Auth, schema, dan RLS belum dibuat |
+| Supabase | In Progress | 25% | Project cloud Free terpisah, client lokal, dan environment aman siap; Auth, schema, dan RLS belum dibuat |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
@@ -608,6 +608,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 
 ## 2026-09-02
 
+- [x] Buat project Supabase Free `rapotku-sdn-tumbang-kawei` terpisah di region Singapore.
+- [x] Verifikasi project `ACTIVE_HEALTHY`, database PostgreSQL 17.6 merespons, dan schema `public` masih kosong.
+- [x] Hubungkan environment development lokal menggunakan publishable key; `.env.local` tetap diabaikan Git.
 - [x] Buat repository GitHub private `kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei`.
 - [x] Tambahkan `@supabase/supabase-js` dan konfigurasi client yang dibuat secara lazy.
 - [x] Gunakan publishable key untuk frontend baru dengan kompatibilitas legacy anon key.
