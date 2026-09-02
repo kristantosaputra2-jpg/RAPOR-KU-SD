@@ -46,6 +46,6 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
 
 Legacy `VITE_SUPABASE_ANON_KEY` masih dibaca sementara untuk kompatibilitas proyek lama. Jangan pernah menaruh secret key atau service-role key Supabase di frontend.
 
-Project Supabase cloud terpisah sudah dibuat pada paket Free di region Singapore. Fondasi Auth kini memiliki tabel `profiles`, tiga role MVP, RLS profil, serta UI login responsif. Akun admin awal dan tabel akademik belum dibuat.
+Project Supabase cloud terpisah sudah dibuat pada paket Free di region Singapore. Fondasi Auth kini memiliki tabel `profiles`, tiga role MVP, RLS profil, UI login responsif, serta akun Admin awal yang aktif. Pendaftaran umum pada Auth cloud sudah dinonaktifkan; tabel akademik belum dibuat.
 
 Migration database disimpan di `supabase/migrations/`. Supabase CLI dipasang sebagai development dependency agar setiap perubahan schema tetap tercatat di repository.

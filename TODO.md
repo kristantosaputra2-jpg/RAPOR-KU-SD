@@ -101,7 +101,7 @@ Fungsinya:
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
   - Anonymous tidak memiliki SELECT pada `profiles`; audit harus diulang untuk setiap tabel baru.
-- [ ] Nonaktifkan public email signup pada konfigurasi Auth cloud
+- [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [ ] Tambahkan test permission
 - [ ] Audit seluruh query Supabase sebelum production
@@ -560,7 +560,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
-| Supabase | In Progress | 55% | Project, client, migration Auth/role, RLS profil, service Auth, dan UI login siap; admin awal belum dibuat |
+| Supabase | In Progress | 65% | Project, client, migration Auth/role, RLS profil, service/UI Auth, Admin awal, dan signup cloud aman; uji login nyata belum selesai |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
@@ -630,7 +630,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat UI login merah-dominan untuk desktop/mobile dengan loading, error, tampil/sembunyikan kata sandi, dan tanpa public signup.
 - [x] Verifikasi UI pada viewport 360px, 390px, 768px, dan 1280px tanpa horizontal overflow.
 - [x] Tambahkan 7 UI/integration test Auth; total seluruh test saat ini 20 dan lulus.
-- [ ] Akun admin awal dan pengujian autentikasi nyata belum dibuat; menunggu login pemilik ke Dashboard Supabase.
+- [x] Buat dan aktifkan akun Admin awal untuk Kristanto Saputra menggunakan akun Supabase Auth yang dikonfirmasi.
+- [x] Nonaktifkan public signup pada Auth cloud dan verifikasi pengaturan tetap nonaktif setelah halaman dimuat ulang.
+- [ ] Pengujian login/logout nyata menunggu Admin memasukkan kata sandinya sendiri pada preview RapotKu.
 
 ---
 
