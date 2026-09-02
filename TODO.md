@@ -78,24 +78,30 @@ Fungsinya:
 - [x] Buat project Supabase
 - [x] Konfigurasi environment development
 - [x] Konfigurasi Supabase client
-- [ ] Buat auth flow
-- [/] Buat role pengguna
-  - Identifier dan label tiga role MVP sudah terpusat di TypeScript; penyimpanan role dan enforcement database menunggu schema/RLS.
-- [ ] Aktifkan Row Level Security
-- [ ] Buat migration dasar
+- [/] Buat auth flow
+  - Service email/password, pemulihan session, logout lokal, dan pesan error aman sudah tersedia; UI serta pengujian akun nyata belum dibuat.
+- [x] Buat role pengguna
+  - Identifier/label TypeScript dan enum database menggunakan `admin`, `homeroom_teacher`, dan `subject_teacher`.
+- [/] Aktifkan Row Level Security
+  - RLS aktif pada `profiles`; setiap tabel baru tetap wajib memiliki policy sendiri.
+- [x] Buat migration dasar
 - [ ] Buat seed development
 - [ ] Buat data sekolah
 - [ ] Buat tahun ajaran
 - [ ] Buat semester
-- [ ] Test login/logout
-- [ ] Test session persistence
+- [/] Test login/logout
+  - Unit test service lulus; pengujian dengan akun nyata menunggu admin awal.
+- [/] Test session persistence
+  - Unit test pemulihan session lulus; pengujian browser nyata menunggu admin awal.
 
 ## Security
 
 - [ ] Buat RLS untuk Admin
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
-- [ ] Pastikan anonymous user tidak dapat mengakses data
+- [/] Pastikan anonymous user tidak dapat mengakses data
+  - Anonymous tidak memiliki SELECT pada `profiles`; audit harus diulang untuk setiap tabel baru.
+- [ ] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [ ] Tambahkan test permission
 - [ ] Audit seluruh query Supabase sebelum production
@@ -554,7 +560,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, dan repository GitHub siap |
-| Supabase | In Progress | 25% | Project cloud Free terpisah, client lokal, dan environment aman siap; Auth, schema, dan RLS belum dibuat |
+| Supabase | In Progress | 45% | Project, client, migration Auth/role, RLS profil, dan service Auth siap; admin awal serta UI login belum dibuat |
 | Master Data | Todo | 0% | Belum coding |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
@@ -617,7 +623,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tambahkan validasi URL serta penolakan secret key dan service-role key di frontend.
 - [x] Pusatkan identifier dan label tiga role MVP pada modul autentikasi.
 - [x] Tambahkan unit test konfigurasi Supabase dan role pengguna.
-- [ ] Project Supabase cloud, Auth, schema, migration, dan RLS belum dibuat pada tahap ini.
+- [x] Tambahkan Supabase CLI 2.116.0 dan migration dasar Auth/role yang sinkron dengan project cloud.
+- [x] Buat `profiles`, tiga role MVP, trigger profil gagal-aman, dan RLS baca profil sendiri.
+- [x] Verifikasi anonymous tidak dapat membaca `profiles` serta security/performance advisor tidak menemukan masalah.
+- [x] Tambahkan database types dan service login, logout lokal, serta session persistence dengan 6 unit test.
+- [ ] Akun admin awal, UI login, dan pengujian autentikasi nyata belum dibuat.
 
 ---
 

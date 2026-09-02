@@ -1,8 +1,9 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 
 import { readSupabaseConfig } from "@/config/env"
+import type { Database } from "@/types/database.types"
 
-export type RapotKuSupabaseClient = ReturnType<typeof createClient>
+export type RapotKuSupabaseClient = SupabaseClient<Database>
 
 let supabaseClient: RapotKuSupabaseClient | undefined
 
@@ -15,7 +16,7 @@ export function getSupabaseClient(): RapotKuSupabaseClient {
       VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
     })
 
-    supabaseClient = createClient(config.url, config.publishableKey, {
+    supabaseClient = createClient<Database>(config.url, config.publishableKey, {
       auth: {
         autoRefreshToken: true,
         detectSessionInUrl: true,

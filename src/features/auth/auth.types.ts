@@ -1,10 +1,12 @@
+import type { Enums } from "@/types/database.types"
+
 export const USER_ROLES = [
   "admin",
   "homeroom_teacher",
   "subject_teacher",
 ] as const
 
-export type UserRole = (typeof USER_ROLES)[number]
+export type UserRole = Enums<"user_role">
 
 export const USER_ROLE_LABELS = {
   admin: "Admin",
