@@ -120,6 +120,54 @@ export type Database = {
           },
         ]
       }
+      class_members: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          semester_id: string
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          semester_id: string
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          semester_id?: string
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_members_class_semester_fkey"
+            columns: ["class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "semester_id"]
+          },
+          {
+            foreignKeyName: "class_members_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -272,6 +320,66 @@ export type Database = {
           },
         ]
       }
+      students: {
+        Row: {
+          address: string | null
+          birth_date: string | null
+          birth_place: string | null
+          created_at: string
+          created_by: string
+          father_name: string | null
+          full_name: string
+          gender: Database["public"]["Enums"]["student_gender"]
+          guardian_name: string | null
+          id: string
+          is_active: boolean
+          mother_name: string | null
+          nis: string
+          nisn: string | null
+          religion: string | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          address?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
+          created_at?: string
+          created_by: string
+          father_name?: string | null
+          full_name: string
+          gender: Database["public"]["Enums"]["student_gender"]
+          guardian_name?: string | null
+          id?: string
+          is_active?: boolean
+          mother_name?: string | null
+          nis: string
+          nisn?: string | null
+          religion?: string | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          address?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
+          created_at?: string
+          created_by?: string
+          father_name?: string | null
+          full_name?: string
+          gender?: Database["public"]["Enums"]["student_gender"]
+          guardian_name?: string | null
+          id?: string
+          is_active?: boolean
+          mother_name?: string | null
+          nis?: string
+          nisn?: string | null
+          religion?: string | null
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: []
+      }
       teacher_profiles: {
         Row: {
           created_at: string
@@ -333,6 +441,7 @@ export type Database = {
     }
     Enums: {
       class_template_group: "lower_primary" | "upper_primary"
+      student_gender: "male" | "female"
       user_role: "admin" | "homeroom_teacher" | "subject_teacher"
     }
     CompositeTypes: {
@@ -393,6 +502,7 @@ export const Constants = {
   public: {
     Enums: {
       class_template_group: ["lower_primary", "upper_primary"],
+      student_gender: ["male", "female"],
       user_role: ["admin", "homeroom_teacher", "subject_teacher"],
     },
   },

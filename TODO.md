@@ -183,15 +183,20 @@ Fungsinya:
 
 ## Siswa
 
-- [ ] Buat halaman Data Siswa
-- [ ] Tambah siswa
-- [ ] Edit siswa
-- [ ] Nonaktifkan siswa
-- [ ] Assign siswa ke kelas
-- [ ] Validasi NIS
-- [ ] Validasi NISN
-- [ ] Tambahkan pencarian siswa
-- [ ] Tambahkan filter kelas
+- [x] Buat halaman Data Siswa
+  - Daftar responsif menampilkan identitas ringkas, kelas semester aktif, status, loading, retry, serta empty state.
+- [x] Tambah siswa
+- [x] Edit siswa
+- [x] Nonaktifkan siswa
+  - Data tidak dihapus dan dapat diaktifkan kembali.
+- [x] Assign siswa ke kelas
+  - Penempatan dipisahkan dalam `class_members` agar riwayat kelas per semester tetap tersimpan.
+- [x] Validasi NIS
+  - NIS wajib, unik, maksimal 30 karakter, dan tetap disimpan sebagai teks agar angka nol di depan tidak hilang.
+- [x] Validasi NISN
+  - NISN opsional sesuai edge case PRD; bila diisi wajib unik dan terdiri dari 10 angka.
+- [x] Tambahkan pencarian siswa
+- [x] Tambahkan filter kelas
 
 ## Import Excel
 
@@ -583,12 +588,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 92% | Auth, sekolah, periode akademik, guru, kelas, audit, dan RLS Admin terkait sudah tersedia |
-| Master Data | In Progress | 50% | Identitas sekolah, periode akademik, guru, dan kelas selesai; siswa, mapel, dan assignment mapel belum dibuat |
+| Supabase | In Progress | 94% | Auth, sekolah, periode akademik, guru, kelas, siswa, audit, dan RLS Admin terkait sudah tersedia |
+| Master Data | In Progress | 65% | Identitas sekolah, periode akademik, guru, kelas, dan siswa selesai; mapel dan assignment mapel belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 30% | 78 unit/integration test dan 22 E2E responsif termasuk Data Guru dan Data Kelas lulus |
+| Testing | In Progress | 35% | 89 unit/integration test dan 26 E2E responsif termasuk Data Siswa lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -689,6 +694,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi Admin dapat menambah kelas, Guru Mapel ditolak, anonymous tidak memiliki akses, dan seluruh data uji di-rollback.
 - [x] Buat halaman Data Kelas mobile-first dengan pencarian, filter periode, tambah/edit, assignment wali kelas, loading, error, success, dan empty state.
 - [x] Verifikasi 78 unit/integration test dan 22 E2E responsif lulus setelah tahap Data Kelas.
+- [x] Buat tabel `students` dan `class_members` terpisah agar identitas siswa serta riwayat kelas per semester aman dan tidak saling menimpa.
+- [x] Tambahkan validasi NIS/NISN, audit, indeks, explicit grants, dan RLS Admin; anonymous tidak memperoleh akses data siswa.
+- [x] Buat halaman Data Siswa mobile-first dengan pencarian, filter kelas/status, tambah/edit, penempatan kelas, nonaktifkan/aktifkan kembali, loading, error, success, dan empty state.
+- [x] Verifikasi 89 unit/integration test dan 26 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Data Siswa.
 
 ---
 

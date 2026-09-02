@@ -253,6 +253,8 @@ describe("App", () => {
     expect(
       await screen.findByRole("heading", { name: "Data Kelas" }),
     ).toBeInTheDocument()
-    expect(screen.getByText("Periode belum tersedia")).toBeInTheDocument()
+    expect(
+      await screen.findByText("Periode belum tersedia"),
+    ).toBeInTheDocument()
   })
 })

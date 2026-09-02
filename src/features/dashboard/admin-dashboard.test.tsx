@@ -35,6 +35,7 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
       />,
     )
 
@@ -61,6 +62,7 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
       />,
     )
 
@@ -84,6 +86,7 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
       />,
     )
 
@@ -106,6 +109,7 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
       />,
     )
 
@@ -126,6 +130,7 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={onOpenTeachers}
         onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
       />,
     )
 
@@ -146,11 +151,33 @@ describe("AdminDashboard", () => {
         onOpenAcademicPeriods={vi.fn()}
         onOpenTeachers={vi.fn()}
         onOpenClasses={onOpenClasses}
+        onOpenStudents={vi.fn()}
       />,
     )
 
     await user.click(screen.getAllByRole("button", { name: "Data Kelas" })[0])
 
     expect(onOpenClasses).toHaveBeenCalledOnce()
+  })
+
+  it("membuka Data Siswa dari navigasi", async () => {
+    const user = userEvent.setup()
+    const onOpenStudents = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
+        onOpenClasses={vi.fn()}
+        onOpenStudents={onOpenStudents}
+      />,
+    )
+
+    await user.click(screen.getAllByRole("button", { name: "Data Siswa" })[0])
+
+    expect(onOpenStudents).toHaveBeenCalledOnce()
   })
 })

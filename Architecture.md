@@ -458,6 +458,32 @@ Relasi gabungan `semester_id + academic_year_id` mencegah semester terhubung ke 
 
 ---
 
+## Implementasi Data Siswa MVP
+
+Identitas siswa dan penempatan kelas dipisahkan agar pergantian semester tidak menghapus riwayat.
+
+`students` menyimpan:
+
+```text
+id
+full_name
+nis
+nisn (nullable)
+gender
+birth_place / birth_date (nullable)
+religion / address (nullable)
+father_name / mother_name / guardian_name (nullable)
+is_active
+created_by / updated_by
+created_at / updated_at
+```
+
+`class_members` menghubungkan `student_id` ke `class_id` dan `semester_id`. Constraint database memastikan satu siswa hanya memiliki satu kelas dalam satu semester. NIS wajib dan unik. NISN boleh kosong untuk kasus siswa yang belum memilikinya; jika diisi harus unik dan terdiri dari 10 angka.
+
+Pada tahap ini akses data siswa dibatasi untuk Admin aktif. Akses Wali Kelas dan Guru Mata Pelajaran baru dibuka melalui RLS setelah `teacher_assignments` tersedia, supaya guru tidak dapat membaca siswa di luar penugasannya.
+
+---
+
 # 15. Data Ownership
 
 Setiap data harus mempunyai konteks yang jelas.

@@ -87,6 +87,12 @@ async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
   await page.route("**/rest/v1/classes*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/students*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
+  await page.route("**/rest/v1/class_members*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -204,6 +210,20 @@ async function openClasses(page: Page, width: number) {
   }
 
   await expect(page.getByRole("heading", { name: "Data Kelas" })).toBeVisible()
+}
+
+async function openStudents(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Data Siswa" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Data Siswa" }).click()
+  }
+
+  await expect(page.getByRole("heading", { name: "Data Siswa" })).toBeVisible()
 }
 
 const mobileViewports = [
@@ -342,6 +362,29 @@ for (const viewport of settingsViewports) {
     await expect(page.getByLabel(/Tingkat Kelas/)).toBeVisible()
     await expect(page.getByLabel(/Nama Rombel/)).toBeVisible()
     await expect(page.getByText(/lower_primary/)).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Data Siswa nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true)
+    await openStudents(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Cari siswa")).toBeVisible()
+    await expect(page.getByLabel("Filter kelas")).toBeVisible()
+    await expect(page.getByText("Belum ada data siswa")).toBeVisible()
+
+    await page.getByRole("button", { name: "Tambah Siswa" }).first().click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await expect(page.getByLabel(/Nama Lengkap/)).toBeVisible()
+    await expect(page.getByLabel(/Kelas Semester Aktif/)).toBeVisible()
   })
 }
 

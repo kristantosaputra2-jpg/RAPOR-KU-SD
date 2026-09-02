@@ -37,6 +37,11 @@ const TeacherPage = lazy(() =>
     default: module.TeacherPage,
   })),
 )
+const StudentPage = lazy(() =>
+  import("@/features/students/student-page").then((module) => ({
+    default: module.StudentPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -64,6 +69,7 @@ export function App() {
     | "academic-periods"
     | "teachers"
     | "classes"
+    | "students"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -153,6 +159,21 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "students") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <StudentPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+            onOpenAcademicPeriods={() => setAdminView("academic-periods")}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "classes") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -225,6 +246,7 @@ export function App() {
         onOpenAcademicPeriods={() => setAdminView("academic-periods")}
         onOpenTeachers={() => setAdminView("teachers")}
         onOpenClasses={() => setAdminView("classes")}
+        onOpenStudents={() => setAdminView("students")}
       />
     )
   }
