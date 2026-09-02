@@ -9,6 +9,7 @@ describe("AdminDashboard", () => {
     render(
       <AdminDashboard
         userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
       />,
@@ -17,7 +18,9 @@ describe("AdminDashboard", () => {
     expect(
       screen.getByRole("heading", { name: "Ringkasan hari ini" }),
     ).toBeInTheDocument()
-    expect(screen.getByText("Belum ada data sekolah")).toBeInTheDocument()
+    expect(
+      screen.getAllByText("SD Negeri Tumbang Kawei").length,
+    ).toBeGreaterThan(0)
     expect(screen.getAllByText("Menunggu data")).toHaveLength(4)
     expect(
       screen.getByText("Pengaturan awal belum lengkap"),
@@ -29,6 +32,7 @@ describe("AdminDashboard", () => {
     render(
       <AdminDashboard
         userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={vi.fn()}
       />,
@@ -48,6 +52,7 @@ describe("AdminDashboard", () => {
     render(
       <AdminDashboard
         userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
         onLogout={onLogout}
         onOpenSchoolSettings={vi.fn()}
       />,
@@ -66,6 +71,7 @@ describe("AdminDashboard", () => {
     render(
       <AdminDashboard
         userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
         onLogout={vi.fn()}
         onOpenSchoolSettings={onOpenSchoolSettings}
       />,

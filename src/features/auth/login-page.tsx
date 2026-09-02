@@ -15,10 +15,11 @@ import {
 } from "@/features/auth/auth.service"
 
 type LoginPageProps = Readonly<{
+  schoolName?: string
   onLogin: (credentials: LoginCredentials) => Promise<void>
 }>
 
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -48,9 +49,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
   return (
     <main className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[1.05fr_0.95fr]">
-      <section className="relative hidden min-h-screen overflow-hidden bg-[linear-gradient(145deg,#8f1118_0%,#c91d24_55%,#ea4a50_100%)] p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
-        <div className="absolute -right-28 top-20 size-80 rounded-full border-[48px] border-white/10" />
-        <div className="absolute -bottom-32 -left-20 size-96 rounded-full bg-white/10" />
+      <section className="relative hidden min-h-screen overflow-hidden bg-[var(--rapotku-brand-strong)] p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
+        <img
+          className="absolute inset-0 size-full object-cover object-center"
+          src="/images/rapotku-school-hero.png"
+          alt=""
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(65,8,11,0.48)_0%,rgba(93,10,14,0.22)_42%,rgba(74,7,11,0.82)_100%)]" />
 
         <div className="relative flex items-center gap-3">
           <span className="grid size-12 place-items-center rounded-2xl bg-white text-[var(--rapotku-brand)] shadow-lg">
@@ -58,7 +63,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </span>
           <div>
             <p className="text-xl font-bold">RapotKu</p>
-            <p className="text-sm text-white/75">Rapor sekolah lebih mudah</p>
+            <p className="text-sm font-medium text-white/90">
+              {schoolName ?? "Rapor sekolah lebih mudah"}
+            </p>
           </div>
         </div>
 
@@ -89,6 +96,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
       <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
         <div className="w-full max-w-md">
+          <div className="mb-6 overflow-hidden rounded-3xl border border-[var(--rapotku-border)] bg-white shadow-[0_16px_38px_rgba(66,20,23,0.12)] lg:hidden">
+            <img
+              className="h-auto w-full"
+              src="/images/rapotku-school-hero.png"
+              alt="Ilustrasi siswa sekolah dasar di halaman sekolah"
+            />
+          </div>
           <div className="mb-10 flex items-center gap-3 lg:hidden">
             <span className="grid size-11 place-items-center rounded-xl bg-[var(--rapotku-brand)] text-white shadow-sm">
               <BookOpenCheck aria-hidden="true" size={22} />
@@ -96,7 +110,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             <div>
               <p className="font-bold">RapotKu</p>
               <p className="text-xs text-[var(--rapotku-muted)]">
-                Rapor sekolah lebih mudah
+                {schoolName ?? "Rapor sekolah lebih mudah"}
               </p>
             </div>
           </div>

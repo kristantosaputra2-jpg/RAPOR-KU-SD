@@ -44,6 +44,17 @@ async function openAuthenticatedDashboard(page: Page) {
   await page.route("**/rest/v1/schools*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/public_school_identity*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        {
+          school_name: "SD Negeri Tumbang Kawei",
+          logo_url: null,
+        },
+      ],
+    })
+  })
 
   await page.addInitScript(
     ({ projectRef, user }) => {
@@ -68,6 +79,28 @@ async function openAuthenticatedDashboard(page: Page) {
   await expect(
     page.getByRole("heading", { name: "Ringkasan hari ini" }),
   ).toBeVisible()
+  await expect(
+    page.getByText("RapotKu - SD Negeri Tumbang Kawei"),
+  ).toBeVisible()
+}
+
+async function openSignedOutLogin(page: Page) {
+  await page.route("**/rest/v1/public_school_identity*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: [
+        {
+          school_name: "SD Negeri Tumbang Kawei",
+          logo_url: null,
+        },
+      ],
+    })
+  })
+
+  await page.goto("/")
+  await expect(
+    page.getByRole("heading", { name: "Masuk ke akun Anda" }),
+  ).toBeVisible()
 }
 
 async function openSchoolSettings(page: Page, width: number) {
@@ -91,6 +124,28 @@ const mobileViewports = [
   { width: 390, height: 844 },
   { width: 768, height: 1024 },
 ] as const
+
+for (const viewport of mobileViewports.slice(0, 2)) {
+  test(`login bergambar utuh pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openSignedOutLogin(page)
+
+    const heroImage = page.getByAltText(
+      "Ilustrasi siswa sekolah dasar di halaman sekolah",
+    )
+    await expect(heroImage).toBeVisible()
+    await expect(page.getByText("SD Negeri Tumbang Kawei").last()).toBeVisible()
+
+    const imageRatio = await heroImage.evaluate((image: HTMLImageElement) => ({
+      displayed: image.clientWidth / image.clientHeight,
+      natural: image.naturalWidth / image.naturalHeight,
+    }))
+
+    expect(Math.abs(imageRatio.displayed - imageRatio.natural)).toBeLessThan(
+      0.02,
+    )
+  })
+}
 
 for (const viewport of mobileViewports) {
   test(`dashboard nyaman pada ${viewport.width}px`, async ({ page }) => {

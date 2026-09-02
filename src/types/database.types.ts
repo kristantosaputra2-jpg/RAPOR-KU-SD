@@ -39,6 +39,27 @@ export type Database = {
         }
         Relationships: []
       }
+      public_school_identity: {
+        Row: {
+          logo_url: string | null
+          school_name: string
+          singleton_key: boolean
+          updated_at: string
+        }
+        Insert: {
+          logo_url?: string | null
+          school_name: string
+          singleton_key?: boolean
+          updated_at?: string
+        }
+        Update: {
+          logo_url?: string | null
+          school_name?: string
+          singleton_key?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       schools: {
         Row: {
           address: string | null

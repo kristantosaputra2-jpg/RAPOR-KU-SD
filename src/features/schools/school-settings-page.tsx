@@ -21,8 +21,10 @@ import {
 type SchoolSettingsPageProps = Readonly<{
   userId: string
   userName: string
+  schoolName?: string
   onBack: () => void
   onLogout: () => Promise<void>
+  onSchoolNameChange: (schoolName: string) => void
 }>
 
 const emptyForm: SchoolSettingsInput = {
@@ -126,8 +128,10 @@ function TextField({
 export function SchoolSettingsPage({
   userId,
   userName,
+  schoolName,
   onBack,
   onLogout,
+  onSchoolNameChange,
 }: SchoolSettingsPageProps) {
   const [form, setForm] = useState<SchoolSettingsInput>(emptyForm)
   const [isLoading, setIsLoading] = useState(true)
@@ -181,6 +185,7 @@ export function SchoolSettingsPage({
     try {
       const savedSettings = await saveSchoolSettings(userId, form)
       setForm(formFromSettings(savedSettings))
+      onSchoolNameChange(savedSettings.school_name)
       setSuccessMessage("Pengaturan sekolah tersimpan.")
     } catch (error) {
       setSaveError(
@@ -224,7 +229,9 @@ export function SchoolSettingsPage({
             <School aria-hidden="true" size={21} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-bold">RapotKu</p>
+            <p className="truncate font-bold">
+              {schoolName ? `RapotKu - ${schoolName}` : "RapotKu"}
+            </p>
             <p className="truncate text-xs text-[var(--rapotku-muted)]">
               {userName} · Admin
             </p>

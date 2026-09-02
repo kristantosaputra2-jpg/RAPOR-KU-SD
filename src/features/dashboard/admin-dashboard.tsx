@@ -20,6 +20,7 @@ import {
 
 type AdminDashboardProps = Readonly<{
   userName: string
+  schoolName?: string
   onLogout: () => Promise<void>
   onOpenSchoolSettings: () => void
 }>
@@ -107,7 +108,7 @@ const setupSteps = [
   },
 ] as const
 
-function Brand() {
+function Brand({ schoolName }: Readonly<{ schoolName?: string }>) {
   return (
     <div className="flex items-center gap-3">
       <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--rapotku-brand)] text-white shadow-[0_8px_20px_rgba(201,29,36,0.2)]">
@@ -115,8 +116,8 @@ function Brand() {
       </span>
       <div>
         <p className="font-bold leading-tight">RapotKu</p>
-        <p className="mt-0.5 text-xs text-[var(--rapotku-muted)]">
-          Admin Sekolah
+        <p className="mt-0.5 max-w-44 truncate text-xs text-[var(--rapotku-muted)]">
+          {schoolName ?? "Admin Sekolah"}
         </p>
       </div>
     </div>
@@ -213,6 +214,7 @@ function AccountPanel({
 
 export function AdminDashboard({
   userName,
+  schoolName,
   onLogout,
   onOpenSchoolSettings,
 }: AdminDashboardProps) {
@@ -237,7 +239,7 @@ export function AdminDashboard({
   return (
     <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
-        <Brand />
+        <Brand schoolName={schoolName} />
         <DashboardNavigation onOpenSchoolSettings={onOpenSchoolSettings} />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -251,7 +253,7 @@ export function AdminDashboard({
       <div className="min-w-0">
         <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-[var(--rapotku-border)] bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
           <div className="lg:hidden">
-            <Brand />
+            <Brand schoolName={schoolName} />
           </div>
           <div className="hidden lg:block">
             <p className="text-sm text-[var(--rapotku-muted)]">
@@ -309,20 +311,32 @@ export function AdminDashboard({
 
           <section
             aria-labelledby="setup-warning-title"
-            className="mt-6 flex flex-col gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#9f151b_0%,#c91d24_62%,#e33d44_100%)] p-5 text-white shadow-[0_16px_40px_rgba(130,18,23,0.16)] sm:flex-row sm:items-center sm:p-6"
+            className="relative mt-6 overflow-hidden rounded-3xl bg-[var(--rapotku-brand-strong)] text-white shadow-[0_16px_40px_rgba(130,18,23,0.16)]"
           >
-            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/15">
-              <AlertCircle aria-hidden="true" size={25} />
-            </span>
-            <div className="flex-1">
-              <h2 id="setup-warning-title" className="text-lg font-bold">
-                Pengaturan awal belum lengkap
-              </h2>
-              <p className="mt-1 max-w-3xl text-sm leading-6 text-white/80">
-                Ringkasan akan terisi setelah identitas sekolah, periode aktif,
-                guru, kelas, siswa, dan mata pelajaran ditambahkan pada tahap
-                berikutnya.
-              </p>
+            <img
+              className="h-auto w-full sm:absolute sm:inset-0 sm:size-full sm:object-cover sm:object-center"
+              src="/images/rapotku-school-hero.png"
+              alt="Ilustrasi siswa sekolah dasar di halaman sekolah"
+            />
+            <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(72,7,11,0.92)_0%,rgba(101,10,15,0.72)_45%,rgba(94,8,13,0.08)_100%)] sm:block" />
+            <div className="relative flex flex-col gap-4 bg-[linear-gradient(135deg,#9f151b_0%,#c91d24_100%)] p-5 sm:min-h-64 sm:max-w-[62%] sm:justify-center sm:bg-none sm:p-8">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/15">
+                <AlertCircle aria-hidden="true" size={25} />
+              </span>
+              <div>
+                {schoolName ? (
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-white/75">
+                    RapotKu - {schoolName}
+                  </p>
+                ) : null}
+                <h2 id="setup-warning-title" className="text-xl font-bold">
+                  Pengaturan awal belum lengkap
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/85">
+                  Identitas sekolah sudah dimulai. Lengkapi periode aktif, guru,
+                  kelas, siswa, dan mata pelajaran pada tahap berikutnya.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -332,7 +346,7 @@ export function AdminDashboard({
                 Ringkasan hari ini
               </h2>
               <span className="text-xs font-medium text-[var(--rapotku-muted)]">
-                Belum ada data sekolah
+                {schoolName ?? "Identitas sekolah belum tersedia"}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
@@ -463,7 +477,7 @@ export function AdminDashboard({
             className="relative flex h-full w-[min(88vw,320px)] flex-col overflow-y-auto bg-white p-5 shadow-2xl"
           >
             <div className="flex items-center justify-between gap-3">
-              <Brand />
+              <Brand schoolName={schoolName} />
               <button
                 className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
                 type="button"

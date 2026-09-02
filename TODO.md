@@ -102,7 +102,7 @@ Fungsinya:
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki akses pada `profiles` dan `schools`; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada `profiles` dan `schools`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [ ] Tambahkan test permission
@@ -392,6 +392,10 @@ Fungsinya:
 - [x] Standardisasi modal
 - [x] Standardisasi empty state
 - [x] Standardisasi toast/feedback
+- [x] Jadikan nama sekolah sebagai identitas utama aplikasi
+  - `SD Negeri Tumbang Kawei` tersimpan sebagai konfigurasi Supabase dan tampil pada login, dashboard, pengaturan, serta judul browser tanpa hardcode pada source code.
+- [x] Gunakan ilustrasi sekolah pada login dan hero Dashboard Admin
+- [x] Pastikan ilustrasi login tampil utuh pada HP
 
 ## Mobile
 
@@ -503,7 +507,8 @@ Fungsinya:
 - [ ] Migration applied
 - [ ] RLS verified
 - [x] Admin account verified
-- [ ] Identitas sekolah verified
+- [/] Identitas sekolah verified
+  - Nama sekolah `SD Negeri Tumbang Kawei` sudah tersimpan dan terverifikasi; NPSN, alamat, dan identitas kepala sekolah belum diberikan.
 - [ ] Tahun ajaran verified
 - [ ] Semester verified
 - [ ] Teacher assignment verified
@@ -570,7 +575,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 15% | 35 unit/integration test dan 8 E2E responsif Dashboard Admin/Pengaturan Sekolah lulus |
+| Testing | In Progress | 15% | 39 unit/integration test dan 10 E2E responsif Login/Dashboard Admin/Pengaturan Sekolah lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -647,6 +652,13 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Hubungkan Pengaturan Sekolah ke navigasi Dashboard Admin tanpa menambah dependency routing.
 - [x] Verifikasi form Pengaturan Sekolah pada preview nyata yang sudah login tanpa mengisi atau mengarang data sekolah.
 - [x] Tambahkan unit/integration dan E2E responsif; total 35 test unit/integration dan 8 test E2E lulus.
+- [x] Simpan `SD Negeri Tumbang Kawei` sebagai nama sekolah awal di Supabase tanpa menanamkannya di source code.
+- [x] Tampilkan nama sekolah sebagai identitas utama pada login, dashboard, halaman pengaturan, dan judul browser.
+- [x] Tambahkan tabel branding publik terbatas yang hanya membuka nama/logo; tabel `schools` tetap tidak dapat dibaca anonymous.
+- [x] Perbaiki hasil audit keamanan dengan mengganti security-definer view menjadi tabel branding ber-RLS dan sinkronisasi internal.
+- [x] Gunakan gambar referensi sekolah sebagai ilustrasi login dan hero Dashboard Admin.
+- [x] Verifikasi ilustrasi login tidak terpotong pada viewport HP 360px dan 390px.
+- [x] Verifikasi 39 unit/integration test dan 10 E2E responsif lulus untuk dua tahap identitas serta visual baru.
 
 ---
 

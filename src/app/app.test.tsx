@@ -17,6 +17,10 @@ const schoolMocks = vi.hoisted(() => ({
   saveSchoolSettings: vi.fn(),
 }))
 
+const identityMocks = vi.hoisted(() => ({
+  getPublicSchoolIdentity: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
@@ -33,6 +37,18 @@ vi.mock(
       >()
 
     return { ...original, ...schoolMocks }
+  },
+)
+
+vi.mock(
+  "@/features/schools/school-identity.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/schools/school-identity.service")
+      >()
+
+    return { ...original, ...identityMocks }
   },
 )
 
@@ -57,6 +73,11 @@ describe("App", () => {
     schoolMocks.getSchoolSettings.mockReset()
     schoolMocks.saveSchoolSettings.mockReset()
     schoolMocks.getSchoolSettings.mockResolvedValue(null)
+    identityMocks.getPublicSchoolIdentity.mockReset()
+    identityMocks.getPublicSchoolIdentity.mockResolvedValue({
+      schoolName: "SD Negeri Tumbang Kawei",
+      logoUrl: null,
+    })
   })
 
   it("menampilkan login ketika tidak ada sesi aktif", async () => {
@@ -66,6 +87,9 @@ describe("App", () => {
       await screen.findByRole("heading", { name: "Masuk ke akun Anda" }),
     ).toBeInTheDocument()
     expect(screen.queryByText(/daftar/i)).not.toBeInTheDocument()
+    expect(
+      (await screen.findAllByText("SD Negeri Tumbang Kawei")).length,
+    ).toBeGreaterThan(0)
   })
 
   it("memulihkan sesi aktif dan menampilkan identitas pengguna", async () => {
@@ -80,6 +104,9 @@ describe("App", () => {
       screen.getByRole("heading", { name: "Ringkasan hari ini" }),
     ).toBeInTheDocument()
     expect(screen.getByText("Akun Admin aktif")).toBeInTheDocument()
+    await waitFor(() => {
+      expect(document.title).toBe("RapotKu - SD Negeri Tumbang Kawei")
+    })
   })
 
   it("masuk menggunakan email dan kata sandi dari form", async () => {

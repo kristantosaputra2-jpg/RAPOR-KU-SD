@@ -44,8 +44,10 @@ function renderPage() {
     <SchoolSettingsPage
       userId="admin-1"
       userName="Admin Sekolah"
+      schoolName="SD Negeri Tumbang Kawei"
       onBack={vi.fn()}
       onLogout={vi.fn().mockResolvedValue(undefined)}
+      onSchoolNameChange={vi.fn()}
     />,
   )
 }
@@ -149,8 +151,10 @@ describe("SchoolSettingsPage", () => {
       <SchoolSettingsPage
         userId="admin-1"
         userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
         onBack={vi.fn()}
         onLogout={vi.fn().mockRejectedValue(new Error("network error"))}
+        onSchoolNameChange={vi.fn()}
       />,
     )
 

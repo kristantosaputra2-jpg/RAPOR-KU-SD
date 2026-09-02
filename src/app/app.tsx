@@ -10,6 +10,10 @@ import {
 import { LoginPage } from "@/features/auth/login-page"
 import { USER_ROLE_LABELS } from "@/features/auth/auth.types"
 import { AdminDashboard } from "@/features/dashboard/admin-dashboard"
+import {
+  getPublicSchoolIdentity,
+  type SchoolIdentity,
+} from "@/features/schools/school-identity.service"
 import { SchoolSettingsPage } from "@/features/schools/school-settings-page"
 
 type AppState =
@@ -21,6 +25,9 @@ export function App() {
   const [appState, setAppState] = useState<AppState>({ status: "loading" })
   const [adminView, setAdminView] = useState<"dashboard" | "school-settings">(
     "dashboard",
+  )
+  const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
+    null,
   )
 
   useEffect(() => {
@@ -47,6 +54,30 @@ export function App() {
     }
   }, [])
 
+  useEffect(() => {
+    let isMounted = true
+
+    void getPublicSchoolIdentity()
+      .then((identity) => {
+        if (isMounted) {
+          setSchoolIdentity(identity)
+        }
+      })
+      .catch(() => {
+        // Authentication stays usable when public branding cannot be loaded.
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    document.title = schoolIdentity
+      ? `RapotKu - ${schoolIdentity.schoolName}`
+      : "RapotKu"
+  }, [schoolIdentity])
+
   async function handleLogin(credentials: LoginCredentials) {
     const account = await signInWithPassword(credentials)
     setAppState({ status: "signed_in", account })
@@ -72,7 +103,12 @@ export function App() {
   }
 
   if (appState.status === "signed_out") {
-    return <LoginPage onLogin={handleLogin} />
+    return (
+      <LoginPage
+        schoolName={schoolIdentity?.schoolName}
+        onLogin={handleLogin}
+      />
+    )
   }
 
   const { profile } = appState.account
@@ -83,8 +119,15 @@ export function App() {
         <SchoolSettingsPage
           userId={appState.account.user.id}
           userName={profile.full_name}
+          schoolName={schoolIdentity?.schoolName}
           onBack={() => setAdminView("dashboard")}
           onLogout={handleLogout}
+          onSchoolNameChange={(schoolName) =>
+            setSchoolIdentity((current) => ({
+              schoolName,
+              logoUrl: current?.logoUrl ?? null,
+            }))
+          }
         />
       )
     }
@@ -92,6 +135,7 @@ export function App() {
     return (
       <AdminDashboard
         userName={profile.full_name}
+        schoolName={schoolIdentity?.schoolName}
         onLogout={handleLogout}
         onOpenSchoolSettings={() => setAdminView("school-settings")}
       />
@@ -101,6 +145,11 @@ export function App() {
   return (
     <main className="grid min-h-screen place-items-center bg-[var(--rapotku-canvas)] p-4 text-[var(--rapotku-text)]">
       <section className="w-full max-w-lg rounded-3xl border border-[var(--rapotku-border)] bg-white p-6 shadow-[0_24px_64px_rgba(66,20,23,0.09)] sm:p-8">
+        {schoolIdentity ? (
+          <p className="mb-4 text-sm font-bold text-[var(--rapotku-muted)]">
+            RapotKu - {schoolIdentity.schoolName}
+          </p>
+        ) : null}
         <p className="mb-2 text-sm font-semibold text-[var(--rapotku-brand)]">
           Berhasil masuk
         </p>

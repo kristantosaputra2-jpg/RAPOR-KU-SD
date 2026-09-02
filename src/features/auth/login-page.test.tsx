@@ -8,7 +8,7 @@ import { LoginPage } from "@/features/auth/login-page"
 describe("LoginPage", () => {
   it("menampilkan dan menyembunyikan kata sandi", async () => {
     const user = userEvent.setup()
-    render(<LoginPage onLogin={vi.fn()} />)
+    render(<LoginPage schoolName="SD Negeri Tumbang Kawei" onLogin={vi.fn()} />)
     const password = screen.getByLabelText("Kata sandi")
 
     expect(password).toHaveAttribute("type", "password")
@@ -20,6 +20,15 @@ describe("LoginPage", () => {
       screen.getByRole("button", { name: "Sembunyikan kata sandi" }),
     )
     expect(password).toHaveAttribute("type", "password")
+  })
+
+  it("menampilkan identitas dan ilustrasi sekolah pada login", () => {
+    render(<LoginPage schoolName="SD Negeri Tumbang Kawei" onLogin={vi.fn()} />)
+
+    expect(screen.getAllByText("SD Negeri Tumbang Kawei")).toHaveLength(2)
+    expect(
+      screen.getByAltText("Ilustrasi siswa sekolah dasar di halaman sekolah"),
+    ).toHaveAttribute("src", "/images/rapotku-school-hero.png")
   })
 
   it("menampilkan pesan autentikasi yang ramah", async () => {
