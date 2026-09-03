@@ -89,6 +89,63 @@ export type Database = {
         }
         Relationships: []
       }
+      attendance: {
+        Row: {
+          absent_days: number
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          permitted_days: number
+          semester_id: string
+          sick_days: number
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          absent_days?: number
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          permitted_days?: number
+          semester_id: string
+          sick_days?: number
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          absent_days?: number
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          permitted_days?: number
+          semester_id?: string
+          sick_days?: number
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "attendance_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           academic_year_id: string

@@ -295,12 +295,12 @@ Fungsinya:
 
 ## Absensi
 
-- [ ] Buat form sakit
-- [ ] Buat form izin
-- [ ] Buat form tanpa keterangan
-- [ ] Hubungkan dengan siswa
-- [ ] Hubungkan dengan semester
-- [ ] Validasi nilai tidak negatif
+- [x] Buat form sakit
+- [x] Buat form izin
+- [x] Buat form tanpa keterangan
+- [x] Hubungkan dengan siswa
+- [x] Hubungkan dengan semester
+- [x] Validasi nilai tidak negatif
 
 ## Ekstrakurikuler
 

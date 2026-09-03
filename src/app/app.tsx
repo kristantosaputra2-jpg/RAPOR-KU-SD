@@ -62,6 +62,11 @@ const GradeEntryPage = lazy(() =>
     default: module.GradeEntryPage,
   })),
 )
+const AttendancePage = lazy(() =>
+  import("@/features/attendance/attendance-page").then((module) => ({
+    default: module.AttendancePage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -94,6 +99,7 @@ export function App() {
     | "assignments"
     | "learning-outcomes"
     | "grades"
+    | "attendance"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -183,6 +189,20 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "attendance") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <AttendancePage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "grades") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -332,6 +352,7 @@ export function App() {
         onOpenAssignments={() => setAdminView("assignments")}
         onOpenLearningOutcomes={() => setAdminView("learning-outcomes")}
         onOpenGrades={() => setAdminView("grades")}
+        onOpenAttendance={() => setAdminView("attendance")}
       />
     )
   }
@@ -343,6 +364,19 @@ export function App() {
           userId={appState.account.user.id}
           userName={profile.full_name}
           userRole={profile.role}
+          schoolName={schoolIdentity?.schoolName}
+          onLogout={handleLogout}
+        />
+      </Suspense>
+    )
+  }
+
+  if (profile.role === "homeroom_teacher") {
+    return (
+      <Suspense fallback={<PageLoadingState />}>
+        <AttendancePage
+          userId={appState.account.user.id}
+          userName={profile.full_name}
           schoolName={schoolIdentity?.schoolName}
           onLogout={handleLogout}
         />
