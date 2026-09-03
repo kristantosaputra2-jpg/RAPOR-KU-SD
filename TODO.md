@@ -108,7 +108,7 @@ Fungsinya:
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [/] Tambahkan test permission
-  - Uji database langsung sudah membuktikan Admin aktif dapat menambah guru dan Guru Mapel ditolak. Suite permission menyeluruh tetap menunggu assignment kelas/mapel.
+  - Uji database langsung sudah membuktikan Admin aktif dapat mengelola data, guru hanya melihat penugasan aktif miliknya, dan Guru Mapel yang ditugaskan dapat mengelola CP sesuai mapel, jenjang kelas, serta semester. Permission nilai dan rapor masih menyusul.
 - [ ] Audit seluruh query Supabase sebelum production
 
 ---
@@ -227,14 +227,14 @@ Fungsinya:
 
 ## Learning Outcomes / CP
 
-- [ ] Buat master CP
-- [ ] Tambah CP
-- [ ] Edit CP
-- [ ] Nonaktifkan CP
-- [ ] Hubungkan CP ke mata pelajaran
-- [ ] Hubungkan CP ke kelas
-- [ ] Hubungkan CP ke semester
-- [ ] Pastikan struktur tidak hardcode KI/KD
+- [x] Buat master CP
+- [x] Tambah CP
+- [x] Edit CP
+- [x] Nonaktifkan CP
+- [x] Hubungkan CP ke mata pelajaran
+- [x] Hubungkan CP ke kelas
+- [x] Hubungkan CP ke semester
+- [x] Pastikan struktur tidak hardcode KI/KD
 
 ---
 
@@ -586,15 +586,15 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | PRD | Done | 100% | PRD gabungan kelas 1–6 tersedia |
 | AGENTS | Done | 100% | Instruksi developer/AI tersedia |
 | Architecture | Done | 100% | Arsitektur awal tersedia |
-| Database Design | Todo | 0% | Menunggu finalisasi rule |
-| Permissions | In Progress | 40% | RLS penugasan membatasi guru ke kelas dan mapel aktif miliknya; permission nilai menyusul |
+| Database Design | In Progress | 20% | Master CP generik sudah tersedia; formula nilai dan output rapor masih menunggu finalisasi |
+| Permissions | In Progress | 50% | RLS penugasan dan CP membatasi guru ke kelas, mapel, jenjang, serta semester aktif yang relevan; permission nilai menyusul |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 98% | Auth, seluruh master data, penugasan guru, audit, explicit grants, dan RLS terkait sudah tersedia |
-| Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, dan penugasan selesai |
+| Supabase | In Progress | 99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia |
+| Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 45% | 108 unit/integration test dan 34 E2E responsif termasuk Penugasan Guru lulus |
+| Testing | In Progress | 50% | 116 unit/integration test dan 38 E2E responsif termasuk Master CP lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -708,6 +708,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi transaksi database bahwa Admin dapat membuat assignment dan Guru Mapel hanya melihat assignment, kelas, serta mapel yang ditugaskan; seluruh fixture uji di-rollback.
 - [x] Buat halaman Penugasan Guru mobile-first dengan pencarian, filter kelas/status, tambah, ganti guru, nonaktifkan/aktifkan kembali, validasi prasyarat, loading, retry, error, success, dan empty state.
 - [x] Verifikasi 108 unit/integration test dan 34 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah tahap Penugasan Guru.
+- [x] Buat tabel `learning_outcomes` generik yang terhubung ke mata pelajaran, jenjang kelas 1–6, dan semester tanpa hardcode KI/KD.
+- [x] Tambahkan audit, constraint, indeks, explicit grants, serta RLS agar Admin mengelola seluruh CP dan guru yang ditugaskan hanya mengelola CP relevan.
+- [x] Verifikasi transaksi database bahwa guru yang ditugaskan dapat membaca dan mengubah CP sesuai scope; anonymous tidak memiliki akses dan fixture uji di-rollback.
+- [x] Buat halaman CP / Deskripsi mobile-first dengan pencarian, filter, tambah, edit, aktif/nonaktif, validasi prasyarat, loading, retry, error, success, dan empty state.
+- [x] Tunda generator deskripsi sampai workflow nilai dan formula penilaian disetujui agar aplikasi tidak mengarang aturan akademik.
+- [x] Verifikasi 116 unit/integration test serta 38 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah tahap Master CP.
 
 ---
 

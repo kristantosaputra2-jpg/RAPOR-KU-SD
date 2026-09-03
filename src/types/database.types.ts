@@ -120,6 +120,66 @@ export type Database = {
           },
         ]
       }
+      learning_outcomes: {
+        Row: {
+          code: string | null
+          created_at: string
+          created_by: string
+          description: string
+          grade_level: number
+          id: string
+          is_active: boolean
+          semester_id: string
+          subject_id: string
+          title: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          grade_level: number
+          id?: string
+          is_active?: boolean
+          semester_id: string
+          subject_id: string
+          title: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          grade_level?: number
+          id?: string
+          is_active?: boolean
+          semester_id?: string
+          subject_id?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_outcomes_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_outcomes_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       class_members: {
         Row: {
           class_id: string

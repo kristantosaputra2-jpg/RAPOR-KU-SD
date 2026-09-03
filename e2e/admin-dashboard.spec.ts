@@ -99,6 +99,9 @@ async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
   await page.route("**/rest/v1/teacher_assignments*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/learning_outcomes*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -229,7 +232,9 @@ async function openStudents(page: Page, width: number) {
     await page.getByRole("button", { name: "Data Siswa" }).click()
   }
 
-  await expect(page.getByRole("heading", { name: "Data Siswa" })).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Data Siswa", exact: true }),
+  ).toBeVisible()
 }
 
 async function openSubjects(page: Page, width: number) {
@@ -261,6 +266,22 @@ async function openAssignments(page: Page, width: number) {
 
   await expect(
     page.getByRole("heading", { name: "Penugasan Guru", exact: true }),
+  ).toBeVisible()
+}
+
+async function openLearningOutcomes(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "CP / Deskripsi" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "CP / Deskripsi" }).click()
+  }
+
+  await expect(
+    page.getByRole("heading", { name: "CP / Deskripsi", exact: true }),
   ).toBeVisible()
 }
 
@@ -472,6 +493,25 @@ for (const viewport of settingsViewports) {
     await expect(
       page.getByRole("button", { name: "Tambah Penugasan" }),
     ).toBeDisabled()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`CP dan Deskripsi nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page)
+    await openLearningOutcomes(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Cari CP")).toBeVisible()
+    await expect(page.getByLabel("Filter mata pelajaran")).toBeVisible()
+    await expect(page.getByText("Belum ada CP")).toBeVisible()
+    await expect(page.getByText(/tidak mengarang rumus nilai/i)).toBeVisible()
   })
 }
 

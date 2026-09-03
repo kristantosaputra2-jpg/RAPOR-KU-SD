@@ -730,7 +730,11 @@ description
 is_active
 ```
 
-Implementasi final TBD.
+Implementasi Master CP MVP saat ini menggunakan field di atas ditambah audit `created_by`, `updated_by`, `created_at`, dan `updated_at`. `code` bersifat opsional, sedangkan `title` dan `description` wajib. Relasi kelas dinyatakan melalui `grade_level` 1–6 sesuai struktur PRD, bukan terikat pada satu rombel tertentu.
+
+Struktur tetap generik dan tidak menanam KI/KD. Admin aktif dapat mengelola seluruh CP. Guru dengan akun yang terhubung ke penugasan aktif hanya dapat membaca, menambah, dan mengubah CP yang cocok dengan mata pelajaran, jenjang kelas, serta semester penugasannya. Guru non-Admin hanya melihat CP aktif. CP dinonaktifkan, bukan dihapus, untuk menjaga riwayat.
+
+`report_descriptions`, pemilihan CP berdasarkan nilai, serta generator draft deskripsi tetap menjadi tahap terpisah. Tahap tersebut baru dibangun setelah workflow input nilai dan formula penilaian disetujui agar tidak mengarang aturan akademik.
 
 ---
 

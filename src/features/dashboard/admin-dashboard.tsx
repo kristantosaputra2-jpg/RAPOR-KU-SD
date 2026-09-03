@@ -13,6 +13,7 @@ import {
   Menu,
   School,
   Settings,
+  Target,
   UserCheck,
   Users,
   X,
@@ -36,6 +37,7 @@ type AdminDashboardProps = Readonly<{
   onOpenStudents: () => void
   onOpenSubjects: () => void
   onOpenAssignments?: () => void
+  onOpenLearningOutcomes?: () => void
 }>
 
 type NavigationItem = Readonly<{
@@ -50,6 +52,7 @@ type NavigationItem = Readonly<{
     | "students"
     | "subjects"
     | "assignments"
+    | "learning-outcomes"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -79,6 +82,7 @@ const navigationGroups: ReadonlyArray<
       { label: "Data Siswa", icon: Users, action: "students" },
       { label: "Mata Pelajaran", icon: BookOpen, action: "subjects" },
       { label: "Penugasan Guru", icon: ClipboardList, action: "assignments" },
+      { label: "CP / Deskripsi", icon: Target, action: "learning-outcomes" },
     ],
   },
   {
@@ -157,6 +161,7 @@ function DashboardNavigation({
   onOpenStudents,
   onOpenSubjects,
   onOpenAssignments,
+  onOpenLearningOutcomes,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
@@ -165,6 +170,7 @@ function DashboardNavigation({
   onOpenStudents: () => void
   onOpenSubjects: () => void
   onOpenAssignments: () => void
+  onOpenLearningOutcomes: () => void
 }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
@@ -204,6 +210,8 @@ function DashboardNavigation({
                           onOpenStudents()
                         } else if (item.action === "assignments") {
                           onOpenAssignments()
+                        } else if (item.action === "learning-outcomes") {
+                          onOpenLearningOutcomes()
                         } else {
                           onOpenSubjects()
                         }
@@ -278,6 +286,7 @@ export function AdminDashboard({
   onOpenStudents,
   onOpenSubjects,
   onOpenAssignments = () => undefined,
+  onOpenLearningOutcomes = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -336,6 +345,7 @@ export function AdminDashboard({
           onOpenStudents={onOpenStudents}
           onOpenSubjects={onOpenSubjects}
           onOpenAssignments={onOpenAssignments}
+          onOpenLearningOutcomes={onOpenLearningOutcomes}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -636,6 +646,10 @@ export function AdminDashboard({
               onOpenAssignments={() => {
                 setIsMenuOpen(false)
                 onOpenAssignments()
+              }}
+              onOpenLearningOutcomes={() => {
+                setIsMenuOpen(false)
+                onOpenLearningOutcomes()
               }}
             />
             <div className="mt-auto pt-6">
