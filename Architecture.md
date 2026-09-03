@@ -507,6 +507,28 @@ Pada tahap ini Admin aktif dapat mengelola master mata pelajaran. Pengguna aktif
 
 ---
 
+## Implementasi Penugasan Guru MVP
+
+`teacher_assignments` menjadi sumber izin aktual Guru Mata Pelajaran dan menyimpan:
+
+```text
+id
+teacher_id
+class_id
+subject_id
+academic_year_id
+semester_id
+is_active
+created_by / updated_by
+created_at / updated_at
+```
+
+Periode pada assignment wajib sama dengan periode kelas melalui foreign key gabungan. Satu kombinasi kelas dan mata pelajaran hanya memiliki satu guru penanggung jawab; pergantian guru dilakukan dengan memperbarui assignment yang ada agar tidak menimbulkan dua sumber kebenaran.
+
+Hanya Admin aktif yang dapat menambah, mengganti guru, atau mengubah status assignment. Guru yang memiliki `teacher_profiles.user_id` terhubung ke akun Auth hanya dapat membaca assignment aktif miliknya beserta kelas dan mata pelajaran terkait. Role tanpa assignment tidak memperoleh akses hanya karena berlabel `subject_teacher`.
+
+---
+
 # 15. Data Ownership
 
 Setiap data harus mempunyai konteks yang jelas.

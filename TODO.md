@@ -104,7 +104,7 @@ Fungsinya:
 - [ ] Buat RLS untuk Wali Kelas
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
-  - Anonymous tidak memiliki akses pada `profiles`, `schools`, `academic_years`, `semesters`, `teacher_profiles`, dan `classes`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
+  - Anonymous tidak memiliki akses pada tabel internal termasuk master data dan `teacher_assignments`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [/] Tambahkan test permission
@@ -159,12 +159,13 @@ Fungsinya:
   - Data tidak dihapus dan dapat diaktifkan kembali; nonaktifkan memakai dialog konfirmasi.
 - [x] Assign role
   - Peran utama dibatasi menjadi `homeroom_teacher` atau `subject_teacher`; akses aktual tetap menunggu assignment.
-- [ ] Assign mata pelajaran
-- [ ] Assign kelas
+- [x] Assign mata pelajaran
+- [x] Assign kelas
+  - Halaman Penugasan Guru menghubungkan guru, mapel, kelas, tahun ajaran, dan semester dalam satu scope yang tervalidasi.
 - [x] Assign wali kelas
   - Penetapan wali kelas tersedia melalui form Data Kelas; aktivasi hak akses akun menunggu tahap assignment.
 - [/] Validasi permission guru
-  - CRUD `teacher_profiles` dibatasi untuk Admin aktif melalui RLS. Permission berdasarkan kelas/mapel diselesaikan setelah tabel assignment tersedia.
+  - Penugasan hanya dikelola Admin; guru terhubung hanya dapat membaca assignment, kelas, dan mapel aktif miliknya. Permission nilai diuji saat grade entry tersedia.
 
 ## Kelas
 
@@ -220,8 +221,8 @@ Fungsinya:
 - [x] Buat master mata pelajaran
 - [x] Mata pelajaran configurable
 - [x] Tambah muatan lokal
-- [ ] Assign mata pelajaran ke kelas
-- [ ] Assign guru ke mapel
+- [x] Assign mata pelajaran ke kelas
+- [x] Assign guru ke mapel
 - [x] Jangan hardcode daftar mapel
 
 ## Learning Outcomes / CP
@@ -586,14 +587,14 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | AGENTS | Done | 100% | Instruksi developer/AI tersedia |
 | Architecture | Done | 100% | Arsitektur awal tersedia |
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
-| Permissions | Todo | 0% | Perlu dokumen khusus |
+| Permissions | In Progress | 40% | RLS penugasan membatasi guru ke kelas dan mapel aktif miliknya; permission nilai menyusul |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 96% | Auth, sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, audit, dan RLS Admin terkait sudah tersedia |
-| Master Data | In Progress | 80% | Identitas sekolah, periode akademik, guru, kelas, siswa, dan mata pelajaran selesai; assignment mapel belum dibuat |
+| Supabase | In Progress | 98% | Auth, seluruh master data, penugasan guru, audit, explicit grants, dan RLS terkait sudah tersedia |
+| Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, dan penugasan selesai |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 40% | 100 unit/integration test dan 30 E2E responsif termasuk Mata Pelajaran lulus |
+| Testing | In Progress | 45% | 108 unit/integration test dan 34 E2E responsif termasuk Penugasan Guru lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -702,6 +703,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat halaman Mata Pelajaran mobile-first dengan pencarian, filter jenis/status, tambah/edit, nonaktifkan/aktifkan kembali, loading, retry, error, success, dan empty state.
 - [x] Pertahankan assignment mata pelajaran ke kelas dan guru sebagai tahap berikutnya agar scope tahap ini tetap fokus.
 - [x] Verifikasi 100 unit/integration test dan 30 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Mata Pelajaran.
+- [x] Buat tabel `teacher_assignments` yang menghubungkan guru, kelas, mapel, tahun ajaran, dan semester dengan audit, status aktif, constraint satu guru per mapel/kelas, explicit grants, dan indeks lengkap.
+- [x] Buat RLS agar hanya Admin aktif yang mengelola assignment, sedangkan guru dengan akun terhubung hanya membaca assignment, kelas, dan mapel aktif miliknya.
+- [x] Verifikasi transaksi database bahwa Admin dapat membuat assignment dan Guru Mapel hanya melihat assignment, kelas, serta mapel yang ditugaskan; seluruh fixture uji di-rollback.
+- [x] Buat halaman Penugasan Guru mobile-first dengan pencarian, filter kelas/status, tambah, ganti guru, nonaktifkan/aktifkan kembali, validasi prasyarat, loading, retry, error, success, dan empty state.
+- [x] Verifikasi 108 unit/integration test dan 34 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah tahap Penugasan Guru.
 
 ---
 

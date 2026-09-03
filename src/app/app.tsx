@@ -47,6 +47,11 @@ const SubjectPage = lazy(() =>
     default: module.SubjectPage,
   })),
 )
+const AssignmentPage = lazy(() =>
+  import("@/features/assignments/assignment-page").then((module) => ({
+    default: module.AssignmentPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -76,6 +81,7 @@ export function App() {
     | "classes"
     | "students"
     | "subjects"
+    | "assignments"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -165,6 +171,20 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "assignments") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <AssignmentPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "subjects") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -268,6 +288,7 @@ export function App() {
         onOpenClasses={() => setAdminView("classes")}
         onOpenStudents={() => setAdminView("students")}
         onOpenSubjects={() => setAdminView("subjects")}
+        onOpenAssignments={() => setAdminView("assignments")}
       />
     )
   }
