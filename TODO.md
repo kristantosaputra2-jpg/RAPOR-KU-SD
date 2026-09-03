@@ -244,8 +244,8 @@ Fungsinya:
 
 ## Input Nilai Kelas 1–3
 
-- [/] Pisahkan nilai Pengetahuan dan Keterampilan per CP sesuai keputusan terbaru sekolah
-- [/] Dukung Single KKM seluruh mapel atau Multi KKM per mapel
+- [x] Pisahkan nilai Pengetahuan dan Keterampilan per CP sesuai keputusan terbaru sekolah
+- [x] Dukung Single KKM seluruh mapel atau Multi KKM per mapel
 - [x] Buat halaman input nilai `lower_primary`
 - [x] Tampilkan seluruh siswa dalam satu layar
 - [x] Buat tabel responsif desktop
@@ -266,18 +266,18 @@ Fungsinya:
 ## Input Nilai Kelas 4–6
 
 - [x] Siapkan fondasi komponen Pengetahuan/Keterampilan dan konfigurasi Single/Multi KKM
-- [ ] Buat halaman input nilai `upper_primary`
-- [ ] Tampilkan seluruh siswa
-- [ ] Buat struktur komponen nilai
-- [ ] Dukungan pengetahuan bila template membutuhkan
-- [ ] Dukungan keterampilan bila template membutuhkan
-- [ ] Input nilai per CP/kompetensi
-- [ ] Hitung nilai akhir
-- [ ] Hitung predikat jika digunakan
-- [ ] Identifikasi capaian terbaik
-- [ ] Identifikasi capaian yang perlu ditingkatkan
-- [ ] Generate deskripsi
-- [ ] Edit deskripsi manual
+- [x] Buat halaman input nilai `upper_primary`
+- [x] Tampilkan seluruh siswa
+- [x] Buat struktur komponen nilai
+- [x] Dukungan pengetahuan bila template membutuhkan
+- [x] Dukungan keterampilan bila template membutuhkan
+- [x] Input nilai per CP/kompetensi
+- [x] Hitung nilai akhir
+- [x] Hitung predikat jika digunakan
+- [x] Identifikasi capaian terbaik
+- [x] Identifikasi capaian yang perlu ditingkatkan
+- [x] Generate deskripsi
+- [x] Edit deskripsi manual
 - [ ] Test workflow kelas 4
 - [ ] Test workflow kelas 5
 - [ ] Test workflow kelas 6
@@ -291,7 +291,7 @@ Fungsinya:
 - [x] Simpan final description
 - [x] Jangan overwrite edit manual guru
 - [x] Tambahkan aksi regenerate dengan konfirmasi
-- [ ] Unit test description engine
+- [x] Unit test description engine
 
 ## Absensi
 
@@ -585,23 +585,23 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 
 # 📊 Progress Tracker
 
-| Area                | Status      | Progress | Catatan                                                                                                                                                |
-| ------------------- | ----------- | -------: | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Discovery           | Done        |     100% | Referensi kelas 1 & 4 sudah dibedah                                                                                                                    |
-| PRD                 | Done        |     100% | PRD gabungan kelas 1–6 tersedia                                                                                                                        |
-| AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                                                        |
-| Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                                               |
-| Database Design     | In Progress |      45% | Komponen Pengetahuan/Keterampilan dan konfigurasi Single/Multi KKM sudah tersedia; pemisahan entry nilai dan output rapor menyusul                     |
-| Permissions         | In Progress |      65% | RLS nilai membatasi perubahan ke Admin atau guru yang ditugaskan; wali kelas hanya dapat memantau kelasnya                                             |
-| Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                                                |
-| Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                                           |
-| Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                                              |
-| Grade Engine        | In Progress |      70% | Input nilai kelas 1–3, rata-rata 0–100, predikat A–D berdasarkan KKM, serta deskripsi CP otomatis yang dapat diedit sudah tersedia; kelas 4–6 menyusul |
-| Report Engine       | Todo        |       0% | Menunggu template final                                                                                                                                |
-| Leger               | Todo        |       0% | Struktur awal sudah diketahui                                                                                                                          |
-| Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                                                |
-| Cloudflare          | Todo        |       0% | Belum deployment                                                                                                                                       |
-| Production          | Todo        |       0% | Belum siap                                                                                                                                             |
+| Area                | Status      | Progress | Catatan                                                                                                                     |
+| ------------------- | ----------- | -------: | --------------------------------------------------------------------------------------------------------------------------- |
+| Discovery           | Done        |     100% | Referensi kelas 1 & 4 sudah dibedah                                                                                         |
+| PRD                 | Done        |     100% | PRD gabungan kelas 1–6 tersedia                                                                                             |
+| AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
+| Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
+| Database Design     | In Progress |      55% | Entry nilai dan deskripsi sudah terpisah per komponen Pengetahuan/Keterampilan; output rapor menyusul                       |
+| Permissions         | In Progress |      65% | RLS nilai membatasi perubahan ke Admin atau guru yang ditugaskan; wali kelas hanya dapat memantau kelasnya                  |
+| Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
+| Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
+| Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
+| Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
+| Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
+| Leger               | Todo        |       0% | Struktur awal sudah diketahui                                                                                               |
+| Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
+| Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
+| Production          | Todo        |       0% | Belum siap                                                                                                                  |
 
 ---
 
@@ -742,6 +742,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Finalisasi mode `single` untuk satu KKM seluruh mapel atau `multi` untuk KKM per mapel; KKM yang sama digunakan oleh kedua komponen.
 - [x] Tambahkan `assessment_components`, `grading_settings`, dan `subject_kkm_rules` sebagai fondasi configurable dengan RLS dan explicit grants; anonymous tidak memiliki akses.
 - [x] Tambahkan resolver KKM dan kalkulasi hasil per komponen serta verifikasi 141 unit/integration test lulus.
+- [x] Kaitkan setiap `grade_entries` dan `report_descriptions` ke `assessment_component_id` dengan unique constraint per komponen.
+- [x] Ubah Input Nilai menjadi matriks seluruh CP aktif kelas 1–6 dengan tab Pengetahuan/Keterampilan, kartu HP, dan nama siswa sticky pada desktop.
+- [x] Tampilkan rata-rata, predikat, dan deskripsi terpisah untuk setiap komponen serta pilihan Single/Multi KKM bagi Admin.
+- [x] Verifikasi 141 unit/integration test dan 42 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah pemisahan komponen nilai.
 
 ---
 

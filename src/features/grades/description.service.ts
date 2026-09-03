@@ -5,7 +5,7 @@ import {
 import type { Database, Tables } from "@/types/database.types"
 
 const columns =
-  "id,student_id,class_id,subject_id,semester_id,grade_level,strongest_outcome_id,weakest_outcome_id,generated_description,final_description,created_at,updated_at"
+  "id,student_id,class_id,subject_id,assessment_component_id,semester_id,grade_level,strongest_outcome_id,weakest_outcome_id,generated_description,final_description,created_at,updated_at"
 
 export type ReportDescription = Pick<
   Tables<"report_descriptions">,
@@ -13,6 +13,7 @@ export type ReportDescription = Pick<
   | "student_id"
   | "class_id"
   | "subject_id"
+  | "assessment_component_id"
   | "semester_id"
   | "grade_level"
   | "strongest_outcome_id"
@@ -27,6 +28,7 @@ export type ReportDescriptionInput = Readonly<{
   studentId: string
   classId: string
   subjectId: string
+  assessmentComponentId: string
   semesterId: string
   gradeLevel: number
   strongestOutcomeId: string
@@ -75,6 +77,7 @@ export async function saveReportDescription(
     student_id: input.studentId,
     class_id: input.classId,
     subject_id: input.subjectId,
+    assessment_component_id: input.assessmentComponentId,
     semester_id: input.semesterId,
     grade_level: input.gradeLevel,
     strongest_outcome_id: input.strongestOutcomeId,
@@ -86,7 +89,10 @@ export async function saveReportDescription(
   }
   const { data, error } = await client
     .from("report_descriptions")
-    .upsert(row, { onConflict: "student_id,class_id,subject_id,semester_id" })
+    .upsert(row, {
+      onConflict:
+        "student_id,class_id,subject_id,assessment_component_id,semester_id",
+    })
     .select(columns)
     .single()
   if (error || !data)

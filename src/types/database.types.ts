@@ -158,6 +158,7 @@ export type Database = {
       }
       grade_entries: {
         Row: {
+          assessment_component_id: string
           class_id: string
           created_at: string
           created_by: string
@@ -172,6 +173,7 @@ export type Database = {
           updated_by: string
         }
         Insert: {
+          assessment_component_id: string
           class_id: string
           created_at?: string
           created_by: string
@@ -186,6 +188,7 @@ export type Database = {
           updated_by: string
         }
         Update: {
+          assessment_component_id?: string
           class_id?: string
           created_at?: string
           created_by?: string
@@ -200,6 +203,13 @@ export type Database = {
           updated_by?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "grade_entries_assessment_component_id_fkey"
+            columns: ["assessment_component_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_components"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "grade_entries_class_scope_fkey"
             columns: ["class_id", "semester_id", "grade_level"]
@@ -462,6 +472,7 @@ export type Database = {
       }
       report_descriptions: {
         Row: {
+          assessment_component_id: string
           class_id: string
           created_at: string
           created_by: string
@@ -478,6 +489,7 @@ export type Database = {
           weakest_outcome_id: string | null
         }
         Insert: {
+          assessment_component_id: string
           class_id: string
           created_at?: string
           created_by: string
@@ -494,6 +506,7 @@ export type Database = {
           weakest_outcome_id?: string | null
         }
         Update: {
+          assessment_component_id?: string
           class_id?: string
           created_at?: string
           created_by?: string
@@ -510,6 +523,13 @@ export type Database = {
           weakest_outcome_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "report_descriptions_assessment_component_id_fkey"
+            columns: ["assessment_component_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_components"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "report_descriptions_class_scope_fkey"
             columns: ["class_id", "semester_id", "grade_level"]

@@ -249,6 +249,47 @@ async function openAuthenticatedDashboard(
         : [],
     })
   })
+  await page.route("**/rest/v1/assessment_components*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "component-knowledge",
+              code: "knowledge",
+              name: "Pengetahuan",
+              display_order: 1,
+              is_active: true,
+            },
+            {
+              id: "component-skills",
+              code: "skills",
+              name: "Keterampilan",
+              display_order: 2,
+              is_active: true,
+            },
+          ]
+        : [],
+    })
+  })
+  await page.route("**/rest/v1/grading_settings*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "setting-1",
+              semester_id: "semester-1",
+              kkm_mode: "single",
+              single_kkm: 65,
+            },
+          ]
+        : [],
+    })
+  })
+  await page.route("**/rest/v1/subject_kkm_rules*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/grade_entries*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -263,6 +304,7 @@ async function openAuthenticatedDashboard(
               class_id: "class-1",
               subject_id: "subject-1",
               learning_outcome_id: outcomeId,
+              assessment_component_id: "component-knowledge",
               semester_id: "semester-1",
               grade_level: 2,
               score,
@@ -711,14 +753,27 @@ for (const viewport of settingsViewports) {
     await openGrades(page, viewport.width)
 
     await expect(
-      page.locator('input[aria-label="Nilai Ani"]:visible'),
+      page.locator(
+        'input[aria-label="Pengetahuan Bilangan dasar Ani"]:visible',
+      ),
     ).toBeVisible()
     await expect(
-      page.locator('input[aria-label="Nilai Budi"]:visible'),
+      page.locator(
+        'input[aria-label="Pengetahuan Bilangan dasar Budi"]:visible',
+      ),
     ).toBeVisible()
     await expect(
-      page.locator('input[aria-label="Nilai Citra"]:visible'),
+      page.locator(
+        'input[aria-label="Pengetahuan Bilangan dasar Citra"]:visible',
+      ),
     ).toBeVisible()
+    await page.getByRole("button", { name: "Keterampilan" }).click()
+    await expect(
+      page.locator(
+        'input[aria-label="Keterampilan Bilangan dasar Ani"]:visible',
+      ),
+    ).toBeVisible()
+    await page.getByRole("button", { name: "Pengetahuan" }).click()
     await expect(page.getByText("A: 89–100")).toBeVisible()
     await expect(page.getByText("B: 77–88")).toBeVisible()
 

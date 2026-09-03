@@ -15,26 +15,30 @@ import { getClasses } from "@/features/classes/class.service"
 import {
   generateDescriptionDraft,
   type OutcomeScore,
-} from "@/features/grades/description-generation"
+} from "./description-generation"
 import {
   getReportDescriptions,
   saveReportDescription,
   type ReportDescription,
-} from "@/features/grades/description.service"
-import {
-  calculateFinalGrade,
-  calculatePredicate,
-  calculatePredicateRanges,
-} from "@/features/grades/grade-calculation"
+} from "./description.service"
+import { calculatePredicateRanges } from "./grade-calculation"
 import {
   getGradeEntries,
-  getGradingRule,
   parseScoreInput,
-  saveGradingRule,
   saveLearningOutcomeScores,
   type GradeEntry,
-  type GradingRule,
-} from "@/features/grades/grade.service"
+} from "./grade.service"
+import {
+  calculateAssessmentResult,
+  type KkmMode,
+} from "./grading-configuration"
+import {
+  getAssessmentComponents,
+  getGradingConfiguration,
+  saveGradingConfiguration,
+  toDomainConfiguration,
+  type LoadedGradingConfiguration,
+} from "./grading-settings.service"
 import { getLearningOutcomes } from "@/features/learning-outcomes/learning-outcome.service"
 import {
   getClassMemberships,
@@ -42,7 +46,7 @@ import {
 } from "@/features/students/student.service"
 import { getSubjects } from "@/features/subjects/subject.service"
 
-type GradeEntryPageProps = Readonly<{
+type Props = Readonly<{
   userId: string
   userName: string
   userRole: UserRole
@@ -51,25 +55,42 @@ type GradeEntryPageProps = Readonly<{
   onLogout: () => Promise<void>
 }>
 
+async function loadReferences() {
+  const [
+    assignments,
+    classes,
+    subjects,
+    outcomes,
+    students,
+    memberships,
+    components,
+  ] = await Promise.all([
+    getTeacherAssignments(),
+    getClasses(),
+    getSubjects(),
+    getLearningOutcomes(),
+    getStudents(),
+    getClassMemberships(),
+    getAssessmentComponents(),
+  ])
+  return {
+    assignments,
+    classes,
+    subjects,
+    outcomes,
+    students,
+    memberships,
+    components,
+  }
+}
 type References = Awaited<ReturnType<typeof loadReferences>>
 
-async function loadReferences() {
-  const [assignments, classes, subjects, outcomes, students, memberships] =
-    await Promise.all([
-      getTeacherAssignments(),
-      getClasses(),
-      getSubjects(),
-      getLearningOutcomes(),
-      getStudents(),
-      getClassMemberships(),
-    ])
-  return { assignments, classes, subjects, outcomes, students, memberships }
-}
-
-const selectClassName =
-  "min-h-12 w-full rounded-xl border border-[var(--rapotku-border)] bg-white px-3 text-sm focus:border-[var(--rapotku-brand)] focus:outline-none"
-const scoreClassName =
+const selectClass =
+  "mt-2 min-h-12 w-full rounded-xl border border-[var(--rapotku-border)] bg-white px-3 text-sm focus:border-[var(--rapotku-brand)] focus:outline-none"
+const scoreClass =
   "min-h-12 w-24 rounded-xl border border-[var(--rapotku-border)] bg-white px-3 text-center text-base font-bold focus:border-[var(--rapotku-brand)] focus:outline-none"
+const keyFor = (componentId: string, studentId: string, outcomeId: string) =>
+  `${componentId}:${studentId}:${outcomeId}`
 
 export function GradeEntryPage({
   userId,
@@ -78,20 +99,22 @@ export function GradeEntryPage({
   schoolName,
   onBack,
   onLogout,
-}: GradeEntryPageProps) {
+}: Props) {
   const [references, setReferences] = useState<References | null>(null)
   const [classId, setClassId] = useState("")
   const [subjectId, setSubjectId] = useState("")
-  const [outcomeId, setOutcomeId] = useState("")
+  const [componentId, setComponentId] = useState("")
   const [entries, setEntries] = useState<ReadonlyArray<GradeEntry>>([])
   const [descriptions, setDescriptions] = useState<
     ReadonlyArray<ReportDescription>
   >([])
-  const [rule, setRule] = useState<GradingRule | null>(null)
+  const [configuration, setConfiguration] =
+    useState<LoadedGradingConfiguration | null>(null)
+  const [kkmMode, setKkmMode] = useState<KkmMode>("single")
   const [kkmDraft, setKkmDraft] = useState("")
-  const [scoreDrafts, setScoreDrafts] = useState<Record<string, string>>({})
+  const [drafts, setDrafts] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingGrades, setIsLoadingGrades] = useState(false)
+  const [isLoadingGrades, setIsLoadingGrades] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
@@ -107,17 +130,11 @@ export function GradeEntryPage({
       .then((data) => {
         if (!mounted) return
         setReferences(data)
-        const firstAssignment = data.assignments.find(
-          (assignment) =>
-            assignment.is_active &&
-            data.classes.some(
-              (item) =>
-                item.id === assignment.class_id && item.grade_level <= 3,
-            ),
-        )
-        if (firstAssignment) {
-          setClassId(firstAssignment.class_id)
-          setSubjectId(firstAssignment.subject_id)
+        setComponentId(data.components[0]?.id ?? "")
+        const first = data.assignments.find((item) => item.is_active)
+        if (first) {
+          setClassId(first.class_id)
+          setSubjectId(first.subject_id)
         }
       })
       .catch(() => setError("Data input nilai belum dapat dimuat. Coba lagi."))
@@ -128,29 +145,29 @@ export function GradeEntryPage({
   }, [])
 
   const selectedClass = references?.classes.find((item) => item.id === classId)
+  const components = references?.components ?? []
+  const activeComponent = components.find((item) => item.id === componentId)
   const classOptions = useMemo(() => {
     if (!references) return []
-    const assignedIds = new Set(
+    const ids = new Set(
       references.assignments
         .filter((item) => item.is_active)
         .map((item) => item.class_id),
     )
-    return references.classes.filter(
-      (item) => item.grade_level <= 3 && assignedIds.has(item.id),
-    )
+    return references.classes.filter((item) => ids.has(item.id))
   }, [references])
   const subjectOptions = useMemo(() => {
     if (!references || !classId) return []
-    const assignedIds = new Set(
+    const ids = new Set(
       references.assignments
         .filter((item) => item.is_active && item.class_id === classId)
         .map((item) => item.subject_id),
     )
     return references.subjects.filter(
-      (item) => item.is_active && assignedIds.has(item.id),
+      (item) => item.is_active && ids.has(item.id),
     )
   }, [classId, references])
-  const outcomeOptions = useMemo(() => {
+  const outcomes = useMemo(() => {
     if (!references || !selectedClass || !subjectId) return []
     return references.outcomes.filter(
       (item) =>
@@ -162,7 +179,7 @@ export function GradeEntryPage({
   }, [references, selectedClass, subjectId])
   const students = useMemo(() => {
     if (!references || !selectedClass) return []
-    const studentIds = new Set(
+    const ids = new Set(
       references.memberships
         .filter(
           (item) =>
@@ -172,18 +189,12 @@ export function GradeEntryPage({
         .map((item) => item.student_id),
     )
     return references.students.filter(
-      (item) => item.is_active && studentIds.has(item.id),
+      (item) => item.is_active && ids.has(item.id),
     )
   }, [references, selectedClass])
 
-  const activeOutcomeId = outcomeOptions.some((item) => item.id === outcomeId)
-    ? outcomeId
-    : (outcomeOptions[0]?.id ?? "")
-
   useEffect(() => {
-    if (!selectedClass || !subjectId) {
-      return
-    }
+    if (!selectedClass || !subjectId) return
     let mounted = true
     const scope = {
       classId: selectedClass.id,
@@ -192,73 +203,72 @@ export function GradeEntryPage({
     }
     void Promise.all([
       getGradeEntries(scope),
-      getGradingRule(scope),
       getReportDescriptions(scope),
+      getGradingConfiguration(scope.semesterId, subjectId),
     ])
-      .then(([gradeEntries, gradingRule, reportDescriptions]) => {
+      .then(([gradeEntries, reportDescriptions, config]) => {
         if (!mounted) return
         setEntries(gradeEntries)
-        setRule(gradingRule)
         setDescriptions(reportDescriptions)
-        setKkmDraft(gradingRule?.minimum_mastery_score.toString() ?? "")
+        setConfiguration(config)
+        setKkmMode((config.setting?.kkm_mode as KkmMode) ?? "single")
+        setKkmDraft(config.effectiveKkm?.toString() ?? "")
         const next: Record<string, string> = {}
-        students.forEach((student) => {
-          const entry = gradeEntries.find(
-            (item) =>
-              item.student_id === student.id &&
-              item.learning_outcome_id === activeOutcomeId,
-          )
-          next[student.id] = entry?.score.toString() ?? ""
+        gradeEntries.forEach((entry) => {
+          next[
+            keyFor(
+              entry.assessment_component_id,
+              entry.student_id,
+              entry.learning_outcome_id,
+            )
+          ] = entry.score.toString()
         })
-        setScoreDrafts(next)
+        setDrafts(next)
       })
       .catch(() => setError("Nilai atau KKM belum dapat dimuat. Coba lagi."))
       .finally(() => mounted && setIsLoadingGrades(false))
     return () => {
       mounted = false
     }
-  }, [activeOutcomeId, selectedClass, students, subjectId])
+  }, [selectedClass, subjectId])
 
-  function summaryForStudent(studentId: string) {
-    const otherScores = entries
-      .filter(
-        (item) =>
-          item.student_id === studentId &&
-          item.learning_outcome_id !== activeOutcomeId,
-      )
-      .map((item) => item.score)
+  function summary(studentId: string) {
+    const domain = configuration ? toDomainConfiguration(configuration) : null
+    if (!domain || !activeComponent) return { average: null, predicate: null }
     try {
-      const current = parseScoreInput(scoreDrafts[studentId] ?? "")
-      const finalGrade = calculateFinalGrade(
-        current === null ? otherScores : [...otherScores, current],
-      )
-      const predicate =
-        finalGrade !== null && rule
-          ? calculatePredicate(finalGrade, rule.minimum_mastery_score)
-          : null
-      return { finalGrade, predicate }
+      const scores = outcomes
+        .map((outcome) =>
+          parseScoreInput(
+            drafts[keyFor(activeComponent.id, studentId, outcome.id)] ?? "",
+          ),
+        )
+        .filter((score): score is number => score !== null)
+      return calculateAssessmentResult(scores, domain)
     } catch {
-      return { finalGrade: null, predicate: null }
+      return { average: null, predicate: null }
     }
   }
 
-  async function handleSaveKkm() {
+  async function saveKkm() {
     if (!selectedClass || !subjectId) return
+    setIsSaving(true)
     setError("")
     setMessage("")
-    setIsSaving(true)
     try {
-      const saved = await saveGradingRule(
-        userId,
-        {
-          classId: selectedClass.id,
-          subjectId,
-          semesterId: selectedClass.semester_id,
-        },
-        Number(kkmDraft),
+      await saveGradingConfiguration(userId, {
+        semesterId: selectedClass.semester_id,
+        subjectId,
+        mode: kkmMode,
+        kkm: Number(kkmDraft),
+      })
+      setConfiguration(
+        await getGradingConfiguration(selectedClass.semester_id, subjectId),
       )
-      setRule(saved)
-      setMessage("KKM tersimpan.")
+      setMessage(
+        kkmMode === "single"
+          ? "Single KKM tersimpan."
+          : "KKM mata pelajaran tersimpan.",
+      )
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "KKM belum tersimpan.")
     } finally {
@@ -266,30 +276,45 @@ export function GradeEntryPage({
     }
   }
 
-  async function handleSaveScores() {
-    if (!selectedClass || !subjectId || !activeOutcomeId) return
+  async function saveScores() {
+    if (!selectedClass || !subjectId || !activeComponent) return
+    setIsSaving(true)
     setError("")
     setMessage("")
-    setIsSaving(true)
+    const scope = {
+      classId: selectedClass.id,
+      subjectId,
+      semesterId: selectedClass.semester_id,
+      gradeLevel: selectedClass.grade_level,
+    }
     try {
-      const scores = students.map((student) => ({
-        studentId: student.id,
-        score: parseScoreInput(scoreDrafts[student.id] ?? ""),
-        existingEntryId: entries.find(
-          (item) =>
-            item.student_id === student.id &&
-            item.learning_outcome_id === activeOutcomeId,
-        )?.id,
-      }))
-      const scope = {
-        classId: selectedClass.id,
-        subjectId,
-        semesterId: selectedClass.semester_id,
-        gradeLevel: selectedClass.grade_level,
-      }
-      await saveLearningOutcomeScores(userId, scope, activeOutcomeId, scores)
+      await Promise.all(
+        outcomes.map((outcome) =>
+          saveLearningOutcomeScores(
+            userId,
+            scope,
+            outcome.id,
+            activeComponent.id,
+            students.map((student) => ({
+              studentId: student.id,
+              score: parseScoreInput(
+                drafts[keyFor(activeComponent.id, student.id, outcome.id)] ??
+                  "",
+              ),
+              existingEntryId: entries.find(
+                (item) =>
+                  item.student_id === student.id &&
+                  item.learning_outcome_id === outcome.id &&
+                  item.assessment_component_id === activeComponent.id,
+              )?.id,
+            })),
+          ),
+        ),
+      )
       setEntries(await getGradeEntries(scope))
-      setMessage("Nilai seluruh siswa berhasil disimpan.")
+      setMessage(
+        `Nilai ${activeComponent.name} seluruh siswa berhasil disimpan.`,
+      )
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Nilai belum tersimpan.",
@@ -299,38 +324,43 @@ export function GradeEntryPage({
     }
   }
 
-  function outcomeScoresForStudent(studentId: string): OutcomeScore[] {
-    return entries
-      .filter((entry) => entry.student_id === studentId)
-      .map((entry) => {
-        const outcome = outcomeOptions.find(
-          (item) => item.id === entry.learning_outcome_id,
-        )
-        return outcome
-          ? {
-              outcomeId: outcome.id,
-              description: outcome.description,
-              score: entry.score,
-            }
-          : null
+  function componentDescription(studentId: string) {
+    return descriptions.find(
+      (item) =>
+        item.student_id === studentId &&
+        item.assessment_component_id === activeComponent?.id,
+    )
+  }
+  function outcomeScores(studentId: string): OutcomeScore[] {
+    if (!activeComponent) return []
+    return outcomes
+      .map((outcome) => {
+        try {
+          const score = parseScoreInput(
+            drafts[keyFor(activeComponent.id, studentId, outcome.id)] ?? "",
+          )
+          return score === null
+            ? null
+            : { outcomeId: outcome.id, description: outcome.description, score }
+        } catch {
+          return null
+        }
       })
       .filter((item): item is OutcomeScore => item !== null)
   }
-
-  function generateForStudent(studentId: string, requireConfirmation: boolean) {
-    const existing = descriptions.find((item) => item.student_id === studentId)
+  function generate(studentId: string, confirmOverwrite: boolean) {
+    const existing = componentDescription(studentId)
     if (
-      requireConfirmation &&
+      confirmOverwrite &&
       existing &&
       existing.final_description !== existing.generated_description &&
       !window.confirm(
         "Deskripsi sudah diedit manual. Buat ulang akan mengganti isi editor. Lanjutkan?",
       )
-    ) {
+    )
       return
-    }
     try {
-      const draft = generateDescriptionDraft(outcomeScoresForStudent(studentId))
+      const draft = generateDescriptionDraft(outcomeScores(studentId))
       setGeneratedDraft(draft.text)
       setFinalDraft(draft.text)
       setStrongestOutcomeId(draft.strongestOutcomeId)
@@ -345,25 +375,21 @@ export function GradeEntryPage({
       )
     }
   }
-
   function openDescription(studentId: string) {
-    const existing = descriptions.find((item) => item.student_id === studentId)
-    if (!existing) {
-      generateForStudent(studentId, false)
-      return
-    }
+    const existing = componentDescription(studentId)
+    if (!existing) return generate(studentId, false)
     setGeneratedDraft(existing.generated_description)
     setFinalDraft(existing.final_description)
     setStrongestOutcomeId(existing.strongest_outcome_id ?? "")
     setWeakestOutcomeId(existing.weakest_outcome_id)
     setEditingStudentId(studentId)
   }
-
-  async function handleSaveDescription() {
+  async function saveDescription() {
     if (
       !editingStudentId ||
       !selectedClass ||
       !subjectId ||
+      !activeComponent ||
       !strongestOutcomeId
     )
       return
@@ -374,6 +400,7 @@ export function GradeEntryPage({
         studentId: editingStudentId,
         classId: selectedClass.id,
         subjectId,
+        assessmentComponentId: activeComponent.id,
         semesterId: selectedClass.semester_id,
         gradeLevel: selectedClass.grade_level,
         strongestOutcomeId,
@@ -382,11 +409,15 @@ export function GradeEntryPage({
         finalDescription: finalDraft,
       })
       setDescriptions((current) => [
-        ...current.filter((item) => item.student_id !== editingStudentId),
+        ...current.filter(
+          (item) =>
+            item.student_id !== editingStudentId ||
+            item.assessment_component_id !== activeComponent.id,
+        ),
         saved,
       ])
       setEditingStudentId(null)
-      setMessage("Deskripsi final berhasil disimpan.")
+      setMessage(`Deskripsi ${activeComponent.name} berhasil disimpan.`)
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Deskripsi belum tersimpan.",
@@ -396,10 +427,9 @@ export function GradeEntryPage({
     }
   }
 
-  const ranges = rule
-    ? calculatePredicateRanges(rule.minimum_mastery_score)
+  const ranges = configuration?.effectiveKkm
+    ? calculatePredicateRanges(configuration.effectiveKkm)
     : []
-
   return (
     <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
       <header className="sticky top-0 z-20 border-b border-[var(--rapotku-border)] bg-white/95 backdrop-blur">
@@ -407,16 +437,16 @@ export function GradeEntryPage({
           <div className="flex min-w-0 items-center gap-3">
             {onBack ? (
               <button
-                className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--rapotku-border)]"
+                className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
                 type="button"
                 aria-label="Kembali"
                 onClick={onBack}
               >
-                <ArrowLeft aria-hidden="true" size={20} />
+                <ArrowLeft size={20} />
               </button>
             ) : null}
-            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--rapotku-brand)] text-white">
-              <BookOpenCheck aria-hidden="true" size={22} />
+            <span className="grid size-11 place-items-center rounded-2xl bg-[var(--rapotku-brand)] text-white">
+              <BookOpenCheck size={22} />
             </span>
             <div className="min-w-0">
               <p className="truncate font-bold">Input Nilai</p>
@@ -426,28 +456,25 @@ export function GradeEntryPage({
             </div>
           </div>
           <button
-            className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)] bg-white"
+            className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
             type="button"
             aria-label="Keluar"
             onClick={() => void onLogout()}
           >
-            <LogOut aria-hidden="true" size={19} />
+            <LogOut size={19} />
           </button>
         </div>
       </header>
-
       <main className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold text-[var(--rapotku-brand)]">
-          Kelas 1–3
+          Kelas 1–6
         </p>
         <h1 className="mt-1 text-2xl font-bold sm:text-3xl">
           Nilai seluruh siswa
         </h1>
-        <p className="mt-2 text-sm leading-6 text-[var(--rapotku-muted)]">
-          Pilih kelas, mapel, dan CP. Semua siswa tetap terlihat dan dapat
-          disimpan sekaligus.
+        <p className="mt-2 text-sm text-[var(--rapotku-muted)]">
+          Isi seluruh CP aktif. Pengetahuan dan Keterampilan dihitung terpisah.
         </p>
-
         {error ? (
           <div
             className="mt-4 rounded-2xl border border-[#f5b7ba] bg-[var(--rapotku-brand-soft)] p-4 text-sm"
@@ -464,15 +491,11 @@ export function GradeEntryPage({
             {message}
           </div>
         ) : null}
-
-        <section
-          className="mt-6 grid gap-4 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 shadow-sm sm:p-6 lg:grid-cols-3"
-          aria-label="Pilihan input nilai"
-        >
+        <section className="mt-6 grid gap-4 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 sm:p-6 lg:grid-cols-2">
           <label className="text-sm font-bold">
             Kelas
             <select
-              className={`${selectClassName} mt-2`}
+              className={selectClass}
               value={classId}
               onChange={(event) => {
                 setIsLoadingGrades(true)
@@ -491,13 +514,13 @@ export function GradeEntryPage({
           <label className="text-sm font-bold">
             Mata pelajaran
             <select
-              className={`${selectClassName} mt-2`}
+              className={selectClass}
               value={subjectId}
+              disabled={!classId}
               onChange={(event) => {
                 setIsLoadingGrades(true)
                 setSubjectId(event.target.value)
               }}
-              disabled={!classId}
             >
               <option value="">Pilih mapel</option>
               {subjectOptions.map((item) => (
@@ -507,286 +530,311 @@ export function GradeEntryPage({
               ))}
             </select>
           </label>
-          <label className="text-sm font-bold">
-            Capaian Pembelajaran
-            <select
-              className={`${selectClassName} mt-2`}
-              value={activeOutcomeId}
-              onChange={(event) => {
-                const nextOutcomeId = event.target.value
-                setOutcomeId(nextOutcomeId)
-                const next: Record<string, string> = {}
-                students.forEach((student) => {
-                  const entry = entries.find(
-                    (item) =>
-                      item.student_id === student.id &&
-                      item.learning_outcome_id === nextOutcomeId,
-                  )
-                  next[student.id] = entry?.score.toString() ?? ""
-                })
-                setScoreDrafts(next)
-              }}
-              disabled={!subjectId}
-            >
-              <option value="">Pilih CP</option>
-              {outcomeOptions.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.code ? `${item.code} · ` : ""}
-                  {item.title}
-                </option>
-              ))}
-            </select>
-          </label>
         </section>
-
         {isLoading ? (
-          <div className="mt-8 flex items-center gap-3" role="status">
-            <LoaderCircle className="animate-spin" aria-hidden="true" />{" "}
+          <p className="mt-8" role="status">
+            <LoaderCircle className="mr-2 inline animate-spin" />
             Menyiapkan data...
-          </div>
-        ) : classOptions.length === 0 ? (
-          <div className="mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
-            <h2 className="font-bold">Belum ada kelas yang siap dinilai</h2>
-            <p className="mt-2 text-sm text-[var(--rapotku-muted)]">
-              Lengkapi kelas 1–3, siswa, mapel, penugasan guru, dan CP terlebih
-              dahulu.
-            </p>
-          </div>
+          </p>
         ) : null}
-
         {selectedClass && subjectId ? (
-          <section className="mt-5 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 sm:p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <h2 className="text-lg font-bold">KKM dan predikat</h2>
-                <p className="mt-1 text-sm text-[var(--rapotku-muted)]">
-                  Batas A–D dihitung otomatis dari KKM.
+          <>
+            <section className="mt-5 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 sm:p-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold">Pengaturan KKM</h2>
+                  <p className="text-sm text-[var(--rapotku-muted)]">
+                    Satu KKM dipakai kedua komponen.
+                  </p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-[180px_110px_auto] sm:items-end">
+                  <label className="text-sm font-bold">
+                    Mode
+                    <select
+                      className={selectClass}
+                      value={kkmMode}
+                      disabled={userRole !== "admin"}
+                      onChange={(event) => {
+                        setKkmMode(event.target.value as KkmMode)
+                        setKkmDraft("")
+                      }}
+                    >
+                      <option value="single">Single KKM</option>
+                      <option value="multi">Multi KKM</option>
+                    </select>
+                  </label>
+                  <label className="text-sm font-bold">
+                    KKM
+                    <input
+                      className={`${scoreClass} mt-2 block`}
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={kkmDraft}
+                      disabled={userRole !== "admin"}
+                      onChange={(event) => setKkmDraft(event.target.value)}
+                    />
+                  </label>
+                  {userRole === "admin" ? (
+                    <button
+                      className="min-h-12 rounded-xl bg-[var(--rapotku-brand)] px-4 font-bold text-white"
+                      type="button"
+                      disabled={isSaving || !kkmDraft}
+                      onClick={() => void saveKkm()}
+                    >
+                      Simpan KKM
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {ranges.length ? (
+                  ranges.map((range) => (
+                    <span
+                      className="rounded-full bg-[#f4f5f7] px-3 py-2 text-xs font-bold"
+                      key={range.predicate}
+                    >
+                      {range.predicate}: {range.minimum}–{range.maximum}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-sm text-[var(--rapotku-muted)]">
+                    KKM belum diatur.
+                  </span>
+                )}
+              </div>
+            </section>
+            <nav
+              className="mt-5 grid grid-cols-2 gap-2 rounded-2xl bg-white p-2"
+              aria-label="Komponen penilaian"
+            >
+              {components.map((component) => (
+                <button
+                  key={component.id}
+                  type="button"
+                  className={`min-h-12 rounded-xl px-4 font-bold ${component.id === componentId ? "bg-[var(--rapotku-brand)] text-white" : "text-[var(--rapotku-muted)]"}`}
+                  onClick={() => setComponentId(component.id)}
+                >
+                  {component.name}
+                </button>
+              ))}
+            </nav>
+            <section className="mt-5 overflow-hidden rounded-3xl border border-[var(--rapotku-border)] bg-white">
+              <div className="border-b border-[var(--rapotku-border)] p-4 sm:p-6">
+                <h2 className="text-lg font-bold">{activeComponent?.name}</h2>
+                <p className="text-sm text-[var(--rapotku-muted)]">
+                  {outcomes.length} CP aktif
                 </p>
               </div>
-              <div className="flex items-end gap-2">
-                <label className="text-sm font-bold">
-                  KKM
-                  <input
-                    className={`${scoreClassName} mt-2 block`}
-                    type="number"
-                    min="1"
-                    max="100"
-                    step="1"
-                    inputMode="numeric"
-                    value={kkmDraft}
-                    disabled={userRole !== "admin"}
-                    onChange={(event) => setKkmDraft(event.target.value)}
-                  />
-                </label>
-                {userRole === "admin" ? (
-                  <button
-                    className="min-h-12 rounded-xl bg-[var(--rapotku-brand)] px-4 font-bold text-white disabled:opacity-60"
-                    type="button"
-                    disabled={isSaving || !kkmDraft}
-                    onClick={() => void handleSaveKkm()}
-                  >
-                    Simpan KKM
-                  </button>
-                ) : null}
-              </div>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {ranges.length ? (
-                ranges.map((range) => (
-                  <span
-                    className="rounded-full bg-[#f4f5f7] px-3 py-2 text-xs font-bold"
-                    key={range.predicate}
-                  >
-                    {range.predicate}: {range.minimum}–{range.maximum}
-                  </span>
-                ))
+              {isLoadingGrades ? (
+                <p className="p-8 text-center">Memuat nilai...</p>
+              ) : outcomes.length === 0 ? (
+                <p className="p-8 text-center font-bold">Belum ada CP aktif.</p>
+              ) : students.length === 0 ? (
+                <p className="p-8 text-center font-bold">Belum ada siswa.</p>
               ) : (
-                <span className="text-sm text-[var(--rapotku-muted)]">
-                  KKM belum diatur oleh Admin.
-                </span>
-              )}
-            </div>
-          </section>
-        ) : null}
-
-        {activeOutcomeId ? (
-          <section className="mt-5 overflow-hidden rounded-3xl border border-[var(--rapotku-border)] bg-white">
-            <div className="border-b border-[var(--rapotku-border)] p-4 sm:p-6">
-              <h2 className="text-lg font-bold">Daftar siswa</h2>
-              <p className="mt-1 text-sm text-[var(--rapotku-muted)]">
-                Kosongkan kolom jika nilai belum tersedia.
-              </p>
-            </div>
-            {isLoadingGrades ? (
-              <div className="p-8 text-center" role="status">
-                Memuat nilai...
-              </div>
-            ) : students.length === 0 ? (
-              <div className="p-8 text-center">
-                <p className="font-bold">Belum ada siswa di kelas ini</p>
-              </div>
-            ) : (
-              <>
-                <div className="divide-y divide-[var(--rapotku-border)] md:hidden">
-                  {students.map((student, index) => {
-                    const summary = summaryForStudent(student.id)
-                    return (
-                      <article className="p-4" key={student.id}>
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-xs font-bold text-[var(--rapotku-muted)]">
-                              {index + 1}
-                            </p>
-                            <h3 className="font-bold">{student.full_name}</h3>
-                            <p className="text-xs text-[var(--rapotku-muted)]">
-                              NIS {student.nis}
-                            </p>
-                          </div>
-                          <input
-                            aria-label={`Nilai ${student.full_name}`}
-                            className={scoreClassName}
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="0.01"
-                            inputMode="decimal"
-                            value={scoreDrafts[student.id] ?? ""}
-                            onChange={(event) =>
-                              setScoreDrafts((current) => ({
-                                ...current,
-                                [student.id]: event.target.value,
-                              }))
-                            }
-                          />
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                          <span className="rounded-full bg-[#f4f5f7] px-3 py-2 font-bold">
-                            Rata-rata: {summary.finalGrade ?? "—"}
-                          </span>
-                          <span className="rounded-full bg-[var(--rapotku-brand-soft)] px-3 py-2 font-bold text-[var(--rapotku-brand)]">
-                            Predikat: {summary.predicate ?? "—"}
-                          </span>
-                          <button
-                            className="min-h-9 rounded-full border border-[var(--rapotku-border)] px-3 font-bold"
-                            type="button"
-                            onClick={() => openDescription(student.id)}
-                          >
-                            {descriptions.some(
-                              (item) => item.student_id === student.id,
-                            )
-                              ? "Edit deskripsi"
-                              : "Buat deskripsi"}
-                          </button>
-                        </div>
-                      </article>
-                    )
-                  })}
-                </div>
-                <div className="hidden overflow-x-auto md:block">
-                  <table className="w-full min-w-[720px] text-left">
-                    <thead className="bg-[#f7f8fa] text-xs uppercase text-[var(--rapotku-muted)]">
-                      <tr>
-                        <th className="px-5 py-4">No</th>
-                        <th className="px-5 py-4">Siswa</th>
-                        <th className="px-5 py-4 text-center">Nilai CP</th>
-                        <th className="px-5 py-4 text-center">Rata-rata</th>
-                        <th className="px-5 py-4 text-center">Predikat</th>
-                        <th className="px-5 py-4 text-center">Deskripsi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[var(--rapotku-border)]">
-                      {students.map((student, index) => {
-                        const summary = summaryForStudent(student.id)
-                        return (
-                          <tr key={student.id}>
-                            <td className="px-5 py-4">{index + 1}</td>
-                            <td className="px-5 py-4">
-                              <p className="font-bold">{student.full_name}</p>
-                              <p className="text-xs text-[var(--rapotku-muted)]">
-                                NIS {student.nis}
-                              </p>
-                            </td>
-                            <td className="px-5 py-3 text-center">
-                              <input
-                                aria-label={`Nilai ${student.full_name}`}
-                                className={scoreClassName}
-                                type="number"
-                                min="0"
-                                max="100"
-                                step="0.01"
-                                value={scoreDrafts[student.id] ?? ""}
-                                onChange={(event) =>
-                                  setScoreDrafts((current) => ({
-                                    ...current,
-                                    [student.id]: event.target.value,
-                                  }))
-                                }
-                              />
-                            </td>
-                            <td className="px-5 py-4 text-center font-bold">
-                              {summary.finalGrade ?? "—"}
-                            </td>
-                            <td className="px-5 py-4 text-center font-bold text-[var(--rapotku-brand)]">
-                              {summary.predicate ?? "—"}
-                            </td>
-                            <td className="px-5 py-4 text-center">
-                              <button
-                                className="min-h-10 rounded-xl border border-[var(--rapotku-border)] px-3 text-sm font-bold"
-                                type="button"
-                                onClick={() => openDescription(student.id)}
+                <>
+                  <div className="divide-y divide-[var(--rapotku-border)] md:hidden">
+                    {students.map((student, index) => {
+                      const result = summary(student.id)
+                      return (
+                        <article className="p-4" key={student.id}>
+                          <p className="text-xs text-[var(--rapotku-muted)]">
+                            {index + 1}
+                          </p>
+                          <h3 className="font-bold">{student.full_name}</h3>
+                          <p className="text-xs text-[var(--rapotku-muted)]">
+                            NIS {student.nis}
+                          </p>
+                          <div className="mt-4 space-y-3">
+                            {outcomes.map((outcome) => (
+                              <label
+                                className="flex items-center justify-between gap-3 text-sm"
+                                key={outcome.id}
                               >
-                                {descriptions.some(
-                                  (item) => item.student_id === student.id,
-                                )
-                                  ? "Edit"
-                                  : "Buat"}
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="sticky bottom-0 border-t border-[var(--rapotku-border)] bg-white/95 p-4 backdrop-blur sm:flex sm:items-center sm:justify-between">
-                  <p className="mb-3 text-sm text-[var(--rapotku-muted)] sm:mb-0">
-                    {students.length} siswa · Simpan setelah selesai mengisi.
-                  </p>
-                  <button
-                    className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white disabled:opacity-60 sm:w-auto"
-                    type="button"
-                    disabled={isSaving}
-                    onClick={() => void handleSaveScores()}
-                  >
-                    {isSaving ? (
-                      <LoaderCircle
-                        className="animate-spin"
-                        aria-hidden="true"
-                        size={18}
-                      />
-                    ) : (
-                      <Save aria-hidden="true" size={18} />
-                    )}
-                    {isSaving ? "Menyimpan..." : "Simpan nilai"}
-                  </button>
-                </div>
-              </>
-            )}
-          </section>
+                                <span className="min-w-0">
+                                  <strong className="block truncate">
+                                    {outcome.code ?? outcome.title}
+                                  </strong>
+                                  <span className="line-clamp-2 text-xs text-[var(--rapotku-muted)]">
+                                    {outcome.description}
+                                  </span>
+                                </span>
+                                <input
+                                  aria-label={`${activeComponent?.name} ${outcome.title} ${student.full_name}`}
+                                  className={scoreClass}
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  step="0.01"
+                                  inputMode="decimal"
+                                  value={
+                                    drafts[
+                                      keyFor(
+                                        componentId,
+                                        student.id,
+                                        outcome.id,
+                                      )
+                                    ] ?? ""
+                                  }
+                                  onChange={(event) =>
+                                    setDrafts((current) => ({
+                                      ...current,
+                                      [keyFor(
+                                        componentId,
+                                        student.id,
+                                        outcome.id,
+                                      )]: event.target.value,
+                                    }))
+                                  }
+                                />
+                              </label>
+                            ))}
+                          </div>
+                          <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                            <span className="rounded-full bg-[#f4f5f7] px-3 py-2 font-bold">
+                              Rata-rata: {result.average ?? "—"}
+                            </span>
+                            <span className="rounded-full bg-[var(--rapotku-brand-soft)] px-3 py-2 font-bold text-[var(--rapotku-brand)]">
+                              Predikat: {result.predicate ?? "—"}
+                            </span>
+                            <button
+                              className="min-h-9 rounded-full border px-3 font-bold"
+                              type="button"
+                              onClick={() => openDescription(student.id)}
+                            >
+                              {componentDescription(student.id)
+                                ? "Edit deskripsi"
+                                : "Buat deskripsi"}
+                            </button>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                  <div className="hidden overflow-x-auto md:block">
+                    <table className="w-max min-w-full text-left">
+                      <thead className="bg-[#f7f8fa] text-xs uppercase text-[var(--rapotku-muted)]">
+                        <tr>
+                          <th className="sticky left-0 z-10 min-w-64 bg-[#f7f8fa] px-5 py-4">
+                            Siswa
+                          </th>
+                          {outcomes.map((outcome) => (
+                            <th
+                              className="min-w-36 px-4 py-4 text-center"
+                              key={outcome.id}
+                            >
+                              {outcome.code ?? outcome.title}
+                            </th>
+                          ))}
+                          <th className="px-4 py-4">Rata-rata</th>
+                          <th className="px-4 py-4">Predikat</th>
+                          <th className="px-4 py-4">Deskripsi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {students.map((student) => {
+                          const result = summary(student.id)
+                          return (
+                            <tr key={student.id}>
+                              <td className="sticky left-0 z-10 bg-white px-5 py-4">
+                                <strong>{student.full_name}</strong>
+                                <p className="text-xs text-[var(--rapotku-muted)]">
+                                  NIS {student.nis}
+                                </p>
+                              </td>
+                              {outcomes.map((outcome) => (
+                                <td className="px-4 py-3" key={outcome.id}>
+                                  <input
+                                    aria-label={`${activeComponent?.name} ${outcome.title} ${student.full_name}`}
+                                    className={scoreClass}
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    value={
+                                      drafts[
+                                        keyFor(
+                                          componentId,
+                                          student.id,
+                                          outcome.id,
+                                        )
+                                      ] ?? ""
+                                    }
+                                    onChange={(event) =>
+                                      setDrafts((current) => ({
+                                        ...current,
+                                        [keyFor(
+                                          componentId,
+                                          student.id,
+                                          outcome.id,
+                                        )]: event.target.value,
+                                      }))
+                                    }
+                                  />
+                                </td>
+                              ))}
+                              <td className="px-4 text-center font-bold">
+                                {result.average ?? "—"}
+                              </td>
+                              <td className="px-4 text-center font-bold text-[var(--rapotku-brand)]">
+                                {result.predicate ?? "—"}
+                              </td>
+                              <td className="px-4">
+                                <button
+                                  className="min-h-10 rounded-xl border px-3 font-bold"
+                                  type="button"
+                                  onClick={() => openDescription(student.id)}
+                                >
+                                  {componentDescription(student.id)
+                                    ? "Edit"
+                                    : "Buat"}
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="sticky bottom-0 border-t bg-white/95 p-4 sm:flex sm:items-center sm:justify-between">
+                    <p className="mb-3 text-sm text-[var(--rapotku-muted)] sm:mb-0">
+                      {students.length} siswa · {outcomes.length} CP
+                    </p>
+                    <button
+                      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white sm:w-auto"
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => void saveScores()}
+                    >
+                      {isSaving ? (
+                        <LoaderCircle className="animate-spin" size={18} />
+                      ) : (
+                        <Save size={18} />
+                      )}
+                      {isSaving
+                        ? "Menyimpan..."
+                        : `Simpan ${activeComponent?.name}`}
+                    </button>
+                  </div>
+                </>
+              )}
+            </section>
+          </>
         ) : null}
       </main>
       {editingStudentId ? (
         <div className="fixed inset-0 z-50 grid items-end bg-[#1d222b]/45 sm:place-items-center sm:p-4">
           <section
-            className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-w-2xl sm:rounded-3xl sm:p-6"
+            className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 sm:max-w-2xl sm:rounded-3xl sm:p-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="description-title"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-[var(--rapotku-brand)]">
-                  Draft otomatis
+                  Draft otomatis · {activeComponent?.name}
                 </p>
                 <h2 id="description-title" className="text-xl font-bold">
                   Deskripsi{" "}
@@ -797,50 +845,44 @@ export function GradeEntryPage({
                 </h2>
               </div>
               <button
-                className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
+                className="grid size-11 place-items-center rounded-xl border"
                 type="button"
                 aria-label="Tutup deskripsi"
                 onClick={() => setEditingStudentId(null)}
               >
-                <X aria-hidden="true" size={20} />
+                <X size={20} />
               </button>
             </div>
             <div className="mt-5 rounded-2xl bg-[#f7f8fa] p-4">
-              <p className="text-xs font-bold uppercase text-[var(--rapotku-muted)]">
-                Hasil sistem
-              </p>
+              <p className="text-xs font-bold uppercase">Hasil sistem</p>
               <p className="mt-2 text-sm leading-6">{generatedDraft}</p>
             </div>
             <label className="mt-5 block text-sm font-bold">
               Deskripsi final
               <textarea
-                className="mt-2 min-h-36 w-full rounded-2xl border border-[var(--rapotku-border)] p-4 text-sm leading-6 focus:border-[var(--rapotku-brand)] focus:outline-none"
+                className="mt-2 min-h-36 w-full rounded-2xl border p-4"
                 maxLength={2000}
                 value={finalDraft}
                 onChange={(event) => setFinalDraft(event.target.value)}
               />
             </label>
-            <p className="mt-2 text-xs text-[var(--rapotku-muted)]">
-              Guru boleh memperbaiki kalimat sebelum menyimpan. Draft sistem
-              tetap disimpan terpisah.
-            </p>
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
               <button
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-border)] px-4 font-bold"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border px-4 font-bold"
                 type="button"
-                onClick={() => generateForStudent(editingStudentId, true)}
+                onClick={() => generate(editingStudentId, true)}
               >
-                <Sparkles aria-hidden="true" size={18} />
+                <Sparkles size={18} />
                 Buat ulang draft
               </button>
               <button
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white disabled:opacity-60"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white"
                 type="button"
                 disabled={isSaving || !finalDraft.trim()}
-                onClick={() => void handleSaveDescription()}
+                onClick={() => void saveDescription()}
               >
-                <Save aria-hidden="true" size={18} />
-                {isSaving ? "Menyimpan..." : "Simpan deskripsi"}
+                <Save size={18} />
+                Simpan deskripsi
               </button>
             </div>
           </section>

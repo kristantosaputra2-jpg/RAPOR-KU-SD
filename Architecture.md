@@ -774,9 +774,9 @@ Keputusan formula yang disetujui pada 3 September 2026:
 - nilai di bawah KKM mendapat D (Kurang), kemudian C (Cukup), B (Baik), dan A (Sangat Baik);
 - ambang A–D dihitung saat digunakan dan tidak ditanam sebagai angka tetap.
 
-Nilai mentah disimpan pada `grade_entries`. Constraint gabungan memastikan siswa benar-benar berada di kelas dan semester tersebut serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
+Nilai mentah disimpan pada `grade_entries` dan dibedakan dengan `assessment_component_id`. Constraint gabungan memastikan satu siswa hanya memiliki satu nilai untuk kombinasi kelas, mapel, CP, komponen, dan semester; siswa benar-benar berada di kelas tersebut; serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
 
-UI yang lama masih memilih satu CP. Tahap UI berikutnya akan memisahkan Pengetahuan dan Keterampilan serta menampilkan seluruh CP aktif tanpa membatasi jumlahnya, sambil tetap menjaga seluruh siswa terlihat pada HP dan desktop. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
+UI kelas 1–6 memakai tab Pengetahuan/Keterampilan dan menampilkan seluruh CP aktif tanpa membatasi jumlahnya. Pada HP, setiap siswa menjadi kartu berisi daftar CP. Pada desktop, seluruh siswa dan CP tampil dalam matriks dengan nama siswa sticky. Rata-rata, predikat, serta deskripsi dihitung dan disimpan terpisah untuk setiap komponen. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
 
 Hindari menyimpan terlalu banyak data derived jika bisa dihitung.
 
@@ -807,7 +807,7 @@ Tujuan:
 - edit manual guru tidak hilang;
 - regenerate tidak otomatis overwrite.
 
-Implementasi menyimpan satu deskripsi per siswa, kelas, mata pelajaran, dan semester. `strongest_outcome_id` dan `weakest_outcome_id` mencatat sumber draft. Deskripsi final tetap editable; pembuatan ulang draft yang berbeda dari hasil edit guru harus melalui konfirmasi eksplisit.
+Implementasi menyimpan satu deskripsi per siswa, kelas, mata pelajaran, komponen penilaian, dan semester. `strongest_outcome_id` dan `weakest_outcome_id` mencatat sumber draft. Deskripsi final tetap editable; pembuatan ulang draft yang berbeda dari hasil edit guru harus melalui konfirmasi eksplisit.
 
 ---
 
