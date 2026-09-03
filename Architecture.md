@@ -781,6 +781,8 @@ Keputusan formula yang disetujui pada 3 September 2026:
 
 Nilai mentah disimpan pada `grade_entries`. Constraint gabungan memastikan siswa benar-benar berada di kelas dan semester tersebut serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
 
+Implementasi UI kelas 1–3 memilih scope kelas, mata pelajaran, dan satu CP, kemudian menampilkan seluruh siswa sekaligus. Layar HP memakai kartu per siswa tanpa membuka halaman siswa satu per satu; desktop memakai tabel. Nilai seluruh siswa disimpan dalam satu aksi eksplisit dengan status loading, sukses, dan error. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
+
 Hindari menyimpan terlalu banyak data derived jika bisa dihitung.
 
 Namun derived value boleh disimpan jika:

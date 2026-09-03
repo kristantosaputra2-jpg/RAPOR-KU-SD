@@ -57,6 +57,11 @@ const LearningOutcomePage = lazy(() =>
     (module) => ({ default: module.LearningOutcomePage }),
   ),
 )
+const GradeEntryPage = lazy(() =>
+  import("@/features/grades/grade-entry-page").then((module) => ({
+    default: module.GradeEntryPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -88,6 +93,7 @@ export function App() {
     | "subjects"
     | "assignments"
     | "learning-outcomes"
+    | "grades"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -177,6 +183,21 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "grades") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <GradeEntryPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "learning-outcomes") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -310,7 +331,22 @@ export function App() {
         onOpenSubjects={() => setAdminView("subjects")}
         onOpenAssignments={() => setAdminView("assignments")}
         onOpenLearningOutcomes={() => setAdminView("learning-outcomes")}
+        onOpenGrades={() => setAdminView("grades")}
       />
+    )
+  }
+
+  if (profile.role === "subject_teacher") {
+    return (
+      <Suspense fallback={<PageLoadingState />}>
+        <GradeEntryPage
+          userId={appState.account.user.id}
+          userName={profile.full_name}
+          userRole={profile.role}
+          schoolName={schoolIdentity?.schoolName}
+          onLogout={handleLogout}
+        />
+      </Suspense>
     )
   }
 

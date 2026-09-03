@@ -14,7 +14,11 @@ const adminUser = {
   updated_at: "2026-09-02T00:00:00.000Z",
 }
 
-async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
+async function openAuthenticatedDashboard(
+  page: Page,
+  withClassPeriod = false,
+  withGradeData = false,
+) {
   const supabaseUrl = process.env.RAPOTKU_E2E_SUPABASE_URL
 
   if (!supabaseUrl) {
@@ -85,21 +89,143 @@ async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
     await route.fulfill({ status: 200, json: [] })
   })
   await page.route("**/rest/v1/classes*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "class-1",
+              academic_year_id: "year-1",
+              semester_id: "semester-1",
+              grade_level: 2,
+              name: "Kelas 2A",
+              homeroom_teacher_id: null,
+              template_group: "lower_primary",
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
   })
   await page.route("**/rest/v1/students*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? ["Ani", "Budi", "Citra"].map((name, index) => ({
+            id: `student-${index + 1}`,
+            full_name: name,
+            nis: `100${index + 1}`,
+            nisn: null,
+            gender: index === 1 ? "male" : "female",
+            birth_place: null,
+            birth_date: null,
+            religion: null,
+            address: null,
+            father_name: null,
+            mother_name: null,
+            guardian_name: null,
+            is_active: true,
+            created_at: "2026-09-02T00:00:00.000Z",
+            updated_at: "2026-09-02T00:00:00.000Z",
+          }))
+        : [],
+    })
   })
   await page.route("**/rest/v1/class_members*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [1, 2, 3].map((number) => ({
+            id: `member-${number}`,
+            student_id: `student-${number}`,
+            class_id: "class-1",
+            semester_id: "semester-1",
+            created_at: "2026-09-02T00:00:00.000Z",
+            updated_at: "2026-09-02T00:00:00.000Z",
+          }))
+        : [],
+    })
   })
   await page.route("**/rest/v1/subjects*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "subject-1",
+              name: "Matematika",
+              code: "MTK",
+              is_local_content: false,
+              display_order: 1,
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
   })
   await page.route("**/rest/v1/teacher_assignments*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "assignment-1",
+              teacher_id: "teacher-1",
+              class_id: "class-1",
+              subject_id: "subject-1",
+              academic_year_id: "year-1",
+              semester_id: "semester-1",
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
   })
   await page.route("**/rest/v1/learning_outcomes*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "outcome-1",
+              subject_id: "subject-1",
+              grade_level: 2,
+              semester_id: "semester-1",
+              code: "CP-1",
+              title: "Bilangan dasar",
+              description: "Memahami bilangan dasar.",
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
+  })
+  await page.route("**/rest/v1/grading_rules*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [
+            {
+              id: "rule-1",
+              class_id: "class-1",
+              subject_id: "subject-1",
+              semester_id: "semester-1",
+              minimum_mastery_score: 65,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
+          ]
+        : [],
+    })
+  })
+  await page.route("**/rest/v1/grade_entries*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
@@ -282,6 +408,21 @@ async function openLearningOutcomes(page: Page, width: number) {
 
   await expect(
     page.getByRole("heading", { name: "CP / Deskripsi", exact: true }),
+  ).toBeVisible()
+}
+
+async function openGrades(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Input Nilai" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Input Nilai" }).click()
+  }
+  await expect(
+    page.getByRole("heading", { name: "Nilai seluruh siswa" }),
   ).toBeVisible()
 }
 
@@ -512,6 +653,32 @@ for (const viewport of settingsViewports) {
     await expect(page.getByLabel("Filter mata pelajaran")).toBeVisible()
     await expect(page.getByText("Belum ada CP")).toBeVisible()
     await expect(page.getByText(/tidak mengarang rumus nilai/i)).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Input Nilai nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openGrades(page, viewport.width)
+
+    await expect(
+      page.locator('input[aria-label="Nilai Ani"]:visible'),
+    ).toBeVisible()
+    await expect(
+      page.locator('input[aria-label="Nilai Budi"]:visible'),
+    ).toBeVisible()
+    await expect(
+      page.locator('input[aria-label="Nilai Citra"]:visible'),
+    ).toBeVisible()
+    await expect(page.getByText("A: 89–100")).toBeVisible()
+    await expect(page.getByText("B: 77–88")).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
   })
 }
 

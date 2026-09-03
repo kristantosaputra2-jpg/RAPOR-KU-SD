@@ -243,22 +243,22 @@ Fungsinya:
 
 ## Input Nilai Kelas 1–3
 
-- [ ] Buat halaman input nilai `lower_primary`
-- [ ] Tampilkan seluruh siswa dalam satu layar
-- [ ] Buat tabel responsif desktop
-- [ ] Buat tampilan mobile
-- [ ] Input nilai per siswa
-- [ ] Pilih CP
+- [x] Buat halaman input nilai `lower_primary`
+- [x] Tampilkan seluruh siswa dalam satu layar
+- [x] Buat tabel responsif desktop
+- [x] Buat tampilan mobile
+- [x] Input nilai per siswa
+- [x] Pilih CP
 - [ ] Generate deskripsi CP
 - [ ] Edit deskripsi manual
-- [ ] Simpan nilai
-- [ ] Tampilkan status `Menyimpan...`
-- [ ] Tampilkan status `Tersimpan`
-- [ ] Warning jika penyimpanan gagal
-- [ ] Validasi nilai 0–100
-- [ ] Test nilai kosong
-- [ ] Test nilai 0
-- [ ] Test nilai 100
+- [x] Simpan nilai
+- [x] Tampilkan status `Menyimpan...`
+- [x] Tampilkan status `Tersimpan`
+- [x] Warning jika penyimpanan gagal
+- [x] Validasi nilai 0–100
+- [x] Test nilai kosong
+- [x] Test nilai 0
+- [x] Test nilai 100
 
 ## Input Nilai Kelas 4–6
 
@@ -592,10 +592,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
 | Supabase | In Progress | 99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia |
 | Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai |
-| Grade Engine | In Progress | 25% | Rumus rata-rata 0–100 dan predikat A–D berdasarkan KKM sudah final dan teruji; UI input menyusul |
+| Grade Engine | In Progress | 50% | Input nilai kelas 1–3, rata-rata 0–100, dan predikat A–D berdasarkan KKM sudah tersedia; deskripsi dan kelas 4–6 menyusul |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 52% | 126 unit/integration test dan 38 E2E responsif lulus; rumus nilai mencakup batas 0, 100, KKM 60, 65, dan 70 |
+| Testing | In Progress | 55% | 130 unit/integration test dan 42 E2E responsif lulus termasuk Input Nilai kelas 1–3 |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -722,6 +722,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tambahkan RLS: Admin dan guru yang ditugaskan dapat mengubah nilai; wali kelas hanya membaca nilai kelasnya; anonymous tidak memiliki akses.
 - [x] Verifikasi langsung di database bahwa guru yang ditugaskan dapat membaca KKM dan menyimpan nilai 88; seluruh fixture uji berhasil di-rollback.
 - [x] Verifikasi 126 unit/integration test lulus termasuk nilai kosong, 0, 100, rata-rata, input tidak valid, dan batas predikat contoh.
+- [x] Buat halaman Input Nilai kelas 1–3 yang menampilkan seluruh siswa sekaligus, memilih kelas/mapel/CP, dan menyimpan nilai secara massal.
+- [x] Gunakan kartu siswa pada HP dan tabel pada desktop agar nama siswa serta kolom nilai tetap mudah dibaca tanpa horizontal scroll ekstrem.
+- [x] Tampilkan rata-rata dan predikat langsung saat angka diubah, serta status `Menyimpan...`, sukses, dan error yang mudah dipahami.
+- [x] Hubungkan Guru Mata Pelajaran langsung ke layar Input Nilai sesuai penugasan yang dibatasi RLS.
+- [x] Verifikasi 130 unit/integration test dan 42 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Input Nilai kelas 1–3.
 
 ---
 
