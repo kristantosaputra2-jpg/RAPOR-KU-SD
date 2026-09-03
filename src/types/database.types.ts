@@ -53,6 +53,42 @@ export type Database = {
           },
         ]
       }
+      assessment_components: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          display_order: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           academic_year_id: string
@@ -244,6 +280,47 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grading_settings: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          kkm_mode: string
+          semester_id: string
+          single_kkm: number | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          kkm_mode: string
+          semester_id: string
+          single_kkm?: number | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          kkm_mode?: string
+          semester_id?: string
+          single_kkm?: number | null
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grading_settings_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: true
+            referencedRelation: "semesters"
             referencedColumns: ["id"]
           },
         ]
@@ -693,6 +770,54 @@ export type Database = {
           updated_by?: string
         }
         Relationships: []
+      }
+      subject_kkm_rules: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          minimum_mastery_score: number
+          semester_id: string
+          subject_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          minimum_mastery_score: number
+          semester_id: string
+          subject_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          minimum_mastery_score?: number
+          semester_id?: string
+          subject_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_kkm_rules_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_kkm_rules_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       teacher_assignments: {
         Row: {

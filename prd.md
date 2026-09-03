@@ -1,4 +1,5 @@
 # PRD — Aplikasi Rapor SD Kelas 1–6
+
 **Versi:** 0.4  
 **Status:** Requirement Utama Gabungan Kelas 1–3 dan 4–6  
 **Tahap:** Belum Coding
@@ -430,12 +431,22 @@ Fokus pada:
 
 Tampilan kandidat:
 
-| No | Siswa | Nilai | CP | Deskripsi | Status |
-|---|---|---:|---|---|---|
+| No  | Siswa | Nilai | CP  | Deskripsi | Status |
+| --- | ----- | ----: | --- | --------- | ------ |
 
 Deskripsi dibuat otomatis tetapi dapat diedit guru.
 
-Aturan final nilai disesuaikan dengan format rapor terbaru yang dipilih sekolah.
+Keputusan terbaru sekolah pada 3 September 2026:
+
+- setiap CP aktif memiliki nilai Pengetahuan dan nilai Keterampilan;
+- jumlah kolom mengikuti jumlah CP aktif dan tidak dibatasi lima;
+- rata-rata, predikat, dan deskripsi Pengetahuan dihitung serta ditampilkan terpisah dari Keterampilan;
+- kedua bagian memakai KKM yang sama untuk mata pelajaran tersebut.
+
+Sekolah memilih salah satu konfigurasi KKM per semester:
+
+- `single`: satu KKM berlaku untuk semua mata pelajaran;
+- `multi`: setiap mata pelajaran memiliki KKM sendiri.
 
 ---
 
@@ -476,7 +487,7 @@ Aplikasi baru harus mampu menangani nilai per learning outcome bila dibutuhkan.
 Contoh:
 
 | Siswa | CP/KD 1 | CP/KD 2 | CP/KD 3 | Nilai Akhir | Predikat |
-|---|---:|---:|---:|---:|---|
+| ----- | ------: | ------: | ------: | ----------: | -------- |
 
 ## 18.3 Pengolahan Nilai
 
@@ -487,6 +498,8 @@ Sistem menghitung otomatis:
 - capaian terbaik;
 - capaian yang perlu ditingkatkan;
 - kandidat deskripsi.
+
+Pemisahan Pengetahuan dan Keterampilan, perhitungan rata-rata, predikat, serta deskripsi mengikuti keputusan yang sama dengan kelas 1–3. Jumlah CP tidak dibatasi lima dan mengikuti CP yang diaktifkan untuk semester tersebut.
 
 ---
 
@@ -1073,4 +1086,3 @@ Tahap berikutnya:
 - database schema final;
 - UI final;
 - deployment.
-

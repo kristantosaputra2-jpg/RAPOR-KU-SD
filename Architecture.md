@@ -1,4 +1,5 @@
 # Architecture.md — Aplikasi Rapor SD Kelas 1–6
+
 **Versi:** 0.1  
 **Status:** Arsitektur Sistem Awal  
 **Acuan utama:** `prd_rapor_sd_kelas_1-6_v0.4.md` dan `AGENTS.md`
@@ -746,15 +747,7 @@ Untuk mendukung perubahan kurikulum:
 assessment_components
 ```
 
-Contoh:
-
-- knowledge;
-- skills;
-- project;
-- daily score;
-- final score.
-
-Label dapat dikonfigurasi.
+MVP menyediakan dua data komponen awal: `knowledge` (Pengetahuan) dan `skills` (Keterampilan). Keduanya disimpan sebagai data konfigurasi, bukan kolom khusus, sehingga struktur tetap dapat mengikuti perubahan format rapor. Setiap CP aktif dinilai pada kedua komponen dan jumlah CP tidak dibatasi angka tetap.
 
 ---
 
@@ -773,15 +766,17 @@ Kemudian nilai akhir adalah hasil calculation.
 Keputusan formula yang disetujui pada 3 September 2026:
 
 - input nilai tetap berupa angka 0–100 per siswa dan CP;
-- nilai akhir merupakan rata-rata seluruh nilai CP yang terisi;
-- KKM disimpan secara configurable per kelas, mata pelajaran, dan semester pada `grading_rules`;
+- rata-rata, predikat, dan deskripsi dihitung terpisah untuk Pengetahuan dan Keterampilan;
+- setiap hasil komponen merupakan rata-rata nilai CP yang terisi pada komponen tersebut;
+- `grading_settings` memilih mode `single` atau `multi` per semester;
+- mode `single` memakai satu KKM untuk seluruh mata pelajaran, sedangkan mode `multi` membaca KKM per mata pelajaran dari `subject_kkm_rules`;
 - panjang interval predikat adalah `ceil((100 - KKM) / 3)`;
 - nilai di bawah KKM mendapat D (Kurang), kemudian C (Cukup), B (Baik), dan A (Sangat Baik);
 - ambang A–D dihitung saat digunakan dan tidak ditanam sebagai angka tetap.
 
 Nilai mentah disimpan pada `grade_entries`. Constraint gabungan memastikan siswa benar-benar berada di kelas dan semester tersebut serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
 
-Implementasi UI kelas 1–3 memilih scope kelas, mata pelajaran, dan satu CP, kemudian menampilkan seluruh siswa sekaligus. Layar HP memakai kartu per siswa tanpa membuka halaman siswa satu per satu; desktop memakai tabel. Nilai seluruh siswa disimpan dalam satu aksi eksplisit dengan status loading, sukses, dan error. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
+UI yang lama masih memilih satu CP. Tahap UI berikutnya akan memisahkan Pengetahuan dan Keterampilan serta menampilkan seluruh CP aktif tanpa membatasi jumlahnya, sambil tetap menjaga seluruh siswa terlihat pada HP dan desktop. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
 
 Hindari menyimpan terlalu banyak data derived jika bisa dihitung.
 
@@ -923,15 +918,15 @@ Contoh:
 
 ```ts
 type ReportViewModel = {
-  school: SchoolInfo;
-  student: StudentInfo;
-  academicPeriod: AcademicPeriod;
-  subjects: SubjectResult[];
-  attendance: AttendanceSummary;
-  extracurriculars: ExtracurricularResult[];
-  achievements: Achievement[];
-  homeroomNote?: string;
-};
+  school: SchoolInfo
+  student: StudentInfo
+  academicPeriod: AcademicPeriod
+  subjects: SubjectResult[]
+  attendance: AttendanceSummary
+  extracurriculars: ExtracurricularResult[]
+  achievements: Achievement[]
+  homeroomNote?: string
+}
 ```
 
 Template hanya menerima view model.
@@ -1443,6 +1438,7 @@ Wajib test:
 Critical path:
 
 ## Admin
+
 ```text
 login
 → setup
@@ -1452,6 +1448,7 @@ login
 ```
 
 ## Guru
+
 ```text
 login
 → class
@@ -1462,6 +1459,7 @@ login
 ```
 
 ## Wali
+
 ```text
 login
 → completeness
@@ -1628,17 +1626,20 @@ MVP fokus satu sekolah.
 Jika nanti berkembang:
 
 Phase 1:
+
 ```text
 single school per deployment
 ```
 
 Phase 2:
+
 ```text
 shared codebase template
 automated provisioning
 ```
 
 Phase 3:
+
 ```text
 optional multi-tenant SaaS
 ```
