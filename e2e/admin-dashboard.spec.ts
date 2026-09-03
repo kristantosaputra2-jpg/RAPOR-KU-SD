@@ -18,6 +18,7 @@ async function openAuthenticatedDashboard(
   page: Page,
   withClassPeriod = false,
   withGradeData = false,
+  gradeLevel = 2,
 ) {
   const supabaseUrl = process.env.RAPOTKU_E2E_SUPABASE_URL
 
@@ -97,22 +98,11 @@ async function openAuthenticatedDashboard(
               id: "class-1",
               academic_year_id: "year-1",
               semester_id: "semester-1",
-              grade_level: 2,
-              name: "Kelas 2A",
+              grade_level: gradeLevel,
+              name: `Kelas ${gradeLevel}A`,
               homeroom_teacher_id: null,
-              template_group: "lower_primary",
-              created_at: "2026-09-02T00:00:00.000Z",
-              updated_at: "2026-09-02T00:00:00.000Z",
-            },
-            {
-              id: "outcome-2",
-              subject_id: "subject-1",
-              grade_level: 2,
-              semester_id: "semester-1",
-              code: "CP-2",
-              title: "Soal cerita",
-              description: "menyelesaikan soal cerita.",
-              is_active: true,
+              template_group:
+                gradeLevel <= 3 ? "lower_primary" : "upper_primary",
               created_at: "2026-09-02T00:00:00.000Z",
               updated_at: "2026-09-02T00:00:00.000Z",
             },
@@ -206,7 +196,7 @@ async function openAuthenticatedDashboard(
             {
               id: "outcome-1",
               subject_id: "subject-1",
-              grade_level: 2,
+              grade_level: gradeLevel,
               semester_id: "semester-1",
               code: "CP-1",
               title: "Bilangan dasar",
@@ -218,7 +208,7 @@ async function openAuthenticatedDashboard(
             {
               id: "outcome-2",
               subject_id: "subject-1",
-              grade_level: 2,
+              grade_level: gradeLevel,
               semester_id: "semester-1",
               code: "CP-2",
               title: "Operasi hitung",
@@ -306,7 +296,7 @@ async function openAuthenticatedDashboard(
               learning_outcome_id: outcomeId,
               assessment_component_id: "component-knowledge",
               semester_id: "semester-1",
-              grade_level: 2,
+              grade_level: gradeLevel,
               score,
               created_at: "2026-09-02T00:00:00.000Z",
               updated_at: "2026-09-02T00:00:00.000Z",
@@ -788,6 +778,40 @@ for (const viewport of settingsViewports) {
       scrollWidth: document.documentElement.scrollWidth,
     }))
     expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+for (const gradeLevel of [4, 5, 6]) {
+  test(`Input Nilai kelas ${gradeLevel} memuat seluruh siswa dan dua komponen`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await openAuthenticatedDashboard(page, true, true, gradeLevel)
+    await openGrades(page, 1280)
+
+    await expect(page.getByLabel("Kelas")).toHaveValue("class-1")
+    await expect(
+      page.getByRole("option", {
+        name: `Kelas ${gradeLevel}A · Kelas ${gradeLevel}`,
+      }),
+    ).toBeAttached()
+
+    for (const studentName of ["Ani", "Budi", "Citra"]) {
+      await expect(
+        page.locator(
+          `input[aria-label="Pengetahuan Bilangan dasar ${studentName}"]:visible`,
+        ),
+      ).toBeVisible()
+    }
+
+    await page.getByRole("button", { name: "Keterampilan" }).click()
+    for (const studentName of ["Ani", "Budi", "Citra"]) {
+      await expect(
+        page.locator(
+          `input[aria-label="Keterampilan Bilangan dasar ${studentName}"]:visible`,
+        ),
+      ).toBeVisible()
+    }
   })
 }
 

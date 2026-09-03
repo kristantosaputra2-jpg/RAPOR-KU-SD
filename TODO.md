@@ -278,9 +278,9 @@ Fungsinya:
 - [x] Identifikasi capaian yang perlu ditingkatkan
 - [x] Generate deskripsi
 - [x] Edit deskripsi manual
-- [ ] Test workflow kelas 4
-- [ ] Test workflow kelas 5
-- [ ] Test workflow kelas 6
+- [x] Test workflow kelas 4
+- [x] Test workflow kelas 5
+- [x] Test workflow kelas 6
 
 ## Description Engine
 
