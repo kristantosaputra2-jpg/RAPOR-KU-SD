@@ -484,6 +484,29 @@ Pada tahap ini akses data siswa dibatasi untuk Admin aktif. Akses Wali Kelas dan
 
 ---
 
+## Implementasi Mata Pelajaran MVP
+
+Master mata pelajaran disimpan sebagai konfigurasi sekolah, bukan daftar tetap di frontend maupun migration.
+
+`subjects` menyimpan:
+
+```text
+id
+name
+code (nullable)
+is_local_content
+display_order
+is_active
+created_by / updated_by
+created_at / updated_at
+```
+
+Nama wajib unik tanpa membedakan huruf besar-kecil. Kode bersifat opsional dan, jika diisi, juga unik tanpa membedakan huruf besar-kecil. `is_local_content` membedakan muatan lokal tanpa membuat tabel atau workflow terpisah, sedangkan `display_order` mengatur urutan tampilan rapor tanpa bergantung pada nama mapel.
+
+Pada tahap ini Admin aktif dapat mengelola master mata pelajaran. Pengguna aktif yang sudah login dapat membaca mapel aktif sebagai persiapan workflow penugasan. Hubungan mapel ke kelas dan guru tetap dipisahkan ke `teacher_assignments` pada tahap berikutnya.
+
+---
+
 # 15. Data Ownership
 
 Setiap data harus mempunyai konteks yang jelas.

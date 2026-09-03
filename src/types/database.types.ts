@@ -380,6 +380,45 @@ export type Database = {
         }
         Relationships: []
       }
+      subjects: {
+        Row: {
+          code: string | null
+          created_at: string
+          created_by: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_local_content: boolean
+          name: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          created_by: string
+          display_order: number
+          id?: string
+          is_active?: boolean
+          is_local_content?: boolean
+          name: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          created_by?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_local_content?: boolean
+          name?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: []
+      }
       teacher_profiles: {
         Row: {
           created_at: string

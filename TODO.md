@@ -217,12 +217,12 @@ Fungsinya:
 
 ## Mata Pelajaran
 
-- [ ] Buat master mata pelajaran
-- [ ] Mata pelajaran configurable
-- [ ] Tambah muatan lokal
+- [x] Buat master mata pelajaran
+- [x] Mata pelajaran configurable
+- [x] Tambah muatan lokal
 - [ ] Assign mata pelajaran ke kelas
 - [ ] Assign guru ke mapel
-- [ ] Jangan hardcode daftar mapel
+- [x] Jangan hardcode daftar mapel
 
 ## Learning Outcomes / CP
 
@@ -588,12 +588,12 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Database Design | Todo | 0% | Menunggu finalisasi rule |
 | Permissions | Todo | 0% | Perlu dokumen khusus |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
-| Supabase | In Progress | 94% | Auth, sekolah, periode akademik, guru, kelas, siswa, audit, dan RLS Admin terkait sudah tersedia |
-| Master Data | In Progress | 65% | Identitas sekolah, periode akademik, guru, kelas, dan siswa selesai; mapel dan assignment mapel belum dibuat |
+| Supabase | In Progress | 96% | Auth, sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, audit, dan RLS Admin terkait sudah tersedia |
+| Master Data | In Progress | 80% | Identitas sekolah, periode akademik, guru, kelas, siswa, dan mata pelajaran selesai; assignment mapel belum dibuat |
 | Grade Engine | Todo | 0% | Menunggu formula final |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 35% | 89 unit/integration test dan 26 E2E responsif termasuk Data Siswa lulus |
+| Testing | In Progress | 40% | 100 unit/integration test dan 30 E2E responsif termasuk Mata Pelajaran lulus |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -698,6 +698,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tambahkan validasi NIS/NISN, audit, indeks, explicit grants, dan RLS Admin; anonymous tidak memperoleh akses data siswa.
 - [x] Buat halaman Data Siswa mobile-first dengan pencarian, filter kelas/status, tambah/edit, penempatan kelas, nonaktifkan/aktifkan kembali, loading, error, success, dan empty state.
 - [x] Verifikasi 89 unit/integration test dan 26 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Data Siswa.
+- [x] Buat tabel `subjects` tanpa data mapel bawaan, dengan nama/kode configurable, penanda muatan lokal, urutan tampilan, status aktif, audit, constraint, explicit grants, dan RLS.
+- [x] Buat halaman Mata Pelajaran mobile-first dengan pencarian, filter jenis/status, tambah/edit, nonaktifkan/aktifkan kembali, loading, retry, error, success, dan empty state.
+- [x] Pertahankan assignment mata pelajaran ke kelas dan guru sebagai tahap berikutnya agar scope tahap ini tetap fokus.
+- [x] Verifikasi 100 unit/integration test dan 30 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Mata Pelajaran.
 
 ---
 

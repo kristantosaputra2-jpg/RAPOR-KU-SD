@@ -93,6 +93,9 @@ async function openAuthenticatedDashboard(page: Page, withClassPeriod = false) {
   await page.route("**/rest/v1/class_members*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/subjects*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -224,6 +227,22 @@ async function openStudents(page: Page, width: number) {
   }
 
   await expect(page.getByRole("heading", { name: "Data Siswa" })).toBeVisible()
+}
+
+async function openSubjects(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Mata Pelajaran" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Mata Pelajaran" }).click()
+  }
+
+  await expect(
+    page.getByRole("heading", { name: "Mata Pelajaran", exact: true }),
+  ).toBeVisible()
 }
 
 const mobileViewports = [
@@ -385,6 +404,34 @@ for (const viewport of settingsViewports) {
     await expect(page.getByRole("dialog")).toBeVisible()
     await expect(page.getByLabel(/Nama Lengkap/)).toBeVisible()
     await expect(page.getByLabel(/Kelas Semester Aktif/)).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Mata Pelajaran nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page)
+    await openSubjects(page, viewport.width)
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+    await expect(page.getByLabel("Cari mata pelajaran")).toBeVisible()
+    await expect(page.getByLabel("Filter jenis mata pelajaran")).toBeVisible()
+    await expect(page.getByText("Belum ada mata pelajaran")).toBeVisible()
+
+    await page
+      .getByRole("button", { name: "Tambah Mata Pelajaran" })
+      .first()
+      .click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await expect(page.getByLabel(/Nama Mata Pelajaran/)).toBeVisible()
+    await expect(
+      page.getByLabel(/Ini mata pelajaran muatan lokal/),
+    ).toBeVisible()
   })
 }
 

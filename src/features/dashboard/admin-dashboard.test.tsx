@@ -36,6 +36,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -63,6 +64,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -87,6 +89,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -110,6 +113,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -131,6 +135,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={onOpenTeachers}
         onOpenClasses={vi.fn()}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -152,6 +157,7 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={onOpenClasses}
         onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
@@ -173,11 +179,36 @@ describe("AdminDashboard", () => {
         onOpenTeachers={vi.fn()}
         onOpenClasses={vi.fn()}
         onOpenStudents={onOpenStudents}
+        onOpenSubjects={vi.fn()}
       />,
     )
 
     await user.click(screen.getAllByRole("button", { name: "Data Siswa" })[0])
 
     expect(onOpenStudents).toHaveBeenCalledOnce()
+  })
+
+  it("membuka Mata Pelajaran dari navigasi", async () => {
+    const user = userEvent.setup()
+    const onOpenSubjects = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
+        onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
+        onOpenSubjects={onOpenSubjects}
+      />,
+    )
+
+    await user.click(
+      screen.getAllByRole("button", { name: "Mata Pelajaran" })[0],
+    )
+
+    expect(onOpenSubjects).toHaveBeenCalledOnce()
   })
 })
