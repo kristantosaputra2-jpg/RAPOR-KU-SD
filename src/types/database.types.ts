@@ -120,6 +120,134 @@ export type Database = {
           },
         ]
       }
+      grade_entries: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          grade_level: number
+          id: string
+          learning_outcome_id: string
+          score: number
+          semester_id: string
+          student_id: string
+          subject_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          grade_level: number
+          id?: string
+          learning_outcome_id: string
+          score: number
+          semester_id: string
+          student_id: string
+          subject_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          grade_level?: number
+          id?: string
+          learning_outcome_id?: string
+          score?: number
+          semester_id?: string
+          student_id?: string
+          subject_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grade_entries_class_scope_fkey"
+            columns: ["class_id", "semester_id", "grade_level"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "semester_id", "grade_level"]
+          },
+          {
+            foreignKeyName: "grade_entries_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "grade_entries_outcome_scope_fkey"
+            columns: [
+              "learning_outcome_id",
+              "subject_id",
+              "semester_id",
+              "grade_level",
+            ]
+            isOneToOne: false
+            referencedRelation: "learning_outcomes"
+            referencedColumns: [
+              "id",
+              "subject_id",
+              "semester_id",
+              "grade_level",
+            ]
+          },
+        ]
+      }
+      grading_rules: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          minimum_mastery_score: number
+          semester_id: string
+          subject_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          minimum_mastery_score: number
+          semester_id: string
+          subject_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          minimum_mastery_score?: number
+          semester_id?: string
+          subject_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grading_rules_class_semester_fkey"
+            columns: ["class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "semester_id"]
+          },
+          {
+            foreignKeyName: "grading_rules_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_outcomes: {
         Row: {
           code: string | null

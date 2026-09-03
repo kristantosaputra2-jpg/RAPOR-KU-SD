@@ -770,6 +770,17 @@ grade_entries
 
 Kemudian nilai akhir adalah hasil calculation.
 
+Keputusan formula yang disetujui pada 3 September 2026:
+
+- input nilai tetap berupa angka 0–100 per siswa dan CP;
+- nilai akhir merupakan rata-rata seluruh nilai CP yang terisi;
+- KKM disimpan secara configurable per kelas, mata pelajaran, dan semester pada `grading_rules`;
+- panjang interval predikat adalah `ceil((100 - KKM) / 3)`;
+- nilai di bawah KKM mendapat D (Kurang), kemudian C (Cukup), B (Baik), dan A (Sangat Baik);
+- ambang A–D dihitung saat digunakan dan tidak ditanam sebagai angka tetap.
+
+Nilai mentah disimpan pada `grade_entries`. Constraint gabungan memastikan siswa benar-benar berada di kelas dan semester tersebut serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
+
 Hindari menyimpan terlalu banyak data derived jika bisa dihitung.
 
 Namun derived value boleh disimpan jika:

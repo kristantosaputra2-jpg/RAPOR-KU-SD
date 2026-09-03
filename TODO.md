@@ -48,7 +48,8 @@ Fungsinya:
 - [ ] Finalisasi field rapor terbaru yang benar-benar dipakai
 - [ ] Finalisasi struktur output rapor
 - [ ] Finalisasi struktur leger
-- [ ] Finalisasi formula nilai
+- [x] Finalisasi formula nilai
+  - Nilai akhir adalah rata-rata nilai CP yang terisi pada skala 0–100. Predikat A–D memakai panjang interval `ceil((100 - KKM) / 3)` sesuai contoh KKM 60, 65, dan 70 yang disetujui user.
 - [ ] Finalisasi aturan CP/deskripsi otomatis
 - [ ] Buat `database.md`
 - [ ] Buat `permissions.md`
@@ -456,8 +457,8 @@ Fungsinya:
 
 ## Testing
 
-- [ ] Unit test grade calculation
-- [ ] Unit test predicate
+- [x] Unit test grade calculation
+- [x] Unit test predicate
 - [ ] Unit test CP selector
 - [ ] Unit test description
 - [ ] Unit test completeness
@@ -586,15 +587,15 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | PRD | Done | 100% | PRD gabungan kelas 1–6 tersedia |
 | AGENTS | Done | 100% | Instruksi developer/AI tersedia |
 | Architecture | Done | 100% | Arsitektur awal tersedia |
-| Database Design | In Progress | 20% | Master CP generik sudah tersedia; formula nilai dan output rapor masih menunggu finalisasi |
-| Permissions | In Progress | 50% | RLS penugasan dan CP membatasi guru ke kelas, mapel, jenjang, serta semester aktif yang relevan; permission nilai menyusul |
+| Database Design | In Progress | 35% | Master CP, aturan KKM, dan nilai mentah sudah tersedia; output rapor masih menunggu finalisasi |
+| Permissions | In Progress | 65% | RLS nilai membatasi perubahan ke Admin atau guru yang ditugaskan; wali kelas hanya dapat memantau kelasnya |
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
 | Supabase | In Progress | 99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia |
 | Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai |
-| Grade Engine | Todo | 0% | Menunggu formula final |
+| Grade Engine | In Progress | 25% | Rumus rata-rata 0–100 dan predikat A–D berdasarkan KKM sudah final dan teruji; UI input menyusul |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 50% | 116 unit/integration test dan 38 E2E responsif termasuk Master CP lulus |
+| Testing | In Progress | 52% | 126 unit/integration test dan 38 E2E responsif lulus; rumus nilai mencakup batas 0, 100, KKM 60, 65, dan 70 |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -714,6 +715,13 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat halaman CP / Deskripsi mobile-first dengan pencarian, filter, tambah, edit, aktif/nonaktif, validasi prasyarat, loading, retry, error, success, dan empty state.
 - [x] Tunda generator deskripsi sampai workflow nilai dan formula penilaian disetujui agar aplikasi tidak mengarang aturan akademik.
 - [x] Verifikasi 116 unit/integration test serta 38 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah tahap Master CP.
+- [x] Tetapkan nilai akhir sebagai rata-rata seluruh nilai CP yang terisi pada skala 0–100.
+- [x] Terapkan predikat A–D secara dinamis dari KKM dengan panjang interval `ceil((100 - KKM) / 3)` tanpa ambang nilai yang di-hardcode.
+- [x] Buat tabel `grading_rules` untuk KKM per kelas, mapel, dan semester serta tabel `grade_entries` untuk nilai mentah per siswa dan CP.
+- [x] Tambahkan constraint database agar nilai hanya 0–100 dan relasi siswa, kelas, CP, mapel, jenjang, serta semester selalu konsisten.
+- [x] Tambahkan RLS: Admin dan guru yang ditugaskan dapat mengubah nilai; wali kelas hanya membaca nilai kelasnya; anonymous tidak memiliki akses.
+- [x] Verifikasi langsung di database bahwa guru yang ditugaskan dapat membaca KKM dan menyimpan nilai 88; seluruh fixture uji berhasil di-rollback.
+- [x] Verifikasi 126 unit/integration test lulus termasuk nilai kosong, 0, 100, rata-rata, input tidak valid, dan batas predikat contoh.
 
 ---
 
