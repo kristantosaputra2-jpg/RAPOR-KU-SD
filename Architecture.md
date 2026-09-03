@@ -734,7 +734,7 @@ Implementasi Master CP MVP saat ini menggunakan field di atas ditambah audit `cr
 
 Struktur tetap generik dan tidak menanam KI/KD. Admin aktif dapat mengelola seluruh CP. Guru dengan akun yang terhubung ke penugasan aktif hanya dapat membaca, menambah, dan mengubah CP yang cocok dengan mata pelajaran, jenjang kelas, serta semester penugasannya. Guru non-Admin hanya melihat CP aktif. CP dinonaktifkan, bukan dihapus, untuk menjaga riwayat.
 
-`report_descriptions`, pemilihan CP berdasarkan nilai, serta generator draft deskripsi tetap menjadi tahap terpisah. Tahap tersebut baru dibangun setelah workflow input nilai dan formula penilaian disetujui agar tidak mengarang aturan akademik.
+`report_descriptions` sudah diimplementasikan setelah workflow nilai disetujui. Draft memilih CP bernilai tertinggi sebagai capaian sangat baik dan CP bernilai terendah sebagai bagian yang perlu ditingkatkan. Jika hanya satu CP yang bernilai, draft hanya menyebut capaian sangat baik. Jika terjadi nilai seri, urutan CP yang stabil menentukan pilihan agar hasil konsisten.
 
 ---
 
@@ -811,6 +811,8 @@ Tujuan:
 - hasil sistem dapat disimpan;
 - edit manual guru tidak hilang;
 - regenerate tidak otomatis overwrite.
+
+Implementasi menyimpan satu deskripsi per siswa, kelas, mata pelajaran, dan semester. `strongest_outcome_id` dan `weakest_outcome_id` mencatat sumber draft. Deskripsi final tetap editable; pembuatan ulang draft yang berbeda dari hasil edit guru harus melalui konfirmasi eksplisit.
 
 ---
 

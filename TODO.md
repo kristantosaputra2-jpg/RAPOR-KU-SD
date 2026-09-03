@@ -50,7 +50,8 @@ Fungsinya:
 - [ ] Finalisasi struktur leger
 - [x] Finalisasi formula nilai
   - Nilai akhir adalah rata-rata nilai CP yang terisi pada skala 0–100. Predikat A–D memakai panjang interval `ceil((100 - KKM) / 3)` sesuai contoh KKM 60, 65, dan 70 yang disetujui user.
-- [ ] Finalisasi aturan CP/deskripsi otomatis
+- [x] Finalisasi aturan CP/deskripsi otomatis
+  - CP bernilai tertinggi menjadi capaian sangat baik dan CP bernilai terendah menjadi bagian yang perlu ditingkatkan. Draft dapat diedit dan tidak menimpa edit manual tanpa konfirmasi.
 - [ ] Buat `database.md`
 - [ ] Buat `permissions.md`
 - [ ] Buat `report-templates.md`
@@ -249,8 +250,8 @@ Fungsinya:
 - [x] Buat tampilan mobile
 - [x] Input nilai per siswa
 - [x] Pilih CP
-- [ ] Generate deskripsi CP
-- [ ] Edit deskripsi manual
+- [x] Generate deskripsi CP
+- [x] Edit deskripsi manual
 - [x] Simpan nilai
 - [x] Tampilkan status `Menyimpan...`
 - [x] Tampilkan status `Tersimpan`
@@ -459,8 +460,8 @@ Fungsinya:
 
 - [x] Unit test grade calculation
 - [x] Unit test predicate
-- [ ] Unit test CP selector
-- [ ] Unit test description
+- [x] Unit test CP selector
+- [x] Unit test description
 - [ ] Unit test completeness
 - [ ] Integration test student-to-report flow
 - [ ] Permission/RLS test
@@ -592,10 +593,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Frontend Foundation | Done | 100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap |
 | Supabase | In Progress | 99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia |
 | Master Data | Done | 100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai |
-| Grade Engine | In Progress | 50% | Input nilai kelas 1–3, rata-rata 0–100, dan predikat A–D berdasarkan KKM sudah tersedia; deskripsi dan kelas 4–6 menyusul |
+| Grade Engine | In Progress | 70% | Input nilai kelas 1–3, rata-rata 0–100, predikat A–D berdasarkan KKM, serta deskripsi CP otomatis yang dapat diedit sudah tersedia; kelas 4–6 menyusul |
 | Report Engine | Todo | 0% | Menunggu template final |
 | Leger | Todo | 0% | Struktur awal sudah diketahui |
-| Testing | In Progress | 55% | 130 unit/integration test dan 42 E2E responsif lulus termasuk Input Nilai kelas 1–3 |
+| Testing | In Progress | 58% | 136 unit/integration test dan 42 E2E responsif lulus termasuk deskripsi CP editable |
 | Cloudflare | Todo | 0% | Belum deployment |
 | Production | Todo | 0% | Belum siap |
 
@@ -727,6 +728,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tampilkan rata-rata dan predikat langsung saat angka diubah, serta status `Menyimpan...`, sukses, dan error yang mudah dipahami.
 - [x] Hubungkan Guru Mata Pelajaran langsung ke layar Input Nilai sesuai penugasan yang dibatasi RLS.
 - [x] Verifikasi 130 unit/integration test dan 42 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap Input Nilai kelas 1–3.
+- [x] Buat tabel `report_descriptions` yang menyimpan draft sistem dan deskripsi final guru secara terpisah dengan relasi, audit, indeks, explicit grants, dan RLS; foreign key memastikan CP sumber berasal dari mapel, jenjang, dan semester yang sama.
+- [x] Gunakan CP dengan nilai tertinggi dan terendah untuk membuat draft: “Menunjukkan capaian sangat baik dalam [CP tertinggi] dan perlu meningkatkan [CP terendah].”
+- [x] Pertahankan deskripsi final hasil edit guru; pembuatan ulang draft yang berbeda memerlukan konfirmasi eksplisit.
+- [x] Sediakan editor deskripsi per siswa dalam modal desktop atau drawer HP dari halaman Input Nilai.
+- [x] Verifikasi 136 unit/integration test dan 42 E2E responsif pada 360px, 390px, 768px, dan 1280px setelah tahap deskripsi CP editable.
 
 ---
 

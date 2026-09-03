@@ -104,6 +104,18 @@ async function openAuthenticatedDashboard(
               created_at: "2026-09-02T00:00:00.000Z",
               updated_at: "2026-09-02T00:00:00.000Z",
             },
+            {
+              id: "outcome-2",
+              subject_id: "subject-1",
+              grade_level: 2,
+              semester_id: "semester-1",
+              code: "CP-2",
+              title: "Soal cerita",
+              description: "menyelesaikan soal cerita.",
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
           ]
         : [],
     })
@@ -203,6 +215,18 @@ async function openAuthenticatedDashboard(
               created_at: "2026-09-02T00:00:00.000Z",
               updated_at: "2026-09-02T00:00:00.000Z",
             },
+            {
+              id: "outcome-2",
+              subject_id: "subject-1",
+              grade_level: 2,
+              semester_id: "semester-1",
+              code: "CP-2",
+              title: "Operasi hitung",
+              description: "Menerapkan operasi hitung sederhana.",
+              is_active: true,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            },
           ]
         : [],
     })
@@ -226,6 +250,30 @@ async function openAuthenticatedDashboard(
     })
   })
   await page.route("**/rest/v1/grade_entries*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: withGradeData
+        ? [1, 2, 3].flatMap((studentNumber) =>
+            [
+              ["outcome-1", 90],
+              ["outcome-2", 70],
+            ].map(([outcomeId, score], index) => ({
+              id: `grade-${studentNumber}-${index + 1}`,
+              student_id: `student-${studentNumber}`,
+              class_id: "class-1",
+              subject_id: "subject-1",
+              learning_outcome_id: outcomeId,
+              semester_id: "semester-1",
+              grade_level: 2,
+              score,
+              created_at: "2026-09-02T00:00:00.000Z",
+              updated_at: "2026-09-02T00:00:00.000Z",
+            })),
+          )
+        : [],
+    })
+  })
+  await page.route("**/rest/v1/report_descriptions*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
@@ -673,6 +721,12 @@ for (const viewport of settingsViewports) {
     ).toBeVisible()
     await expect(page.getByText("A: 89–100")).toBeVisible()
     await expect(page.getByText("B: 77–88")).toBeVisible()
+
+    await page.locator("button:visible", { hasText: "Buat" }).first().click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await expect(page.getByLabel("Deskripsi final")).toHaveValue(
+      /perlu meningkatkan/,
+    )
 
     const layout = await page.evaluate(() => ({
       clientWidth: document.documentElement.clientWidth,

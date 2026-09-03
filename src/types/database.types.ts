@@ -383,6 +383,93 @@ export type Database = {
         }
         Relationships: []
       }
+      report_descriptions: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          final_description: string
+          generated_description: string
+          grade_level: number
+          id: string
+          semester_id: string
+          strongest_outcome_id: string | null
+          student_id: string
+          subject_id: string
+          updated_at: string
+          updated_by: string
+          weakest_outcome_id: string | null
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          final_description: string
+          generated_description: string
+          grade_level: number
+          id?: string
+          semester_id: string
+          strongest_outcome_id?: string | null
+          student_id: string
+          subject_id: string
+          updated_at?: string
+          updated_by: string
+          weakest_outcome_id?: string | null
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          final_description?: string
+          generated_description?: string
+          grade_level?: number
+          id?: string
+          semester_id?: string
+          strongest_outcome_id?: string | null
+          student_id?: string
+          subject_id?: string
+          updated_at?: string
+          updated_by?: string
+          weakest_outcome_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_descriptions_class_scope_fkey"
+            columns: ["class_id", "semester_id", "grade_level"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "semester_id", "grade_level"]
+          },
+          {
+            foreignKeyName: "report_descriptions_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "report_descriptions_strongest_outcome_id_fkey"
+            columns: ["strongest_outcome_id"]
+            isOneToOne: false
+            referencedRelation: "learning_outcomes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_descriptions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_descriptions_weakest_outcome_id_fkey"
+            columns: ["weakest_outcome_id"]
+            isOneToOne: false
+            referencedRelation: "learning_outcomes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       public_school_identity: {
         Row: {
           logo_url: string | null

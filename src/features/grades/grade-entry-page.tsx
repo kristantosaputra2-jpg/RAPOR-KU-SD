@@ -5,11 +5,22 @@ import {
   LoaderCircle,
   LogOut,
   Save,
+  Sparkles,
+  X,
 } from "lucide-react"
 
 import { getTeacherAssignments } from "@/features/assignments/assignment.service"
 import type { UserRole } from "@/features/auth/auth.types"
 import { getClasses } from "@/features/classes/class.service"
+import {
+  generateDescriptionDraft,
+  type OutcomeScore,
+} from "@/features/grades/description-generation"
+import {
+  getReportDescriptions,
+  saveReportDescription,
+  type ReportDescription,
+} from "@/features/grades/description.service"
 import {
   calculateFinalGrade,
   calculatePredicate,
@@ -73,6 +84,9 @@ export function GradeEntryPage({
   const [subjectId, setSubjectId] = useState("")
   const [outcomeId, setOutcomeId] = useState("")
   const [entries, setEntries] = useState<ReadonlyArray<GradeEntry>>([])
+  const [descriptions, setDescriptions] = useState<
+    ReadonlyArray<ReportDescription>
+  >([])
   const [rule, setRule] = useState<GradingRule | null>(null)
   const [kkmDraft, setKkmDraft] = useState("")
   const [scoreDrafts, setScoreDrafts] = useState<Record<string, string>>({})
@@ -81,6 +95,11 @@ export function GradeEntryPage({
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
+  const [editingStudentId, setEditingStudentId] = useState<string | null>(null)
+  const [generatedDraft, setGeneratedDraft] = useState("")
+  const [finalDraft, setFinalDraft] = useState("")
+  const [strongestOutcomeId, setStrongestOutcomeId] = useState("")
+  const [weakestOutcomeId, setWeakestOutcomeId] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -171,11 +190,16 @@ export function GradeEntryPage({
       subjectId,
       semesterId: selectedClass.semester_id,
     }
-    void Promise.all([getGradeEntries(scope), getGradingRule(scope)])
-      .then(([gradeEntries, gradingRule]) => {
+    void Promise.all([
+      getGradeEntries(scope),
+      getGradingRule(scope),
+      getReportDescriptions(scope),
+    ])
+      .then(([gradeEntries, gradingRule, reportDescriptions]) => {
         if (!mounted) return
         setEntries(gradeEntries)
         setRule(gradingRule)
+        setDescriptions(reportDescriptions)
         setKkmDraft(gradingRule?.minimum_mastery_score.toString() ?? "")
         const next: Record<string, string> = {}
         students.forEach((student) => {
@@ -269,6 +293,103 @@ export function GradeEntryPage({
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Nilai belum tersimpan.",
+      )
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  function outcomeScoresForStudent(studentId: string): OutcomeScore[] {
+    return entries
+      .filter((entry) => entry.student_id === studentId)
+      .map((entry) => {
+        const outcome = outcomeOptions.find(
+          (item) => item.id === entry.learning_outcome_id,
+        )
+        return outcome
+          ? {
+              outcomeId: outcome.id,
+              description: outcome.description,
+              score: entry.score,
+            }
+          : null
+      })
+      .filter((item): item is OutcomeScore => item !== null)
+  }
+
+  function generateForStudent(studentId: string, requireConfirmation: boolean) {
+    const existing = descriptions.find((item) => item.student_id === studentId)
+    if (
+      requireConfirmation &&
+      existing &&
+      existing.final_description !== existing.generated_description &&
+      !window.confirm(
+        "Deskripsi sudah diedit manual. Buat ulang akan mengganti isi editor. Lanjutkan?",
+      )
+    ) {
+      return
+    }
+    try {
+      const draft = generateDescriptionDraft(outcomeScoresForStudent(studentId))
+      setGeneratedDraft(draft.text)
+      setFinalDraft(draft.text)
+      setStrongestOutcomeId(draft.strongestOutcomeId)
+      setWeakestOutcomeId(draft.weakestOutcomeId)
+      setEditingStudentId(studentId)
+      setError("")
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Deskripsi belum dapat dibuat.",
+      )
+    }
+  }
+
+  function openDescription(studentId: string) {
+    const existing = descriptions.find((item) => item.student_id === studentId)
+    if (!existing) {
+      generateForStudent(studentId, false)
+      return
+    }
+    setGeneratedDraft(existing.generated_description)
+    setFinalDraft(existing.final_description)
+    setStrongestOutcomeId(existing.strongest_outcome_id ?? "")
+    setWeakestOutcomeId(existing.weakest_outcome_id)
+    setEditingStudentId(studentId)
+  }
+
+  async function handleSaveDescription() {
+    if (
+      !editingStudentId ||
+      !selectedClass ||
+      !subjectId ||
+      !strongestOutcomeId
+    )
+      return
+    setIsSaving(true)
+    setError("")
+    try {
+      const saved = await saveReportDescription(userId, {
+        studentId: editingStudentId,
+        classId: selectedClass.id,
+        subjectId,
+        semesterId: selectedClass.semester_id,
+        gradeLevel: selectedClass.grade_level,
+        strongestOutcomeId,
+        weakestOutcomeId,
+        generatedDescription: generatedDraft,
+        finalDescription: finalDraft,
+      })
+      setDescriptions((current) => [
+        ...current.filter((item) => item.student_id !== editingStudentId),
+        saved,
+      ])
+      setEditingStudentId(null)
+      setMessage("Deskripsi final berhasil disimpan.")
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Deskripsi belum tersimpan.",
       )
     } finally {
       setIsSaving(false)
@@ -538,13 +659,24 @@ export function GradeEntryPage({
                             }
                           />
                         </div>
-                        <div className="mt-3 flex gap-2 text-xs">
+                        <div className="mt-3 flex flex-wrap gap-2 text-xs">
                           <span className="rounded-full bg-[#f4f5f7] px-3 py-2 font-bold">
                             Rata-rata: {summary.finalGrade ?? "—"}
                           </span>
                           <span className="rounded-full bg-[var(--rapotku-brand-soft)] px-3 py-2 font-bold text-[var(--rapotku-brand)]">
                             Predikat: {summary.predicate ?? "—"}
                           </span>
+                          <button
+                            className="min-h-9 rounded-full border border-[var(--rapotku-border)] px-3 font-bold"
+                            type="button"
+                            onClick={() => openDescription(student.id)}
+                          >
+                            {descriptions.some(
+                              (item) => item.student_id === student.id,
+                            )
+                              ? "Edit deskripsi"
+                              : "Buat deskripsi"}
+                          </button>
                         </div>
                       </article>
                     )
@@ -559,6 +691,7 @@ export function GradeEntryPage({
                         <th className="px-5 py-4 text-center">Nilai CP</th>
                         <th className="px-5 py-4 text-center">Rata-rata</th>
                         <th className="px-5 py-4 text-center">Predikat</th>
+                        <th className="px-5 py-4 text-center">Deskripsi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--rapotku-border)]">
@@ -596,6 +729,19 @@ export function GradeEntryPage({
                             <td className="px-5 py-4 text-center font-bold text-[var(--rapotku-brand)]">
                               {summary.predicate ?? "—"}
                             </td>
+                            <td className="px-5 py-4 text-center">
+                              <button
+                                className="min-h-10 rounded-xl border border-[var(--rapotku-border)] px-3 text-sm font-bold"
+                                type="button"
+                                onClick={() => openDescription(student.id)}
+                              >
+                                {descriptions.some(
+                                  (item) => item.student_id === student.id,
+                                )
+                                  ? "Edit"
+                                  : "Buat"}
+                              </button>
+                            </td>
                           </tr>
                         )
                       })}
@@ -629,6 +775,77 @@ export function GradeEntryPage({
           </section>
         ) : null}
       </main>
+      {editingStudentId ? (
+        <div className="fixed inset-0 z-50 grid items-end bg-[#1d222b]/45 sm:place-items-center sm:p-4">
+          <section
+            className="max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-w-2xl sm:rounded-3xl sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="description-title"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-[var(--rapotku-brand)]">
+                  Draft otomatis
+                </p>
+                <h2 id="description-title" className="text-xl font-bold">
+                  Deskripsi{" "}
+                  {
+                    students.find((item) => item.id === editingStudentId)
+                      ?.full_name
+                  }
+                </h2>
+              </div>
+              <button
+                className="grid size-11 place-items-center rounded-xl border border-[var(--rapotku-border)]"
+                type="button"
+                aria-label="Tutup deskripsi"
+                onClick={() => setEditingStudentId(null)}
+              >
+                <X aria-hidden="true" size={20} />
+              </button>
+            </div>
+            <div className="mt-5 rounded-2xl bg-[#f7f8fa] p-4">
+              <p className="text-xs font-bold uppercase text-[var(--rapotku-muted)]">
+                Hasil sistem
+              </p>
+              <p className="mt-2 text-sm leading-6">{generatedDraft}</p>
+            </div>
+            <label className="mt-5 block text-sm font-bold">
+              Deskripsi final
+              <textarea
+                className="mt-2 min-h-36 w-full rounded-2xl border border-[var(--rapotku-border)] p-4 text-sm leading-6 focus:border-[var(--rapotku-brand)] focus:outline-none"
+                maxLength={2000}
+                value={finalDraft}
+                onChange={(event) => setFinalDraft(event.target.value)}
+              />
+            </label>
+            <p className="mt-2 text-xs text-[var(--rapotku-muted)]">
+              Guru boleh memperbaiki kalimat sebelum menyimpan. Draft sistem
+              tetap disimpan terpisah.
+            </p>
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+              <button
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-border)] px-4 font-bold"
+                type="button"
+                onClick={() => generateForStudent(editingStudentId, true)}
+              >
+                <Sparkles aria-hidden="true" size={18} />
+                Buat ulang draft
+              </button>
+              <button
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white disabled:opacity-60"
+                type="button"
+                disabled={isSaving || !finalDraft.trim()}
+                onClick={() => void handleSaveDescription()}
+              >
+                <Save aria-hidden="true" size={18} />
+                {isSaving ? "Menyimpan..." : "Simpan deskripsi"}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </div>
   )
 }
