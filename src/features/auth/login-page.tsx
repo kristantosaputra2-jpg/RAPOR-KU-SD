@@ -48,7 +48,7 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[1.05fr_0.95fr]">
+    <main className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[1.05fr_0.95fr]">
       <section className="relative hidden min-h-screen overflow-hidden bg-[var(--rapotku-brand-strong)] p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
         <img
           className="absolute inset-0 size-full object-cover object-center"
@@ -95,7 +95,7 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
       </section>
 
       <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md rounded-[var(--rapotku-radius-card)] bg-white/60 p-1 backdrop-blur-[2px] sm:p-2 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
           <div className="mb-6 overflow-hidden rounded-3xl border border-[var(--rapotku-border)] bg-white shadow-[0_16px_38px_rgba(66,20,23,0.12)] lg:hidden">
             <img
               className="h-auto w-full"

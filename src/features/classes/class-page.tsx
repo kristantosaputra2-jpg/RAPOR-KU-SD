@@ -283,7 +283,7 @@ export function ClassPage({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
+    <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
       <header className="sticky top-0 z-20 border-b border-[var(--rapotku-border)] bg-white/95 backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-[1240px] items-center gap-3 px-4 sm:px-6 lg:px-8">
           <button

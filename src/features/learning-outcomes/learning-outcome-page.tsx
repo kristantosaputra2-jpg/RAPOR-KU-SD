@@ -226,7 +226,7 @@ export function LearningOutcomePage({
     activeSubjects.length === 0 || Object.keys(semesterLabels).length === 0
 
   return (
-    <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
+    <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
       <header className="sticky top-0 z-20 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
           <button

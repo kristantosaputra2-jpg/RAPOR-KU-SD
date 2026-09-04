@@ -394,7 +394,7 @@ export function AdminDashboard({
   const completedSetupSteps = (schoolName ? 1 : 0) + (hasActivePeriod ? 1 : 0)
 
   return (
-    <div className="min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
+    <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
         <Brand schoolName={schoolName} />
         <DashboardNavigation
@@ -544,7 +544,7 @@ export function AdminDashboard({
 
                 return (
                   <article
-                    className="rounded-2xl border border-[var(--rapotku-border)] bg-white p-4 shadow-[0_8px_24px_rgba(24,31,45,0.04)] sm:p-5"
+                    className="app-interactive-card rounded-2xl border border-[var(--rapotku-border)] bg-white p-4 shadow-[0_8px_24px_rgba(24,31,45,0.04)] sm:p-5"
                     key={card.label}
                   >
                     <div className="flex items-start justify-between gap-3">

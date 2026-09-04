@@ -416,6 +416,10 @@ Fungsinya:
 - [x] Standardisasi modal
 - [x] Standardisasi empty state
 - [x] Standardisasi toast/feedback
+- [x] Penyempurnaan visual aplikasi tanpa mengubah hero dan alur
+  - Outfit Variable dimuat lokal, kanvas memakai nuansa merah hangat, permukaan dan bayangan dipertegas secara halus, serta motion singkat memiliki fallback reduced-motion.
+  - Hero, struktur navigasi, field, urutan kerja, dan requirement produk tidak diubah.
+  - Lulus 168 unit/integration test, 65 E2E pada viewport 360px, 390px, 768px, dan 1280px, typecheck, lint, format, serta production build.
 - [x] Jadikan nama sekolah sebagai identitas utama aplikasi
   - `SD Negeri Tumbang Kawei` tersimpan sebagai konfigurasi Supabase dan tampil pada login, dashboard, pengaturan, serta judul browser tanpa hardcode pada source code.
 - [x] Gunakan ilustrasi sekolah pada login dan hero Dashboard Admin

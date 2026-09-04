@@ -3,6 +3,8 @@
 :root {
   color-scheme: light;
   font-family:
+    "Outfit Variable",
+    "Outfit",
     "Plus Jakarta Sans",
     "Segoe UI",
     system-ui,
@@ -11,16 +13,20 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 
-  --rapotku-brand: #c91d24;
-  --rapotku-brand-strong: #99151a;
+  --rapotku-brand: #c61f27;
+  --rapotku-brand-strong: #94161c;
   --rapotku-brand-soft: #fff0f1;
-  --rapotku-surface: #ffffff;
-  --rapotku-canvas: #f7f8fa;
-  --rapotku-text: #1d222b;
-  --rapotku-muted: #667085;
-  --rapotku-border: #e6e8ec;
+  --rapotku-surface: #fffdfd;
+  --rapotku-canvas: #f8f4f4;
+  --rapotku-text: #242127;
+  --rapotku-muted: #68636e;
+  --rapotku-border: #e9dfe1;
   --rapotku-success: #0f633e;
   --rapotku-warning: #854b00;
+  --rapotku-radius-card: 16px;
+  --rapotku-radius-control: 10px;
+  --rapotku-shadow-soft: 0 18px 48px rgba(112, 43, 48, 0.07);
+  --rapotku-shadow-lifted: 0 22px 54px rgba(112, 43, 48, 0.11);
 }
 
 * {
@@ -30,8 +36,11 @@
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--rapotku-canvas);
+  color: var(--rapotku-text);
+  font-variation-settings: "wght" 450;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -39,4 +48,157 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  transition:
+    transform 160ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px) scale(0.985);
+}
+
+input,
+select,
+textarea {
+  background-color: var(--rapotku-surface);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: #d9c6c9;
+}
+
+::selection {
+  background: #f6c9cc;
+  color: var(--rapotku-brand-strong);
+}
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  background-color: var(--rapotku-canvas);
+  background-image:
+    radial-gradient(
+      circle at 88% 3%,
+      rgba(198, 31, 39, 0.075),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 12% 96%,
+      rgba(206, 153, 55, 0.07),
+      transparent 22rem
+    );
+  background-attachment: fixed;
+}
+
+.app-shell header[class*="border-b"] {
+  border-color: rgba(224, 207, 210, 0.9);
+  background-color: rgba(255, 253, 253, 0.88);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.app-shell > main,
+.app-shell > div > main {
+  animation: page-reveal 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-shell :where(section, article)[class~="bg-white"] {
+  background-color: var(--rapotku-surface);
+  background-image: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #fffdfd 62%,
+    #fff9f9 100%
+  );
+  box-shadow: var(--rapotku-shadow-soft);
+}
+
+.app-shell :where(h1, h2) {
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.app-shell h1 {
+  font-variation-settings: "wght" 720;
+  line-height: 1.12;
+}
+
+.app-shell h2 {
+  font-variation-settings: "wght" 680;
+  line-height: 1.2;
+}
+
+.app-shell p {
+  text-wrap: pretty;
+}
+
+.app-interactive-card {
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-interactive-card:hover {
+    transform: translateY(-2px);
+    border-color: #dcc8cb;
+    box-shadow: var(--rapotku-shadow-lifted);
+  }
+}
+
+@keyframes page-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 639px) {
+  .app-shell {
+    background-attachment: scroll;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(198, 31, 39, 0.07),
+        transparent 16rem
+      ),
+      linear-gradient(180deg, #fbf7f7 0%, var(--rapotku-canvas) 28rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
