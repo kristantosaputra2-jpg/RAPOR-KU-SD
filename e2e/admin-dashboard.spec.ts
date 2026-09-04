@@ -311,6 +311,26 @@ async function openAuthenticatedDashboard(
   await page.route("**/rest/v1/attendance*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/extracurriculars*", async (route) => {
+    if (route.request().method() === "POST") {
+      await route.fulfill({
+        status: 201,
+        json: {
+          id: "extra-1",
+          school_id: "school-1",
+          name: "Pramuka",
+          is_active: true,
+          created_at: "2026-09-03T00:00:00.000Z",
+          updated_at: "2026-09-03T00:00:00.000Z",
+        },
+      })
+      return
+    }
+    await route.fulfill({ status: 200, json: [] })
+  })
+  await page.route("**/rest/v1/student_extracurriculars*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -521,6 +541,21 @@ async function openAttendance(page: Page, width: number) {
   }
   await expect(
     page.getByRole("heading", { name: "Absensi seluruh siswa" }),
+  ).toBeVisible()
+}
+
+async function openExtracurriculars(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Ekstrakurikuler" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Ekstrakurikuler" }).click()
+  }
+  await expect(
+    page.getByRole("heading", { name: "Ekstrakurikuler siswa" }),
   ).toBeVisible()
 }
 
@@ -861,6 +896,29 @@ for (const viewport of settingsViewports) {
     await expect(
       page.getByRole("button", { name: "Simpan Absensi" }),
     ).toBeVisible()
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Ekstrakurikuler nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openExtracurriculars(page, viewport.width)
+
+    await page.getByLabel("Nama ekstrakurikuler").fill("Pramuka")
+    await page.getByRole("button", { name: "Tambah" }).click()
+    await expect(page.getByLabel("Pilih ekstrakurikuler")).toHaveValue(
+      "extra-1",
+    )
+    await page.getByRole("checkbox", { name: /Ani/ }).check()
+    await expect(page.getByLabel("Predikat Ani")).toBeVisible()
+    await expect(page.getByLabel("Deskripsi Ani")).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
   })
 }
 

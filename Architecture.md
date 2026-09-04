@@ -416,6 +416,17 @@ report_status
 report_templates
 ```
 
+## Implementasi Ekstrakurikuler MVP
+
+`extracurriculars` menyimpan master kegiatan per sekolah. Penempatan dan hasil
+siswa disimpan terpisah di `student_extracurriculars`, terikat pada siswa,
+kelas, dan semester. Hasil terdiri dari `achievement` untuk predikat/capaian
+dan `description` untuk uraian rapor.
+
+Admin dapat mengelola master serta data siswa. Wali kelas hanya dapat membaca
+dan mengubah data ekstrakurikuler kelas yang menjadi tanggung jawabnya. Kedua
+tabel memakai RLS dan tidak dapat diakses pengguna anonim.
+
 Schema final masih TBD.
 
 ## Implementasi Data Guru MVP

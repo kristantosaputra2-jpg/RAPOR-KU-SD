@@ -304,10 +304,10 @@ Fungsinya:
 
 ## Ekstrakurikuler
 
-- [ ] Master ekstrakurikuler
-- [ ] Assign siswa
-- [ ] Predikat/capaian
-- [ ] Deskripsi
+- [x] Master ekstrakurikuler
+- [x] Assign siswa
+- [x] Predikat/capaian
+- [x] Deskripsi
 - [ ] Tampil di rapor
 
 ## Prestasi

@@ -146,6 +146,47 @@ export type Database = {
           },
         ]
       }
+      extracurriculars: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          name: string
+          school_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          name: string
+          school_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          school_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracurriculars_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           academic_year_id: string
@@ -745,6 +786,70 @@ export type Database = {
             columns: ["academic_year_id"]
             isOneToOne: false
             referencedRelation: "academic_years"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_extracurriculars: {
+        Row: {
+          achievement: string
+          class_id: string
+          created_at: string
+          created_by: string
+          description: string
+          extracurricular_id: string
+          id: string
+          semester_id: string
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          achievement: string
+          class_id: string
+          created_at?: string
+          created_by: string
+          description: string
+          extracurricular_id: string
+          id?: string
+          semester_id: string
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          achievement?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string
+          extracurricular_id?: string
+          id?: string
+          semester_id?: string
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_extracurriculars_extracurricular_id_fkey"
+            columns: ["extracurricular_id"]
+            isOneToOne: false
+            referencedRelation: "extracurriculars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_extracurriculars_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "student_extracurriculars_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
             referencedColumns: ["id"]
           },
         ]

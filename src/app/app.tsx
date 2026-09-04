@@ -67,6 +67,11 @@ const AttendancePage = lazy(() =>
     default: module.AttendancePage,
   })),
 )
+const ExtracurricularPage = lazy(() =>
+  import("@/features/extracurriculars/extracurricular-page").then((module) => ({
+    default: module.ExtracurricularPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -100,6 +105,7 @@ export function App() {
     | "learning-outcomes"
     | "grades"
     | "attendance"
+    | "extracurriculars"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -189,6 +195,21 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "extracurriculars") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ExtracurricularPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "attendance") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -353,6 +374,7 @@ export function App() {
         onOpenLearningOutcomes={() => setAdminView("learning-outcomes")}
         onOpenGrades={() => setAdminView("grades")}
         onOpenAttendance={() => setAdminView("attendance")}
+        onOpenExtracurriculars={() => setAdminView("extracurriculars")}
       />
     )
   }
