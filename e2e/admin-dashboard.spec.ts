@@ -720,6 +720,63 @@ for (const viewport of [...mobileViewports, { width: 1280, height: 900 }]) {
   })
 }
 
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 1280, height: 900 },
+]) {
+  test(`cetak satu rapor dapat dibuka pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openReportPreview(page, viewport.width)
+    await page.evaluate(() => {
+      const testWindow = window as Window & { __printCalls?: number }
+      testWindow.__printCalls = 0
+      window.print = () => {
+        testWindow.__printCalls = (testWindow.__printCalls ?? 0) + 1
+      }
+    })
+
+    await page.getByRole("button", { name: "Cetak rapor" }).click()
+
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __printCalls?: number }).__printCalls ?? 0,
+        ),
+      )
+      .toBe(1)
+  })
+}
+
+test("media cetak memakai lembar A4 dan page break", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await openAuthenticatedDashboard(page, true, true)
+  await openReportPreview(page, 1280)
+  await page.emulateMedia({ media: "print" })
+
+  await expect(page.locator(".report-screen-only").first()).toBeHidden()
+  await expect(page.locator(".report-mobile-results")).toBeHidden()
+  await expect(page.locator(".report-table-results")).toBeVisible()
+
+  const printLayout = await page
+    .locator(".report-sheet")
+    .first()
+    .evaluate((element) => {
+      const style = getComputedStyle(element)
+      return {
+        breakAfter: style.breakAfter,
+        minHeight: Number.parseFloat(style.minHeight),
+        shadow: style.boxShadow,
+      }
+    })
+  expect(printLayout.breakAfter).toBe("page")
+  expect(printLayout.minHeight).toBeGreaterThan(1000)
+  expect(printLayout.shadow).toBe("none")
+})
+
 test("sidebar dashboard dapat digulir pada layar pendek", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 640 })
   await openAuthenticatedDashboard(page)

@@ -1926,6 +1926,13 @@ Field yang belum terisi ditampilkan dengan penanda yang jelas dan tidak
 diisi dengan data buatan. Print CSS, format A4, page break, dan PDF tetap
 menjadi tahap terpisah setelah preview.
 
+Sub-tahap cetak satu siswa memakai komponen presentasi yang sama dengan preview.
+Media cetak menyembunyikan kontrol aplikasi, menetapkan kertas A4 portrait,
+memisahkan setiap bagian utama dengan page break, dan mempertahankan header tabel
+ketika halaman hasil belajar harus berlanjut. Browser print menjadi jalur MVP;
+batch print, validasi Chrome/Android nyata, dan keputusan engine PDF tetap
+dikerjakan terpisah.
+
 ---
 
 Arsitektur aplikasi mengikuti pola:

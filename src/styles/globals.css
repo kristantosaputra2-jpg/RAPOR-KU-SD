@@ -389,6 +389,95 @@ textarea:hover:not(:disabled) {
     );
 }
 
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: auto;
+    background: white !important;
+  }
+
+  body {
+    color: #111827;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .report-screen-only {
+    display: none !important;
+  }
+
+  .app-shell,
+  .app-shell main,
+  .report-print-root {
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
+
+  .report-print-root > div {
+    display: block;
+  }
+
+  .report-sheet {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 277mm;
+    margin: 0;
+    padding: 8mm;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .report-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .report-cover,
+  .report-sheet:nth-child(2),
+  .report-sheet:last-child {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-mobile-results {
+    display: none !important;
+  }
+
+  .report-table-results {
+    display: block !important;
+    overflow: visible;
+  }
+
+  .report-table-results table {
+    min-width: 0;
+    font-size: 10px;
+  }
+
+  .report-table-results thead {
+    display: table-header-group;
+  }
+
+  .report-table-results tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
 @media (max-width: 639px) {
   .app-shell {
     background-attachment: scroll;

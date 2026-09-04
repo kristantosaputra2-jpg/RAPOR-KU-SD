@@ -364,16 +364,16 @@ Fungsinya:
 
 ## Print / PDF
 
-- [ ] Buat print CSS
-- [ ] Format A4
-- [ ] Page break
-- [ ] Test browser print
+- [x] Buat print CSS
+- [x] Format A4
+- [x] Page break
+- [x] Test browser print
 - [ ] Test Chrome desktop
 - [ ] Test browser Android
 - [ ] Finalisasi PDF engine
-- [ ] Print satu siswa
+- [x] Print satu siswa
 - [ ] Batch print satu kelas
-- [ ] Pastikan hasil preview = hasil cetak
+- [x] Pastikan hasil preview = hasil cetak
 
 ## Leger Kelas 1–3
 

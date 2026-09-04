@@ -140,7 +140,7 @@ export function ReportPreviewTemplate({ report }: Props) {
           </div>
         ) : (
           <>
-            <div className="mt-6 space-y-4 md:hidden">
+            <div className="report-mobile-results mt-6 space-y-4 md:hidden">
               {report.subjects.map((subject) => (
                 <section
                   className="rounded-2xl border border-slate-200 p-4"
@@ -180,7 +180,7 @@ export function ReportPreviewTemplate({ report }: Props) {
                 </section>
               ))}
             </div>
-            <div className="mt-6 hidden overflow-x-auto rounded-2xl border border-slate-200 md:block">
+            <div className="report-table-results mt-6 hidden overflow-x-auto rounded-2xl border border-slate-200 md:block">
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead className="bg-red-50 text-slate-700">
                   <tr>

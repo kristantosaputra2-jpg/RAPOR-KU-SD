@@ -4,6 +4,7 @@ import {
   BookOpenCheck,
   LoaderCircle,
   LogOut,
+  Printer,
   RefreshCw,
 } from "lucide-react"
 
@@ -173,7 +174,7 @@ export function ReportPreviewPage({
 
   return (
     <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
-      <header className="sticky top-0 z-30 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
+      <header className="report-screen-only sticky top-0 z-30 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             {onBack ? (
@@ -208,7 +209,7 @@ export function ReportPreviewPage({
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-9">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="report-screen-only flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-[var(--rapotku-brand)]">
               Pemeriksaan sebelum cetak
@@ -221,14 +222,19 @@ export function ReportPreviewPage({
               {userName}.
             </p>
           </div>
-          <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
-            Cetak tersedia pada tahap berikutnya
-          </span>
+          <button
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(198,31,39,0.2)] transition hover:bg-[var(--rapotku-brand-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!report}
+            onClick={() => window.print()}
+            type="button"
+          >
+            <Printer aria-hidden="true" size={18} /> Cetak rapor
+          </button>
         </div>
 
         {error ? (
           <div
-            className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            className="report-screen-only mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
             role="alert"
           >
             <span>{error}</span>
@@ -247,7 +253,7 @@ export function ReportPreviewPage({
           </div>
         ) : null}
 
-        <section className="mt-6 grid gap-4 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 sm:grid-cols-2 sm:p-6">
+        <section className="report-screen-only mt-6 grid gap-4 rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 sm:grid-cols-2 sm:p-6">
           <label className="block text-sm font-bold">
             Kelas
             <select
@@ -292,7 +298,7 @@ export function ReportPreviewPage({
 
         {isLoading || (selectedStudent && !report && !error) ? (
           <div
-            className="mt-10 flex items-center justify-center gap-3 py-16"
+            className="report-screen-only mt-10 flex items-center justify-center gap-3 py-16"
             role="status"
           >
             <LoaderCircle className="animate-spin text-[var(--rapotku-brand)]" />
@@ -301,21 +307,21 @@ export function ReportPreviewPage({
               : "Menyusun preview rapor..."}
           </div>
         ) : classes.length === 0 ? (
-          <section className="mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
+          <section className="report-screen-only mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
             <h2 className="font-bold">Belum ada kelas</h2>
             <p className="mt-2 text-sm text-[var(--rapotku-muted)]">
               Tambahkan kelas terlebih dahulu sebelum membuat preview.
             </p>
           </section>
         ) : classStudents.length === 0 ? (
-          <section className="mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
+          <section className="report-screen-only mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
             <h2 className="font-bold">Belum ada siswa di kelas ini</h2>
             <p className="mt-2 text-sm text-[var(--rapotku-muted)]">
               Tempatkan siswa ke kelas yang dipilih terlebih dahulu.
             </p>
           </section>
         ) : report ? (
-          <div className="mx-auto mt-8 max-w-[900px]">
+          <div className="report-print-root mx-auto mt-8 max-w-[900px]">
             <ReportPreviewTemplate report={report} />
           </div>
         ) : null}
