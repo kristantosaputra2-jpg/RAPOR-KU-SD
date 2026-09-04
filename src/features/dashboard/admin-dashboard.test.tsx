@@ -234,4 +234,29 @@ describe("AdminDashboard", () => {
 
     expect(onOpenReports).toHaveBeenCalledOnce()
   })
+
+  it("membuka Leger Kelas 1–3 dari navigasi", async () => {
+    const user = userEvent.setup()
+    const onOpenLeger = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
+        onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
+        onOpenLeger={onOpenLeger}
+      />,
+    )
+
+    await user.click(
+      screen.getAllByRole("button", { name: "Leger Kelas 1–3" })[0],
+    )
+
+    expect(onOpenLeger).toHaveBeenCalledOnce()
+  })
 })

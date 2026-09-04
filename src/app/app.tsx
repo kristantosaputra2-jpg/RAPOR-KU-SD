@@ -92,6 +92,11 @@ const ReportPreviewPage = lazy(() =>
     default: module.ReportPreviewPage,
   })),
 )
+const LegerPage = lazy(() =>
+  import("@/features/leger/leger-page").then((module) => ({
+    default: module.LegerPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -129,6 +134,7 @@ export function App() {
     | "achievements"
     | "homeroom-notes"
     | "report-completeness"
+    | "leger"
     | "reports"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
@@ -219,6 +225,19 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "leger") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <LegerPage
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "reports") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -457,6 +476,7 @@ export function App() {
         onOpenAchievements={() => setAdminView("achievements")}
         onOpenHomeroomNotes={() => setAdminView("homeroom-notes")}
         onOpenReportCompleteness={() => setAdminView("report-completeness")}
+        onOpenLeger={() => setAdminView("leger")}
         onOpenReports={() => setAdminView("reports")}
       />
     )

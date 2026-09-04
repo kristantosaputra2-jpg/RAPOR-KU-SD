@@ -940,6 +940,13 @@ print/export
 
 Lower primary dan upper primary dapat memiliki definisi kolom berbeda.
 
+Implementasi lower primary memakai query batch per kelas dan semester, lalu
+mengubah data rapor menjadi view model khusus leger. Nilai Pengetahuan dan
+Keterampilan tetap menjadi kolom terpisah, status kelengkapan menggunakan
+status rapor yang sudah ada, dan ringkasan capaian hanya membaca deskripsi
+final guru. Pada HP, data yang sama ditampilkan sebagai kartu per siswa agar
+tidak membutuhkan horizontal scroll ekstrem.
+
 ---
 
 # 30. Report Generation Architecture

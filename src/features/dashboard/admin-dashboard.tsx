@@ -46,6 +46,7 @@ type AdminDashboardProps = Readonly<{
   onOpenAchievements?: () => void
   onOpenHomeroomNotes?: () => void
   onOpenReportCompleteness?: () => void
+  onOpenLeger?: () => void
   onOpenReports?: () => void
 }>
 
@@ -68,6 +69,7 @@ type NavigationItem = Readonly<{
     | "achievements"
     | "homeroom-notes"
     | "report-completeness"
+    | "leger"
     | "reports"
 }>
 
@@ -122,6 +124,7 @@ const navigationGroups: ReadonlyArray<
         icon: ClipboardCheck,
         action: "report-completeness",
       },
+      { label: "Leger Kelas 1–3", icon: ClipboardList, action: "leger" },
       { label: "Laporan", icon: FileText, action: "reports" },
       { label: "Pengaturan Rapor", icon: Settings },
     ],
@@ -201,6 +204,7 @@ function DashboardNavigation({
   onOpenAchievements,
   onOpenHomeroomNotes,
   onOpenReportCompleteness,
+  onOpenLeger,
   onOpenReports,
 }: Readonly<{
   onOpenSchoolSettings: () => void
@@ -217,6 +221,7 @@ function DashboardNavigation({
   onOpenAchievements: () => void
   onOpenHomeroomNotes: () => void
   onOpenReportCompleteness: () => void
+  onOpenLeger: () => void
   onOpenReports: () => void
 }>) {
   return (
@@ -274,6 +279,8 @@ function DashboardNavigation({
                           onOpenHomeroomNotes()
                         } else if (item.action === "report-completeness") {
                           onOpenReportCompleteness()
+                        } else if (item.action === "leger") {
+                          onOpenLeger()
                         } else if (item.action === "reports") {
                           onOpenReports()
                         } else {
@@ -357,6 +364,7 @@ export function AdminDashboard({
   onOpenAchievements = () => undefined,
   onOpenHomeroomNotes = () => undefined,
   onOpenReportCompleteness = () => undefined,
+  onOpenLeger = () => undefined,
   onOpenReports = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -423,6 +431,7 @@ export function AdminDashboard({
           onOpenAchievements={onOpenAchievements}
           onOpenHomeroomNotes={onOpenHomeroomNotes}
           onOpenReportCompleteness={onOpenReportCompleteness}
+          onOpenLeger={onOpenLeger}
           onOpenReports={onOpenReports}
         />
         <div className="mt-auto pt-6">
@@ -755,6 +764,10 @@ export function AdminDashboard({
               onOpenReportCompleteness={() => {
                 setIsMenuOpen(false)
                 onOpenReportCompleteness()
+              }}
+              onOpenLeger={() => {
+                setIsMenuOpen(false)
+                onOpenLeger()
               }}
               onOpenReports={() => {
                 setIsMenuOpen(false)

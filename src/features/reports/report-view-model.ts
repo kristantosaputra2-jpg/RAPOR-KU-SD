@@ -76,6 +76,7 @@ export type ReportViewModel = Readonly<{
     logoUrl: string | null
   }>
   student: Readonly<{
+    id: string
     name: string
     nis: string
     nisn: string | null
@@ -231,6 +232,7 @@ export function buildReportViewModel(
       logoUrl: optionalText(source.school?.logo_url),
     },
     student: {
+      id: student.id,
       name: student.full_name,
       nis: student.nis,
       nisn: optionalText(student.nisn),

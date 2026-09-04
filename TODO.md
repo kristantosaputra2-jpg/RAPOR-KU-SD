@@ -377,12 +377,12 @@ Fungsinya:
 
 ## Leger Kelas 1–3
 
-- [ ] Buat query leger lower primary
-- [ ] Buat view model
-- [ ] Buat tabel leger
+- [x] Buat query leger lower primary
+- [x] Buat view model
+- [x] Buat tabel leger
 - [ ] Print
 - [ ] Export
-- [ ] Test semua mapel
+- [x] Test semua mapel
 
 ## Leger Kelas 4–6
 
@@ -609,7 +609,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
-| Leger               | Todo        |       0% | Struktur awal sudah diketahui                                                                                               |
+| Leger               | In Progress |      60% | Query, view model, tabel desktop/mobile, dan test lower primary selesai; print/export belum                                 |
 | Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |

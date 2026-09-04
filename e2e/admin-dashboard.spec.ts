@@ -631,11 +631,55 @@ async function openReportPreview(page: Page, width: number) {
   ).toBeVisible()
 }
 
+async function openLowerPrimaryLeger(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Leger Kelas 1–3" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Leger Kelas 1–3" }).click()
+  }
+  await expect(
+    page.getByRole("heading", {
+      name: "Nilai satu kelas, terbaca dalam sekali lihat",
+    }),
+  ).toBeVisible()
+}
+
 const mobileViewports = [
   { width: 360, height: 800 },
   { width: 390, height: 844 },
   { width: 768, height: 1024 },
 ] as const
+
+for (const viewport of [
+  ...mobileViewports,
+  { width: 1280, height: 900 },
+] as const) {
+  test(`Leger Kelas 1–3 nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 2)
+    await openLowerPrimaryLeger(page, viewport.width)
+
+    await expect(page.getByText("Kelas 2A", { exact: true })).toBeVisible()
+    const legerSurface =
+      viewport.width < 768
+        ? page.locator("article").first()
+        : page.locator("table")
+    await expect(legerSurface.getByText("Matematika").first()).toBeVisible()
+    await expect(legerSurface.getByText("Pengetahuan").first()).toBeVisible()
+    await expect(legerSurface.getByText("Keterampilan").first()).toBeVisible()
+    await expect(legerSurface.getByText("Ani").first()).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
 
 for (const viewport of mobileViewports.slice(0, 2)) {
   test(`login bergambar utuh pada ${viewport.width}px`, async ({ page }) => {
