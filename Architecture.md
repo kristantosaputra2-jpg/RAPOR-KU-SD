@@ -429,6 +429,18 @@ tabel memakai RLS dan tidak dapat diakses pengguna anonim.
 
 Schema final masih TBD.
 
+## Implementasi Prestasi MVP
+
+`achievements` menyimpan prestasi siswa per kelas dan semester. Setiap catatan
+memuat jenis prestasi, tingkat prestasi, keterangan, tahun, serta tanggal
+opsional. Jika tanggal diisi, tahunnya wajib sama dengan tahun prestasi.
+
+Admin dapat mengelola prestasi semua kelas. Wali kelas hanya dapat membaca,
+menambah, dan memperbarui prestasi pada kelas yang menjadi tanggung jawabnya.
+Tabel memakai RLS, tidak dapat diakses pengguna anonim, dan tidak memberikan
+izin hapus pada tahap ini. Penyajian prestasi di rapor dikerjakan bersama tahap
+Preview Rapor agar data dan template cetak tetap terpisah.
+
 ## Implementasi Data Guru MVP
 
 `teacher_profiles` menyimpan master guru secara terpisah dari akun autentikasi.

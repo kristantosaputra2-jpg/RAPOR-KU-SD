@@ -53,6 +53,69 @@ export type Database = {
           },
         ]
       }
+      achievements: {
+        Row: {
+          achievement_level: string
+          achievement_type: string
+          class_id: string
+          created_at: string
+          created_by: string
+          description: string
+          event_date: string | null
+          event_year: number
+          id: string
+          semester_id: string
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          achievement_level: string
+          achievement_type: string
+          class_id: string
+          created_at?: string
+          created_by: string
+          description: string
+          event_date?: string | null
+          event_year: number
+          id?: string
+          semester_id: string
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          achievement_level?: string
+          achievement_type?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string
+          event_date?: string | null
+          event_year?: number
+          id?: string
+          semester_id?: string
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievements_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "achievements_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_components: {
         Row: {
           code: string

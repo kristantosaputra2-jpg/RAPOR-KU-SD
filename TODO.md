@@ -312,11 +312,11 @@ Fungsinya:
 
 ## Prestasi
 
-- [ ] Tambah prestasi
-- [ ] Jenis prestasi
-- [ ] Tingkat prestasi
-- [ ] Keterangan
-- [ ] Tahun/tanggal
+- [x] Tambah prestasi
+- [x] Jenis prestasi
+- [x] Tingkat prestasi
+- [x] Keterangan
+- [x] Tahun/tanggal
 - [ ] Tampil di rapor
 
 ## Catatan Wali Kelas

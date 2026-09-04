@@ -72,6 +72,11 @@ const ExtracurricularPage = lazy(() =>
     default: module.ExtracurricularPage,
   })),
 )
+const AchievementPage = lazy(() =>
+  import("@/features/achievements/achievement-page").then((module) => ({
+    default: module.AchievementPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -106,6 +111,7 @@ export function App() {
     | "grades"
     | "attendance"
     | "extracurriculars"
+    | "achievements"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -195,6 +201,20 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "achievements") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <AchievementPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "extracurriculars") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -375,6 +395,7 @@ export function App() {
         onOpenGrades={() => setAdminView("grades")}
         onOpenAttendance={() => setAdminView("attendance")}
         onOpenExtracurriculars={() => setAdminView("extracurriculars")}
+        onOpenAchievements={() => setAdminView("achievements")}
       />
     )
   }

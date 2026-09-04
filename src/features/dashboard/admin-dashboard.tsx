@@ -41,6 +41,7 @@ type AdminDashboardProps = Readonly<{
   onOpenGrades?: () => void
   onOpenAttendance?: () => void
   onOpenExtracurriculars?: () => void
+  onOpenAchievements?: () => void
 }>
 
 type NavigationItem = Readonly<{
@@ -59,6 +60,7 @@ type NavigationItem = Readonly<{
     | "grades"
     | "attendance"
     | "extracurriculars"
+    | "achievements"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -101,6 +103,7 @@ const navigationGroups: ReadonlyArray<
         icon: GraduationCap,
         action: "extracurriculars",
       },
+      { label: "Prestasi", icon: BookOpenCheck, action: "achievements" },
       { label: "Monitoring", icon: ClipboardCheck },
       { label: "Laporan", icon: FileText },
       { label: "Pengaturan Rapor", icon: Settings },
@@ -178,6 +181,7 @@ function DashboardNavigation({
   onOpenGrades,
   onOpenAttendance,
   onOpenExtracurriculars,
+  onOpenAchievements,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
@@ -190,6 +194,7 @@ function DashboardNavigation({
   onOpenGrades: () => void
   onOpenAttendance: () => void
   onOpenExtracurriculars: () => void
+  onOpenAchievements: () => void
 }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
@@ -237,6 +242,8 @@ function DashboardNavigation({
                           onOpenAttendance()
                         } else if (item.action === "extracurriculars") {
                           onOpenExtracurriculars()
+                        } else if (item.action === "achievements") {
+                          onOpenAchievements()
                         } else {
                           onOpenSubjects()
                         }
@@ -315,6 +322,7 @@ export function AdminDashboard({
   onOpenGrades = () => undefined,
   onOpenAttendance = () => undefined,
   onOpenExtracurriculars = () => undefined,
+  onOpenAchievements = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -377,6 +385,7 @@ export function AdminDashboard({
           onOpenGrades={onOpenGrades}
           onOpenAttendance={onOpenAttendance}
           onOpenExtracurriculars={onOpenExtracurriculars}
+          onOpenAchievements={onOpenAchievements}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -693,6 +702,10 @@ export function AdminDashboard({
               onOpenExtracurriculars={() => {
                 setIsMenuOpen(false)
                 onOpenExtracurriculars()
+              }}
+              onOpenAchievements={() => {
+                setIsMenuOpen(false)
+                onOpenAchievements()
               }}
             />
             <div className="mt-auto pt-6">
