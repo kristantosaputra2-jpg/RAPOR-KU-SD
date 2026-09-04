@@ -496,6 +496,57 @@ export type Database = {
           },
         ]
       }
+      homeroom_notes: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          note: string
+          semester_id: string
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          note?: string
+          semester_id: string
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          note?: string
+          semester_id?: string
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homeroom_notes_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "homeroom_notes_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_outcomes: {
         Row: {
           code: string | null
@@ -630,6 +681,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      report_completion_confirmations: {
+        Row: {
+          achievement_confirmed_empty: boolean
+          class_id: string
+          created_at: string
+          created_by: string
+          extracurricular_confirmed_empty: boolean
+          id: string
+          semester_id: string
+          student_id: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          achievement_confirmed_empty?: boolean
+          class_id: string
+          created_at?: string
+          created_by: string
+          extracurricular_confirmed_empty?: boolean
+          id?: string
+          semester_id: string
+          student_id: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          achievement_confirmed_empty?: boolean
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          extracurricular_confirmed_empty?: boolean
+          id?: string
+          semester_id?: string
+          student_id?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_completion_confirmations_membership_fkey"
+            columns: ["student_id", "class_id", "semester_id"]
+            isOneToOne: false
+            referencedRelation: "class_members"
+            referencedColumns: ["student_id", "class_id", "semester_id"]
+          },
+          {
+            foreignKeyName: "report_completion_confirmations_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "semesters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       report_descriptions: {
         Row: {

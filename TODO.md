@@ -321,10 +321,10 @@ Fungsinya:
 
 ## Catatan Wali Kelas
 
-- [ ] Buat field catatan
-- [ ] Tambahkan batas karakter
-- [ ] Preview hasil di rapor
-- [ ] Test teks panjang
+- [x] Buat field catatan
+- [x] Tambahkan batas karakter
+- [x] Preview hasil di rapor
+- [x] Test teks panjang
 
 ---
 
@@ -332,18 +332,18 @@ Fungsinya:
 
 ## Report Completeness
 
-- [ ] Buat completeness engine
-- [ ] Status `Belum Diisi`
-- [ ] Status `Sebagian`
-- [ ] Status `Lengkap`
-- [ ] Status `Siap Cetak`
-- [ ] Check identitas
-- [ ] Check nilai
-- [ ] Check deskripsi
-- [ ] Check absensi
-- [ ] Check ekstrakurikuler
-- [ ] Check prestasi
-- [ ] Check catatan wali kelas
+- [x] Buat completeness engine
+- [x] Status `Belum Diisi`
+- [x] Status `Sebagian`
+- [x] Status `Lengkap`
+- [x] Status `Siap Cetak`
+- [x] Check identitas
+- [x] Check nilai
+- [x] Check deskripsi
+- [x] Check absensi
+- [x] Check ekstrakurikuler
+- [x] Check prestasi
+- [x] Check catatan wali kelas
 
 ## Report Preview
 
@@ -465,7 +465,7 @@ Fungsinya:
 - [x] Unit test predicate
 - [x] Unit test CP selector
 - [x] Unit test description
-- [ ] Unit test completeness
+- [x] Unit test completeness
 - [ ] Integration test student-to-report flow
 - [ ] Permission/RLS test
 - [ ] E2E Admin flow

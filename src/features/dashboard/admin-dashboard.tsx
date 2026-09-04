@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import {
   AlertCircle,
+  BookHeart,
   BookOpen,
   BookOpenCheck,
   CalendarDays,
@@ -42,6 +43,8 @@ type AdminDashboardProps = Readonly<{
   onOpenAttendance?: () => void
   onOpenExtracurriculars?: () => void
   onOpenAchievements?: () => void
+  onOpenHomeroomNotes?: () => void
+  onOpenReportCompleteness?: () => void
 }>
 
 type NavigationItem = Readonly<{
@@ -61,6 +64,8 @@ type NavigationItem = Readonly<{
     | "attendance"
     | "extracurriculars"
     | "achievements"
+    | "homeroom-notes"
+    | "report-completeness"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -104,7 +109,16 @@ const navigationGroups: ReadonlyArray<
         action: "extracurriculars",
       },
       { label: "Prestasi", icon: BookOpenCheck, action: "achievements" },
-      { label: "Monitoring", icon: ClipboardCheck },
+      {
+        label: "Catatan Wali Kelas",
+        icon: BookHeart,
+        action: "homeroom-notes",
+      },
+      {
+        label: "Monitoring",
+        icon: ClipboardCheck,
+        action: "report-completeness",
+      },
       { label: "Laporan", icon: FileText },
       { label: "Pengaturan Rapor", icon: Settings },
     ],
@@ -182,6 +196,8 @@ function DashboardNavigation({
   onOpenAttendance,
   onOpenExtracurriculars,
   onOpenAchievements,
+  onOpenHomeroomNotes,
+  onOpenReportCompleteness,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
@@ -195,6 +211,8 @@ function DashboardNavigation({
   onOpenAttendance: () => void
   onOpenExtracurriculars: () => void
   onOpenAchievements: () => void
+  onOpenHomeroomNotes: () => void
+  onOpenReportCompleteness: () => void
 }>) {
   return (
     <nav aria-label="Menu utama" className="mt-8 space-y-7">
@@ -244,6 +262,10 @@ function DashboardNavigation({
                           onOpenExtracurriculars()
                         } else if (item.action === "achievements") {
                           onOpenAchievements()
+                        } else if (item.action === "homeroom-notes") {
+                          onOpenHomeroomNotes()
+                        } else if (item.action === "report-completeness") {
+                          onOpenReportCompleteness()
                         } else {
                           onOpenSubjects()
                         }
@@ -323,6 +345,8 @@ export function AdminDashboard({
   onOpenAttendance = () => undefined,
   onOpenExtracurriculars = () => undefined,
   onOpenAchievements = () => undefined,
+  onOpenHomeroomNotes = () => undefined,
+  onOpenReportCompleteness = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -386,6 +410,8 @@ export function AdminDashboard({
           onOpenAttendance={onOpenAttendance}
           onOpenExtracurriculars={onOpenExtracurriculars}
           onOpenAchievements={onOpenAchievements}
+          onOpenHomeroomNotes={onOpenHomeroomNotes}
+          onOpenReportCompleteness={onOpenReportCompleteness}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -706,6 +732,14 @@ export function AdminDashboard({
               onOpenAchievements={() => {
                 setIsMenuOpen(false)
                 onOpenAchievements()
+              }}
+              onOpenHomeroomNotes={() => {
+                setIsMenuOpen(false)
+                onOpenHomeroomNotes()
+              }}
+              onOpenReportCompleteness={() => {
+                setIsMenuOpen(false)
+                onOpenReportCompleteness()
               }}
             />
             <div className="mt-auto pt-6">

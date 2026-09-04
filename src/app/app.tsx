@@ -77,6 +77,16 @@ const AchievementPage = lazy(() =>
     default: module.AchievementPage,
   })),
 )
+const HomeroomNotePage = lazy(() =>
+  import("@/features/homeroom-notes/homeroom-note-page").then((module) => ({
+    default: module.HomeroomNotePage,
+  })),
+)
+const ReportCompletenessPage = lazy(() =>
+  import("@/features/report-status/report-completeness-page").then(
+    (module) => ({ default: module.ReportCompletenessPage }),
+  ),
+)
 
 type AppState =
   | { status: "loading" }
@@ -112,6 +122,8 @@ export function App() {
     | "attendance"
     | "extracurriculars"
     | "achievements"
+    | "homeroom-notes"
+    | "report-completeness"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -201,6 +213,34 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "report-completeness") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ReportCompletenessPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (adminView === "homeroom-notes") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <HomeroomNotePage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "achievements") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -396,6 +436,8 @@ export function App() {
         onOpenAttendance={() => setAdminView("attendance")}
         onOpenExtracurriculars={() => setAdminView("extracurriculars")}
         onOpenAchievements={() => setAdminView("achievements")}
+        onOpenHomeroomNotes={() => setAdminView("homeroom-notes")}
+        onOpenReportCompleteness={() => setAdminView("report-completeness")}
       />
     )
   }

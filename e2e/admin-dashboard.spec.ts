@@ -334,6 +334,15 @@ async function openAuthenticatedDashboard(
   await page.route("**/rest/v1/achievements*", async (route) => {
     await route.fulfill({ status: 200, json: [] })
   })
+  await page.route("**/rest/v1/homeroom_notes*", async (route) => {
+    await route.fulfill({ status: 200, json: [] })
+  })
+  await page.route(
+    "**/rest/v1/report_completion_confirmations*",
+    async (route) => {
+      await route.fulfill({ status: 200, json: [] })
+    },
+  )
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -574,6 +583,36 @@ async function openAchievements(page: Page, width: number) {
   }
   await expect(
     page.getByRole("heading", { name: "Prestasi siswa" }),
+  ).toBeVisible()
+}
+
+async function openHomeroomNotes(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Catatan Wali Kelas" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Catatan Wali Kelas" }).click()
+  }
+  await expect(
+    page.getByRole("heading", { name: "Catatan untuk setiap siswa" }),
+  ).toBeVisible()
+}
+
+async function openReportCompleteness(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Monitoring" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Monitoring" }).click()
+  }
+  await expect(
+    page.getByRole("heading", { name: "Kelengkapan rapor siswa" }),
   ).toBeVisible()
 }
 
@@ -952,6 +991,50 @@ for (const viewport of settingsViewports) {
     await expect(page.getByLabel("Tahun prestasi")).toBeVisible()
     await expect(page.getByLabel("Tanggal prestasi")).toBeVisible()
     await expect(page.getByLabel("Keterangan prestasi")).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Catatan Wali Kelas nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openHomeroomNotes(page, viewport.width)
+
+    const note = page.getByLabel("Catatan Ani")
+    await expect(note).toBeVisible()
+    await expect(note).toHaveAttribute("maxlength", "500")
+    await note.fill("Pertahankan semangat belajar dan sikap baikmu.")
+    await expect(page.getByText("Pratinjau di rapor").first()).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+for (const viewport of settingsViewports) {
+  test(`Kelengkapan Rapor nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openReportCompleteness(page, viewport.width)
+
+    await expect(page.getByText("Ani", { exact: true })).toBeVisible()
+    await expect(page.getByLabel("Memang tidak ada prestasi Ani")).toBeVisible()
+    await expect(
+      page.getByLabel("Memang tidak ada ekstrakurikuler Ani"),
+    ).toBeVisible()
 
     const layout = await page.evaluate(() => ({
       clientWidth: document.documentElement.clientWidth,

@@ -441,6 +441,37 @@ Tabel memakai RLS, tidak dapat diakses pengguna anonim, dan tidak memberikan
 izin hapus pada tahap ini. Penyajian prestasi di rapor dikerjakan bersama tahap
 Preview Rapor agar data dan template cetak tetap terpisah.
 
+## Implementasi Catatan Wali Kelas MVP
+
+`homeroom_notes` menyimpan satu catatan per siswa, kelas, dan semester. Catatan
+dibatasi maksimal 500 karakter pada UI, service, dan database agar tetap aman
+untuk layout cetak. Guru melihat seluruh siswa dalam satu halaman, menyimpan
+semua catatan dalam satu permintaan, serta memperoleh pratinjau teks rapor.
+
+Admin dapat mengelola semua kelas. Wali kelas dibatasi oleh RLS ke kelas yang
+menjadi tanggung jawabnya. Pengguna anonim tidak dapat membaca data dan izin
+hapus tidak diberikan pada tahap ini.
+
+## Implementasi Kelengkapan Rapor MVP
+
+Status kelengkapan dihitung sebagai derived output dan tidak disimpan manual:
+
+- `Belum Diisi`: belum ada komponen isi rapor yang selesai;
+- `Sebagian`: sebagian komponen sudah selesai;
+- `Lengkap`: seluruh isi selesai tetapi identitas belum lengkap;
+- `Siap Cetak`: isi dan identitas seluruhnya lengkap.
+
+Nilai dinyatakan lengkap jika seluruh CP aktif pada setiap mata pelajaran yang
+ditugaskan mempunyai nilai pada seluruh komponen penilaian aktif. Deskripsi
+wajib tersedia untuk setiap mata pelajaran dan komponen. Absensi, catatan wali
+kelas, ekstrakurikuler, dan prestasi juga diperiksa per siswa.
+
+Karena siswa dapat sah tidak memiliki ekstrakurikuler atau prestasi,
+`report_completion_confirmations` hanya menyimpan konfirmasi eksplisit wali
+kelas untuk kondisi “memang tidak ada”. Konfirmasi tersebut bukan status akhir;
+mesin selalu menghitung ulang status dari data terbaru. Tabel konfirmasi memakai
+RLS yang sama dengan komponen wali kelas lainnya.
+
 ## Implementasi Data Guru MVP
 
 `teacher_profiles` menyimpan master guru secara terpisah dari akun autentikasi.
