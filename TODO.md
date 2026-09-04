@@ -424,6 +424,10 @@ Fungsinya:
   - `SD Negeri Tumbang Kawei` tersimpan sebagai konfigurasi Supabase dan tampil pada login, dashboard, pengaturan, serta judul browser tanpa hardcode pada source code.
 - [x] Gunakan ilustrasi sekolah pada login dan hero Dashboard Admin
 - [x] Pastikan ilustrasi login tampil utuh pada HP
+- [x] Tambahkan motion mikro pada hero Login/Dashboard dan interaksi menu
+  - Karakter, daun, dan burung bergerak halus; section ringkasan overlap dengan hero; gerak scroll hanya dekoratif; menu memakai kotak interaktif dan bounce teks singkat.
+  - Gambar sumber tetap sama dan hanya dimuat dari satu URL; lapisan motion bersifat dekoratif, tidak menambah informasi ganda bagi pembaca layar, serta otomatis tenang pada reduced-motion.
+  - Lulus 169 unit/integration test, 6 E2E khusus Login/Dashboard pada 360px, 390px, 768px, dan 1280px, typecheck, lint, format, serta production build.
 
 ## Mobile
 

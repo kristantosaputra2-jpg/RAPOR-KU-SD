@@ -13,6 +13,7 @@ import {
   AuthFlowError,
   type LoginCredentials,
 } from "@/features/auth/auth.service"
+import { MotionHeroImage } from "@/components/motion-hero-image"
 
 type LoginPageProps = Readonly<{
   schoolName?: string
@@ -50,9 +51,9 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
   return (
     <main className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[1.05fr_0.95fr]">
       <section className="relative hidden min-h-screen overflow-hidden bg-[var(--rapotku-brand-strong)] p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
-        <img
-          className="absolute inset-0 size-full object-cover object-center"
-          src="/images/rapotku-school-hero.png"
+        <MotionHeroImage
+          className="absolute inset-0 size-full"
+          imageClassName="size-full object-cover object-center"
           alt=""
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(65,8,11,0.48)_0%,rgba(93,10,14,0.22)_42%,rgba(74,7,11,0.82)_100%)]" />
@@ -97,9 +98,9 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
       <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
         <div className="w-full max-w-md rounded-[var(--rapotku-radius-card)] bg-white/60 p-1 backdrop-blur-[2px] sm:p-2 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
           <div className="mb-6 overflow-hidden rounded-3xl border border-[var(--rapotku-border)] bg-white shadow-[0_16px_38px_rgba(66,20,23,0.12)] lg:hidden">
-            <img
-              className="h-auto w-full"
-              src="/images/rapotku-school-hero.png"
+            <MotionHeroImage
+              className="w-full"
+              imageClassName="h-auto w-full"
               alt="Ilustrasi siswa sekolah dasar di halaman sekolah"
             />
           </div>

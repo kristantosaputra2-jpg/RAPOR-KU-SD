@@ -26,6 +26,7 @@ import {
   getActiveAcademicPeriod,
   type ActiveAcademicPeriod,
 } from "@/features/academic-periods/academic-periods.service"
+import { MotionHeroImage } from "@/components/motion-hero-image"
 
 type AdminDashboardProps = Readonly<{
   userName: string
@@ -230,14 +231,14 @@ function DashboardNavigation({
                   {item.isActive ? (
                     <div
                       aria-current="page"
-                      className="flex min-h-11 items-center gap-3 rounded-xl bg-[var(--rapotku-brand-soft)] px-3 font-semibold text-[var(--rapotku-brand)]"
+                      className="app-nav-button is-active flex min-h-11 items-center gap-3 rounded-xl bg-[var(--rapotku-brand-soft)] px-3 font-semibold text-[var(--rapotku-brand)]"
                     >
                       <Icon aria-hidden="true" size={19} />
-                      <span>{item.label}</span>
+                      <span className="app-nav-label">{item.label}</span>
                     </div>
                   ) : item.action ? (
                     <button
-                      className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-semibold text-[var(--rapotku-muted)] transition hover:bg-[var(--rapotku-canvas)] hover:text-[var(--rapotku-brand)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
+                      className="app-nav-button flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left font-semibold text-[var(--rapotku-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
                       type="button"
                       onClick={() => {
                         if (item.action === "school-settings") {
@@ -272,15 +273,15 @@ function DashboardNavigation({
                       }}
                     >
                       <Icon aria-hidden="true" size={19} />
-                      <span>{item.label}</span>
+                      <span className="app-nav-label">{item.label}</span>
                     </button>
                   ) : (
                     <div
                       aria-disabled="true"
-                      className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-[var(--rapotku-muted)]"
+                      className="app-nav-button is-disabled flex min-h-11 items-center gap-3 rounded-xl px-3 text-[var(--rapotku-muted)]"
                     >
                       <Icon aria-hidden="true" size={19} />
-                      <span className="flex-1">{item.label}</span>
+                      <span className="app-nav-label flex-1">{item.label}</span>
                       <span className="rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
                         Segera
                       </span>
@@ -499,11 +500,11 @@ export function AdminDashboard({
 
           <section
             aria-labelledby="setup-warning-title"
-            className="relative mt-6 overflow-hidden rounded-3xl bg-[var(--rapotku-brand-strong)] text-white shadow-[0_16px_40px_rgba(130,18,23,0.16)]"
+            className="dashboard-motion-hero relative mt-6 overflow-hidden rounded-3xl bg-[var(--rapotku-brand-strong)] text-white shadow-[0_16px_40px_rgba(130,18,23,0.16)]"
           >
-            <img
-              className="h-auto w-full sm:absolute sm:inset-0 sm:size-full sm:object-cover sm:object-center"
-              src="/images/rapotku-school-hero.png"
+            <MotionHeroImage
+              className="w-full sm:absolute sm:inset-0 sm:size-full"
+              imageClassName="h-auto w-full sm:size-full sm:object-cover sm:object-center"
               alt="Ilustrasi siswa sekolah dasar di halaman sekolah"
             />
             <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(72,7,11,0.92)_0%,rgba(101,10,15,0.72)_45%,rgba(94,8,13,0.08)_100%)] sm:block" />
@@ -529,8 +530,11 @@ export function AdminDashboard({
             </div>
           </section>
 
-          <section aria-labelledby="summary-title" className="mt-8">
-            <div className="mb-4 flex items-center justify-between">
+          <section
+            aria-labelledby="summary-title"
+            className="relative z-10 mx-2 -mt-5 rounded-2xl border border-white/70 bg-white/72 p-3 shadow-[0_18px_45px_rgba(112,43,48,0.12)] backdrop-blur-md sm:mx-5 sm:-mt-8 sm:p-4"
+          >
+            <div className="mb-3 flex items-center justify-between px-1">
               <h2 id="summary-title" className="text-lg font-bold">
                 Ringkasan hari ini
               </h2>
@@ -671,7 +675,7 @@ export function AdminDashboard({
             aria-label="Menu Admin"
             aria-modal="true"
             role="dialog"
-            className="relative flex h-full w-[min(88vw,320px)] flex-col overflow-y-auto bg-white p-5 shadow-2xl"
+            className="app-mobile-menu relative flex h-full w-[min(88vw,320px)] flex-col overflow-y-auto bg-white p-5 shadow-2xl"
           >
             <div className="flex items-center justify-between gap-3">
               <Brand schoolName={schoolName} />
