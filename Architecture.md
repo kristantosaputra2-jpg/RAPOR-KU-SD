@@ -1907,6 +1907,27 @@ Jika tidak, arsitektur terlalu terikat template.
 
 # 77. Kesimpulan
 
+## Implementasi Preview Rapor MVP
+
+Preview rapor memakai alur terpisah:
+
+```text
+Supabase services + RLS
+→ report source data
+→ pure report view model
+→ template presentasi
+→ preview responsif
+```
+
+Template kelas 1–3 dan kelas 4–6 memakai core data yang sama, lalu dipilih
+melalui `template_group`. Nilai angka 0–100 dihitung per komponen penilaian,
+sedangkan predikat A–D ditentukan dari konfigurasi KKM single atau multi.
+Field yang belum terisi ditampilkan dengan penanda yang jelas dan tidak
+diisi dengan data buatan. Print CSS, format A4, page break, dan PDF tetap
+menjadi tahap terpisah setelah preview.
+
+---
+
 Arsitektur aplikasi mengikuti pola:
 
 ```text

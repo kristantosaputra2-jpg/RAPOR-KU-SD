@@ -616,6 +616,21 @@ async function openReportCompleteness(page: Page, width: number) {
   ).toBeVisible()
 }
 
+async function openReportPreview(page: Page, width: number) {
+  if (width < 1024) {
+    await page.getByRole("button", { name: "Buka menu" }).click()
+    await page
+      .getByLabel("Menu Admin")
+      .getByRole("button", { name: "Laporan" })
+      .click()
+  } else {
+    await page.getByRole("button", { name: "Laporan" }).click()
+  }
+  await expect(
+    page.getByRole("heading", { name: "Preview rapor siswa" }),
+  ).toBeVisible()
+}
+
 const mobileViewports = [
   { width: 360, height: 800 },
   { width: 390, height: 844 },
@@ -682,6 +697,28 @@ test("dashboard nyaman pada desktop 1280px", async ({ page }) => {
     page.getByRole("navigation", { name: "Menu utama" }),
   ).toBeVisible()
 })
+
+for (const viewport of [...mobileViewports, { width: 1280, height: 900 }]) {
+  test(`preview rapor nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true)
+    await openReportPreview(page, viewport.width)
+
+    await expect(page.getByText("Rapor Siswa")).toBeVisible()
+    const resultLayout =
+      viewport.width >= 768
+        ? page.locator("table")
+        : page.locator("article").filter({ hasText: "Nilai dan deskripsi" })
+    await expect(resultLayout.getByText("Pengetahuan").first()).toBeVisible()
+    await expect(resultLayout.getByText("Keterampilan").first()).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
 
 test("sidebar dashboard dapat digulir pada layar pendek", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 640 })

@@ -211,4 +211,27 @@ describe("AdminDashboard", () => {
 
     expect(onOpenSubjects).toHaveBeenCalledOnce()
   })
+
+  it("membuka Preview Rapor dari menu Laporan", async () => {
+    const user = userEvent.setup()
+    const onOpenReports = vi.fn()
+    render(
+      <AdminDashboard
+        userName="Admin Sekolah"
+        schoolName="SD Negeri Tumbang Kawei"
+        onLogout={vi.fn()}
+        onOpenSchoolSettings={vi.fn()}
+        onOpenAcademicPeriods={vi.fn()}
+        onOpenTeachers={vi.fn()}
+        onOpenClasses={vi.fn()}
+        onOpenStudents={vi.fn()}
+        onOpenSubjects={vi.fn()}
+        onOpenReports={onOpenReports}
+      />,
+    )
+
+    await user.click(screen.getAllByRole("button", { name: "Laporan" })[0])
+
+    expect(onOpenReports).toHaveBeenCalledOnce()
+  })
 })

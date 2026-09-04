@@ -308,7 +308,7 @@ Fungsinya:
 - [x] Assign siswa
 - [x] Predikat/capaian
 - [x] Deskripsi
-- [ ] Tampil di rapor
+- [x] Tampil di rapor
 
 ## Prestasi
 
@@ -317,7 +317,7 @@ Fungsinya:
 - [x] Tingkat prestasi
 - [x] Keterangan
 - [x] Tahun/tanggal
-- [ ] Tampil di rapor
+- [x] Tampil di rapor
 
 ## Catatan Wali Kelas
 
@@ -347,20 +347,20 @@ Fungsinya:
 
 ## Report Preview
 
-- [ ] Buat report view model
-- [ ] Preview lower primary
-- [ ] Preview upper primary
-- [ ] Preview identitas sekolah
-- [ ] Preview identitas siswa
-- [ ] Preview nilai
-- [ ] Preview deskripsi
-- [ ] Preview ekskul
-- [ ] Preview prestasi
-- [ ] Preview absensi
-- [ ] Preview catatan wali kelas
-- [ ] Test nama siswa panjang
-- [ ] Test deskripsi panjang
-- [ ] Test field kosong
+- [x] Buat report view model
+- [x] Preview lower primary
+- [x] Preview upper primary
+- [x] Preview identitas sekolah
+- [x] Preview identitas siswa
+- [x] Preview nilai
+- [x] Preview deskripsi
+- [x] Preview ekskul
+- [x] Preview prestasi
+- [x] Preview absensi
+- [x] Preview catatan wali kelas
+- [x] Test nama siswa panjang
+- [x] Test deskripsi panjang
+- [x] Test field kosong
 
 ## Print / PDF
 

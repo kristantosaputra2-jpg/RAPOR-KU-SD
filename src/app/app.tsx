@@ -87,6 +87,11 @@ const ReportCompletenessPage = lazy(() =>
     (module) => ({ default: module.ReportCompletenessPage }),
   ),
 )
+const ReportPreviewPage = lazy(() =>
+  import("@/features/reports/report-preview-page").then((module) => ({
+    default: module.ReportPreviewPage,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -124,6 +129,7 @@ export function App() {
     | "achievements"
     | "homeroom-notes"
     | "report-completeness"
+    | "reports"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -213,6 +219,19 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "reports") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ReportPreviewPage
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "report-completeness") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -438,6 +457,7 @@ export function App() {
         onOpenAchievements={() => setAdminView("achievements")}
         onOpenHomeroomNotes={() => setAdminView("homeroom-notes")}
         onOpenReportCompleteness={() => setAdminView("report-completeness")}
+        onOpenReports={() => setAdminView("reports")}
       />
     )
   }

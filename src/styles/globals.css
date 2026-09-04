@@ -374,6 +374,21 @@ textarea:hover:not(:disabled) {
   }
 }
 
+.report-sheet {
+  border-color: #e6d9da;
+  box-shadow: 0 18px 48px rgba(79, 31, 35, 0.09);
+}
+
+.report-cover {
+  background-image:
+    radial-gradient(circle at 8% 8%, rgba(198, 31, 39, 0.1), transparent 13rem),
+    radial-gradient(
+      circle at 92% 92%,
+      rgba(226, 154, 40, 0.11),
+      transparent 14rem
+    );
+}
+
 @media (max-width: 639px) {
   .app-shell {
     background-attachment: scroll;

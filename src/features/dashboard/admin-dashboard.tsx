@@ -46,6 +46,7 @@ type AdminDashboardProps = Readonly<{
   onOpenAchievements?: () => void
   onOpenHomeroomNotes?: () => void
   onOpenReportCompleteness?: () => void
+  onOpenReports?: () => void
 }>
 
 type NavigationItem = Readonly<{
@@ -67,6 +68,7 @@ type NavigationItem = Readonly<{
     | "achievements"
     | "homeroom-notes"
     | "report-completeness"
+    | "reports"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -120,7 +122,7 @@ const navigationGroups: ReadonlyArray<
         icon: ClipboardCheck,
         action: "report-completeness",
       },
-      { label: "Laporan", icon: FileText },
+      { label: "Laporan", icon: FileText, action: "reports" },
       { label: "Pengaturan Rapor", icon: Settings },
     ],
   },
@@ -199,6 +201,7 @@ function DashboardNavigation({
   onOpenAchievements,
   onOpenHomeroomNotes,
   onOpenReportCompleteness,
+  onOpenReports,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
@@ -214,6 +217,7 @@ function DashboardNavigation({
   onOpenAchievements: () => void
   onOpenHomeroomNotes: () => void
   onOpenReportCompleteness: () => void
+  onOpenReports: () => void
 }>) {
   return (
     <nav
@@ -270,6 +274,8 @@ function DashboardNavigation({
                           onOpenHomeroomNotes()
                         } else if (item.action === "report-completeness") {
                           onOpenReportCompleteness()
+                        } else if (item.action === "reports") {
+                          onOpenReports()
                         } else {
                           onOpenSubjects()
                         }
@@ -351,6 +357,7 @@ export function AdminDashboard({
   onOpenAchievements = () => undefined,
   onOpenHomeroomNotes = () => undefined,
   onOpenReportCompleteness = () => undefined,
+  onOpenReports = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -416,6 +423,7 @@ export function AdminDashboard({
           onOpenAchievements={onOpenAchievements}
           onOpenHomeroomNotes={onOpenHomeroomNotes}
           onOpenReportCompleteness={onOpenReportCompleteness}
+          onOpenReports={onOpenReports}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -747,6 +755,10 @@ export function AdminDashboard({
               onOpenReportCompleteness={() => {
                 setIsMenuOpen(false)
                 onOpenReportCompleteness()
+              }}
+              onOpenReports={() => {
+                setIsMenuOpen(false)
+                onOpenReports()
               }}
             />
             <div className="mt-auto pt-6">
