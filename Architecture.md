@@ -1933,6 +1933,11 @@ ketika halaman hasil belajar harus berlanjut. Browser print menjadi jalur MVP;
 batch print, validasi Chrome/Android nyata, dan keputusan engine PDF tetap
 dikerjakan terpisah.
 
+Batch print satu kelas mengambil data siswa dengan filter kelompok dalam satu
+rangkaian query, lalu membagi hasilnya menjadi view model per siswa di memori.
+Pendekatan ini menghindari N+1 query. Setiap siswa tetap memakai template preview
+yang sama dan dipisahkan dengan page break sebelum dialog cetak browser dibuka.
+
 ---
 
 Arsitektur aplikasi mengikuti pola:

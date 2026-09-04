@@ -738,7 +738,7 @@ for (const viewport of [
       }
     })
 
-    await page.getByRole("button", { name: "Cetak rapor" }).click()
+    await page.getByRole("button", { name: "Cetak siswa ini" }).click()
 
     await expect
       .poll(() =>
@@ -750,6 +750,49 @@ for (const viewport of [
       .toBe(1)
   })
 }
+
+test("cetak satu kelas menyusun semua siswa dengan satu batch data", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  const gradeRequests: Array<string> = []
+  page.on("request", (request) => {
+    if (request.url().includes("/rest/v1/grade_entries")) {
+      gradeRequests.push(request.url())
+    }
+  })
+  await openAuthenticatedDashboard(page, true, true)
+  await openReportPreview(page, 1280)
+  await page.evaluate(() => {
+    const testWindow = window as Window & {
+      __printedStudentCount?: number
+      __printCalls?: number
+    }
+    testWindow.__printCalls = 0
+    window.print = () => {
+      testWindow.__printCalls = (testWindow.__printCalls ?? 0) + 1
+      testWindow.__printedStudentCount = document.querySelectorAll(
+        ".report-batch-student",
+      ).length
+    }
+  })
+
+  await page.getByRole("button", { name: "Cetak satu kelas (3)" }).click()
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as Window & { __printedStudentCount?: number })
+            .__printedStudentCount ?? 0,
+      ),
+    )
+    .toBe(3)
+  expect(gradeRequests).toHaveLength(2)
+  expect(decodeURIComponent(gradeRequests[1] ?? "")).toContain(
+    "student_id=in.(student-1,student-2,student-3)",
+  )
+})
 
 test("media cetak memakai lembar A4 dan page break", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })

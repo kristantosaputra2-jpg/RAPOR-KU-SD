@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { flushSync } from "react-dom"
 import {
   ArrowLeft,
   BookOpenCheck,
@@ -20,7 +21,7 @@ import {
 
 import { ReportPreviewTemplate } from "./report-preview-template"
 import { buildReportViewModel, type ReportViewModel } from "./report-view-model"
-import { getReportSourceData } from "./report.service"
+import { getClassReportSourceData, getReportSourceData } from "./report.service"
 
 type Props = Readonly<{
   userName: string
@@ -55,6 +56,10 @@ export function ReportPreviewPage({
   const [classId, setClassId] = useState("")
   const [studentId, setStudentId] = useState("")
   const [report, setReport] = useState<ReportViewModel | null>(null)
+  const [classReports, setClassReports] = useState<
+    ReadonlyArray<ReportViewModel>
+  >([])
+  const [isPreparingClassPrint, setIsPreparingClassPrint] = useState(false)
   const [revision, setRevision] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
@@ -172,8 +177,53 @@ export function ReportPreviewPage({
     selectedStudent,
   ])
 
+  async function handlePrintClass() {
+    if (!selectedClass || !selectedSemester || !selectedAcademicYear) return
+
+    setError("")
+    setIsPreparingClassPrint(true)
+    try {
+      const sources = await getClassReportSourceData(
+        selectedClass.id,
+        selectedClass.semester_id,
+        classStudents.map((student) => student.id),
+      )
+      const reports = classStudents.flatMap((student) => {
+        const source = sources.get(student.id)
+        return source
+          ? [
+              buildReportViewModel({
+                schoolClass: selectedClass,
+                student,
+                academicYear: selectedAcademicYear,
+                semester: selectedSemester,
+                source,
+              }),
+            ]
+          : []
+      })
+      if (reports.length !== classStudents.length) {
+        throw new Error("Sebagian data rapor siswa belum dapat disusun.")
+      }
+
+      flushSync(() => setClassReports(reports))
+      window.print()
+    } catch (reason: unknown) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "Rapor satu kelas belum dapat disiapkan.",
+      )
+    } finally {
+      setClassReports([])
+      setIsPreparingClassPrint(false)
+    }
+  }
+
   return (
-    <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
+    <div
+      className={`app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] ${classReports.length ? "report-print-mode-batch" : ""}`}
+    >
       <header className="report-screen-only sticky top-0 z-30 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
@@ -222,14 +272,35 @@ export function ReportPreviewPage({
               {userName}.
             </p>
           </div>
-          <button
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(198,31,39,0.2)] transition hover:bg-[var(--rapotku-brand-strong)] disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!report}
-            onClick={() => window.print()}
-            type="button"
-          >
-            <Printer aria-hidden="true" size={18} /> Cetak rapor
-          </button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <button
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-brand)] bg-white px-5 text-sm font-bold text-[var(--rapotku-brand)] transition hover:bg-[var(--rapotku-brand-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={classStudents.length === 0 || isPreparingClassPrint}
+              onClick={() => void handlePrintClass()}
+              type="button"
+            >
+              {isPreparingClassPrint ? (
+                <LoaderCircle
+                  aria-hidden="true"
+                  className="animate-spin"
+                  size={18}
+                />
+              ) : (
+                <Printer aria-hidden="true" size={18} />
+              )}
+              {isPreparingClassPrint
+                ? "Menyiapkan kelas..."
+                : `Cetak satu kelas (${classStudents.length})`}
+            </button>
+            <button
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(198,31,39,0.2)] transition hover:bg-[var(--rapotku-brand-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!report || isPreparingClassPrint}
+              onClick={() => window.print()}
+              type="button"
+            >
+              <Printer aria-hidden="true" size={18} /> Cetak siswa ini
+            </button>
+          </div>
         </div>
 
         {error ? (
@@ -321,8 +392,23 @@ export function ReportPreviewPage({
             </p>
           </section>
         ) : report ? (
-          <div className="report-print-root mx-auto mt-8 max-w-[900px]">
+          <div className="report-print-root report-single-print-root mx-auto mt-8 max-w-[900px]">
             <ReportPreviewTemplate report={report} />
+          </div>
+        ) : null}
+        {classReports.length ? (
+          <div
+            aria-hidden="true"
+            className="report-batch-print-root report-print-root"
+          >
+            {classReports.map((classReport) => (
+              <div
+                className="report-batch-student"
+                key={`${classReport.student.nis}:${classReport.student.name}`}
+              >
+                <ReportPreviewTemplate report={classReport} />
+              </div>
+            ))}
           </div>
         ) : null}
       </main>

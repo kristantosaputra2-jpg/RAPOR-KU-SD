@@ -389,6 +389,10 @@ textarea:hover:not(:disabled) {
     );
 }
 
+.report-batch-print-root {
+  display: none;
+}
+
 @page {
   size: A4 portrait;
   margin: 10mm;
@@ -426,6 +430,24 @@ textarea:hover:not(:disabled) {
 
   .report-print-root > div {
     display: block;
+  }
+
+  .report-print-mode-batch .report-single-print-root {
+    display: none;
+  }
+
+  .report-print-mode-batch .report-batch-print-root {
+    display: block;
+  }
+
+  .report-batch-student {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .report-batch-student:last-child {
+    break-after: auto;
+    page-break-after: auto;
   }
 
   .report-sheet {

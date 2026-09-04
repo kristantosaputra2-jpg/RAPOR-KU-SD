@@ -372,7 +372,7 @@ Fungsinya:
 - [ ] Test browser Android
 - [ ] Finalisasi PDF engine
 - [x] Print satu siswa
-- [ ] Batch print satu kelas
+- [x] Batch print satu kelas
 - [x] Pastikan hasil preview = hasil cetak
 
 ## Leger Kelas 1–3

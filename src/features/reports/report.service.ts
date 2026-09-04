@@ -12,12 +12,14 @@ export class ReportPreviewError extends Error {
   }
 }
 
-export async function getReportSourceData(
+async function getReportSources(
   classId: string,
   semesterId: string,
-  studentId: string,
+  studentIds: ReadonlyArray<string>,
   client: RapotKuSupabaseClient = getSupabaseClient(),
-): Promise<ReportSourceData> {
+): Promise<ReadonlyMap<string, ReportSourceData>> {
+  if (studentIds.length === 0) return new Map()
+
   const [
     schoolResult,
     assignmentResult,
@@ -64,7 +66,7 @@ export async function getReportSourceData(
       .select(
         "id,student_id,class_id,subject_id,learning_outcome_id,assessment_component_id,semester_id,grade_level,score,created_at,updated_at",
       )
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
       .eq("semester_id", semesterId),
     client
@@ -72,7 +74,7 @@ export async function getReportSourceData(
       .select(
         "id,student_id,class_id,subject_id,assessment_component_id,semester_id,grade_level,strongest_outcome_id,weakest_outcome_id,generated_description,final_description,created_at,updated_at",
       )
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
       .eq("semester_id", semesterId),
     client
@@ -89,10 +91,9 @@ export async function getReportSourceData(
       .select(
         "id,student_id,class_id,semester_id,sick_days,permitted_days,absent_days,created_at,updated_at",
       )
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
-      .eq("semester_id", semesterId)
-      .maybeSingle(),
+      .eq("semester_id", semesterId),
     client
       .from("extracurriculars")
       .select("id,name")
@@ -101,7 +102,7 @@ export async function getReportSourceData(
     client
       .from("student_extracurriculars")
       .select("student_id,extracurricular_id,achievement,description")
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
       .eq("semester_id", semesterId),
     client
@@ -109,17 +110,16 @@ export async function getReportSourceData(
       .select(
         "id,student_id,class_id,semester_id,achievement_type,achievement_level,description,event_year,event_date,created_at,updated_at",
       )
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
       .eq("semester_id", semesterId)
       .order("event_year", { ascending: false }),
     client
       .from("homeroom_notes")
       .select("id,student_id,class_id,semester_id,note,created_at,updated_at")
-      .eq("student_id", studentId)
+      .in("student_id", studentIds)
       .eq("class_id", classId)
-      .eq("semester_id", semesterId)
-      .maybeSingle(),
+      .eq("semester_id", semesterId),
   ])
 
   const results = [
@@ -143,21 +143,69 @@ export async function getReportSourceData(
     )
   }
 
-  return {
-    school: schoolResult.data,
-    assignedSubjectIds: [
-      ...new Set((assignmentResult.data ?? []).map((item) => item.subject_id)),
-    ],
-    subjects: subjectResult.data ?? [],
-    assessmentComponents: componentResult.data ?? [],
-    gradeEntries: gradeResult.data ?? [],
-    descriptions: descriptionResult.data ?? [],
-    gradingSetting: gradingSettingResult.data,
-    subjectKkmRules: subjectKkmResult.data ?? [],
-    attendance: attendanceResult.data,
-    extracurricularCatalog: extracurricularCatalogResult.data ?? [],
-    extracurricularEntries: extracurricularResult.data ?? [],
-    achievements: achievementResult.data ?? [],
-    homeroomNote: noteResult.data,
+  const assignedSubjectIds = [
+    ...new Set((assignmentResult.data ?? []).map((item) => item.subject_id)),
+  ]
+  return new Map(
+    studentIds.map((studentId) => [
+      studentId,
+      {
+        school: schoolResult.data,
+        assignedSubjectIds,
+        subjects: subjectResult.data ?? [],
+        assessmentComponents: componentResult.data ?? [],
+        gradeEntries: (gradeResult.data ?? []).filter(
+          (item) => item.student_id === studentId,
+        ),
+        descriptions: (descriptionResult.data ?? []).filter(
+          (item) => item.student_id === studentId,
+        ),
+        gradingSetting: gradingSettingResult.data,
+        subjectKkmRules: subjectKkmResult.data ?? [],
+        attendance:
+          (attendanceResult.data ?? []).find(
+            (item) => item.student_id === studentId,
+          ) ?? null,
+        extracurricularCatalog: extracurricularCatalogResult.data ?? [],
+        extracurricularEntries: (extracurricularResult.data ?? []).filter(
+          (item) => item.student_id === studentId,
+        ),
+        achievements: (achievementResult.data ?? []).filter(
+          (item) => item.student_id === studentId,
+        ),
+        homeroomNote:
+          (noteResult.data ?? []).find(
+            (item) => item.student_id === studentId,
+          ) ?? null,
+      },
+    ]),
+  )
+}
+
+export async function getReportSourceData(
+  classId: string,
+  semesterId: string,
+  studentId: string,
+  client: RapotKuSupabaseClient = getSupabaseClient(),
+): Promise<ReportSourceData> {
+  const sources = await getReportSources(
+    classId,
+    semesterId,
+    [studentId],
+    client,
+  )
+  const source = sources.get(studentId)
+  if (!source) {
+    throw new ReportPreviewError("Data siswa untuk preview belum tersedia.")
   }
+  return source
+}
+
+export function getClassReportSourceData(
+  classId: string,
+  semesterId: string,
+  studentIds: ReadonlyArray<string>,
+  client: RapotKuSupabaseClient = getSupabaseClient(),
+) {
+  return getReportSources(classId, semesterId, studentIds, client)
 }
