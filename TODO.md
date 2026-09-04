@@ -1,6 +1,6 @@
 # TODO.md — Aplikasi Rapor SD Kelas 1–6
 
-**Last Updated:** 2026-09-02  
+**Last Updated:** 2026-09-04
 **Project:** Aplikasi Rapor SD  
 **Status Legend:** `[ ]` Todo · `[/]` In Progress · `[x]` Done · `[*]` Blocked · `[-]` Cancelled
 
@@ -380,8 +380,8 @@ Fungsinya:
 - [x] Buat query leger lower primary
 - [x] Buat view model
 - [x] Buat tabel leger
-- [ ] Print
-- [ ] Export
+- [x] Print
+- [x] Export
 - [x] Test semua mapel
 
 ## Leger Kelas 4–6
@@ -609,7 +609,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
-| Leger               | In Progress |      60% | Query, view model, tabel desktop/mobile, dan test lower primary selesai; print/export belum                                 |
+| Leger               | In Progress |      50% | Leger lower primary selesai termasuk tabel desktop/mobile, print A4 landscape, ekspor CSV, dan test                         |
 | Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |

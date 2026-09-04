@@ -3,8 +3,10 @@ import {
   ArrowLeft,
   BookOpenCheck,
   ClipboardList,
+  Download,
   LoaderCircle,
   LogOut,
+  Printer,
   RefreshCw,
 } from "lucide-react"
 
@@ -19,6 +21,7 @@ import {
 } from "@/features/students/student.service"
 
 import type { LowerPrimaryLegerViewModel } from "./leger-view-model"
+import { buildLowerPrimaryLegerCsv, createLegerFilename } from "./leger-export"
 import { getLowerPrimaryLeger } from "./leger.service"
 
 type Props = Readonly<{
@@ -172,9 +175,22 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
     }
   }, [academicYear, classStudents, revision, selectedClass, semester])
 
+  function handleExport() {
+    if (!leger) return
+    const blob = new Blob(["\uFEFF", buildLowerPrimaryLegerCsv(leger)], {
+      type: "text/csv;charset=utf-8",
+    })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement("a")
+    anchor.href = url
+    anchor.download = createLegerFilename(leger)
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)]">
-      <header className="sticky top-0 z-30 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
+      <header className="leger-screen-only sticky top-0 z-30 border-b border-[var(--rapotku-border)] bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             {onBack ? (
@@ -214,7 +230,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
       </header>
 
       <main className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8">
-        <section className="overflow-hidden rounded-3xl bg-[linear-gradient(130deg,#841016_0%,#c91d24_72%,#e34a4f_100%)] p-5 text-white shadow-[0_18px_50px_rgba(130,18,23,0.18)] sm:p-7">
+        <section className="leger-screen-only overflow-hidden rounded-3xl bg-[linear-gradient(130deg,#841016_0%,#c91d24_72%,#e34a4f_100%)] p-5 text-white shadow-[0_18px_50px_rgba(130,18,23,0.18)] sm:p-7">
           <div className="flex max-w-3xl items-start gap-4">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/15">
               <BookOpenCheck aria-hidden="true" size={24} />
@@ -234,7 +250,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
           </div>
         </section>
 
-        <section className="relative z-10 mx-2 -mt-3 rounded-2xl border border-white/70 bg-white/90 p-4 shadow-[0_16px_38px_rgba(80,30,33,0.09)] backdrop-blur sm:mx-5 sm:-mt-5 sm:p-5">
+        <section className="leger-screen-only relative z-10 mx-2 -mt-3 rounded-2xl border border-white/70 bg-white/90 p-4 shadow-[0_16px_38px_rgba(80,30,33,0.09)] backdrop-blur sm:mx-5 sm:-mt-5 sm:p-5">
           <label className="block max-w-md text-sm font-bold">
             Pilih kelas 1–3
             <select
@@ -259,7 +275,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
 
         {error ? (
           <div
-            className="mt-5 flex items-center justify-between gap-3 rounded-2xl border border-[#f5b7ba] bg-[var(--rapotku-brand-soft)] p-4 text-sm text-[var(--rapotku-brand-strong)]"
+            className="leger-screen-only mt-5 flex items-center justify-between gap-3 rounded-2xl border border-[#f5b7ba] bg-[var(--rapotku-brand-soft)] p-4 text-sm text-[var(--rapotku-brand-strong)]"
             role="alert"
           >
             <span>{error}</span>
@@ -310,22 +326,47 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
         ) : null}
 
         {leger && !isLoading ? (
-          <section className="mt-6" aria-labelledby="leger-title">
+          <section
+            className="leger-print-sheet mt-6"
+            aria-labelledby="leger-title"
+          >
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
+                <p className="leger-print-only hidden text-sm font-bold uppercase tracking-[0.12em]">
+                  {leger.schoolName}
+                </p>
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
                   {leger.academicYear} · {leger.semester}
                 </p>
                 <h2 id="leger-title" className="mt-1 text-xl font-bold">
-                  {leger.className}
+                  Leger {leger.className}
                 </h2>
               </div>
-              <span className="rounded-full border border-[var(--rapotku-border)] bg-white px-3 py-2 text-xs font-bold text-[var(--rapotku-muted)]">
-                {leger.rows.length} siswa · {leger.subjectColumns.length} mapel
-              </span>
+              <div className="leger-screen-only flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-[var(--rapotku-border)] bg-white px-3 py-2 text-xs font-bold text-[var(--rapotku-muted)]">
+                  {leger.rows.length} siswa · {leger.subjectColumns.length}{" "}
+                  mapel
+                </span>
+                <button
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold transition active:scale-[0.98]"
+                  onClick={handleExport}
+                  type="button"
+                >
+                  <Download aria-hidden="true" size={17} />
+                  Ekspor CSV
+                </button>
+                <button
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] active:scale-[0.98]"
+                  onClick={() => window.print()}
+                  type="button"
+                >
+                  <Printer aria-hidden="true" size={17} />
+                  Cetak leger
+                </button>
+              </div>
             </div>
 
-            <div className="hidden overflow-x-auto rounded-3xl border border-[var(--rapotku-border)] bg-white shadow-[0_8px_28px_rgba(24,31,45,0.04)] md:block">
+            <div className="leger-table-results hidden overflow-x-auto rounded-3xl border border-[var(--rapotku-border)] bg-white shadow-[0_8px_28px_rgba(24,31,45,0.04)] md:block">
               <table className="min-w-max border-collapse text-sm">
                 <thead>
                   <tr className="bg-[#fff7f7] text-left">
@@ -428,7 +469,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
               </table>
             </div>
 
-            <div className="grid gap-4 md:hidden">
+            <div className="leger-mobile-results grid gap-4 md:hidden">
               {leger.rows.map((row) => (
                 <article
                   className="rounded-3xl border border-[var(--rapotku-border)] bg-white p-4 shadow-[0_8px_24px_rgba(24,31,45,0.04)]"

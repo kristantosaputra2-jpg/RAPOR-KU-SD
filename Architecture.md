@@ -947,6 +947,11 @@ status rapor yang sudah ada, dan ringkasan capaian hanya membaca deskripsi
 final guru. Pada HP, data yang sama ditampilkan sebagai kartu per siswa agar
 tidak membutuhkan horizontal scroll ekstrem.
 
+Output lower primary memakai HTML print dengan halaman A4 landscape. Ekspor
+memakai CSV UTF-8 berseparator titik koma agar ringan, gratis, dan dapat dibuka
+di Excel tanpa dependency tambahan. Kolom nilai angka dan predikat tetap
+dipisahkan supaya hasil dapat diolah tanpa membaca teks gabungan.
+
 ---
 
 # 30. Report Generation Architecture

@@ -398,6 +398,11 @@ textarea:hover:not(:disabled) {
   margin: 10mm;
 }
 
+@page leger {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
 @media print {
   html,
   body,
@@ -415,6 +420,65 @@ textarea:hover:not(:disabled) {
 
   .report-screen-only {
     display: none !important;
+  }
+
+  .leger-screen-only,
+  .leger-mobile-results {
+    display: none !important;
+  }
+
+  .leger-print-sheet {
+    page: leger;
+    width: 100%;
+    margin: 0;
+    color: #111827;
+  }
+
+  .leger-print-only,
+  .leger-table-results {
+    display: block !important;
+  }
+
+  .leger-table-results {
+    overflow: visible;
+    border: 1px solid #c9cdd3;
+    border-radius: 0;
+    box-shadow: none !important;
+  }
+
+  .leger-table-results table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    font-size: 7px;
+  }
+
+  .leger-table-results th,
+  .leger-table-results td {
+    position: static !important;
+    min-width: 0 !important;
+    padding: 3px !important;
+    background: white !important;
+  }
+
+  .leger-table-results thead {
+    display: table-header-group;
+  }
+
+  .leger-table-results tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .leger-table-results details summary {
+    display: none !important;
+  }
+
+  .leger-table-results details > :not(summary) {
+    display: block !important;
+    max-width: none;
+    font-size: 6px;
+    line-height: 1.25;
   }
 
   .app-shell,

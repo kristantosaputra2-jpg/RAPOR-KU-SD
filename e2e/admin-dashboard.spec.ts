@@ -663,7 +663,9 @@ for (const viewport of [
     await openAuthenticatedDashboard(page, true, true, 2)
     await openLowerPrimaryLeger(page, viewport.width)
 
-    await expect(page.getByText("Kelas 2A", { exact: true })).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Leger Kelas 2A" }),
+    ).toBeVisible()
     const legerSurface =
       viewport.width < 768
         ? page.locator("article").first()
@@ -680,6 +682,56 @@ for (const viewport of [
     expect(layout.scrollWidth).toBe(layout.clientWidth)
   })
 }
+
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 1280, height: 900 },
+] as const) {
+  test(`cetak leger dapat dibuka pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 2)
+    await openLowerPrimaryLeger(page, viewport.width)
+    await page.evaluate(() => {
+      const testWindow = window as Window & { __printCalls?: number }
+      testWindow.__printCalls = 0
+      window.print = () => {
+        testWindow.__printCalls = (testWindow.__printCalls ?? 0) + 1
+      }
+    })
+
+    await page.getByRole("button", { name: "Cetak leger" }).click()
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __printCalls?: number }).__printCalls ?? 0,
+        ),
+      )
+      .toBe(1)
+
+    await page.emulateMedia({ media: "print" })
+    await expect(page.locator(".leger-screen-only").first()).toBeHidden()
+    await expect(page.locator(".leger-mobile-results")).toBeHidden()
+    await expect(page.locator(".leger-table-results")).toBeVisible()
+  })
+}
+
+test("ekspor leger mengunduh file CSV yang dapat dibuka di Excel", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await openAuthenticatedDashboard(page, true, true, 2)
+  await openLowerPrimaryLeger(page, 1280)
+
+  const downloadPromise = page.waitForEvent("download")
+  await page.getByRole("button", { name: "Ekspor CSV" }).click()
+  const download = await downloadPromise
+
+  expect(download.suggestedFilename()).toBe("leger-kelas-2a.csv")
+  expect(await download.failure()).toBeNull()
+})
 
 for (const viewport of mobileViewports.slice(0, 2)) {
   test(`login bergambar utuh pada ${viewport.width}px`, async ({ page }) => {
