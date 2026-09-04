@@ -216,7 +216,10 @@ function DashboardNavigation({
   onOpenReportCompleteness: () => void
 }>) {
   return (
-    <nav aria-label="Menu utama" className="mt-8 space-y-7">
+    <nav
+      aria-label="Menu utama"
+      className="app-sidebar-scroll mt-6 min-h-0 flex-1 space-y-7 overflow-y-auto overscroll-contain pr-1"
+    >
       {navigationGroups.map((group) => (
         <div key={group.label}>
           <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[#98a2b3]">
@@ -396,7 +399,7 @@ export function AdminDashboard({
 
   return (
     <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
-      <aside className="sticky top-0 hidden h-screen border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
+      <aside className="sticky top-0 hidden h-screen overflow-hidden border-r border-[var(--rapotku-border)] bg-white p-5 lg:flex lg:flex-col">
         <Brand schoolName={schoolName} />
         <DashboardNavigation
           onOpenSchoolSettings={onOpenSchoolSettings}
@@ -675,7 +678,7 @@ export function AdminDashboard({
             aria-label="Menu Admin"
             aria-modal="true"
             role="dialog"
-            className="app-mobile-menu relative flex h-full w-[min(88vw,320px)] flex-col overflow-y-auto bg-white p-5 shadow-2xl"
+            className="app-mobile-menu relative flex h-full w-[min(88vw,320px)] flex-col overflow-hidden bg-white p-5 shadow-2xl"
           >
             <div className="flex items-center justify-between gap-3">
               <Brand schoolName={schoolName} />

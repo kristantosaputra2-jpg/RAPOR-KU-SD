@@ -428,6 +428,9 @@ Fungsinya:
   - Karakter, daun, dan burung bergerak halus; section ringkasan overlap dengan hero; gerak scroll hanya dekoratif; menu memakai kotak interaktif dan bounce teks singkat.
   - Gambar sumber tetap sama dan hanya dimuat dari satu URL; lapisan motion bersifat dekoratif, tidak menambah informasi ganda bagi pembaca layar, serta otomatis tenang pada reduced-motion.
   - Lulus 169 unit/integration test, 6 E2E khusus Login/Dashboard pada 360px, 390px, 768px, dan 1280px, typecheck, lint, format, serta production build.
+- [x] Perbaiki scroll sidebar Dashboard pada layar pendek
+  - Daftar menu memiliki scroll mandiri pada desktop dan drawer HP, sementara identitas akun serta tombol Keluar tetap dapat dijangkau.
+  - Lulus regression test khusus pada tinggi layar 640px dan pemeriksaan Dashboard 360px, 390px, 768px, serta 1280px.
 
 ## Mobile
 

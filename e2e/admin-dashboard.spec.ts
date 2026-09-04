@@ -683,6 +683,27 @@ test("dashboard nyaman pada desktop 1280px", async ({ page }) => {
   ).toBeVisible()
 })
 
+test("sidebar dashboard dapat digulir pada layar pendek", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 640 })
+  await openAuthenticatedDashboard(page)
+
+  const navigation = page.getByRole("navigation", { name: "Menu utama" })
+  const dimensions = await navigation.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }))
+
+  expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight)
+
+  const scrollTop = await navigation.evaluate((element) => {
+    element.scrollTop = element.scrollHeight
+    return element.scrollTop
+  })
+
+  expect(scrollTop).toBeGreaterThan(0)
+  await expect(page.getByRole("button", { name: "Keluar" })).toBeVisible()
+})
+
 const settingsViewports = [
   ...mobileViewports,
   { width: 1280, height: 900 },
