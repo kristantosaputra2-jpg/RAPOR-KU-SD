@@ -704,10 +704,9 @@ for (const viewport of [
     await expect(
       page.getByRole("heading", { name: "Leger Kelas 4A" }),
     ).toBeVisible()
+    await expect(page.getByRole("button", { name: "Ekspor CSV" })).toBeVisible()
     await expect(
-      page.getByText(
-        "Cetak dan ekspor kelas 4–6 disiapkan pada tahap berikutnya",
-      ),
+      page.getByRole("button", { name: "Cetak leger" }),
     ).toBeVisible()
 
     const legerSurface =
@@ -783,6 +782,55 @@ test("ekspor leger mengunduh file CSV yang dapat dibuka di Excel", async ({
   const download = await downloadPromise
 
   expect(download.suggestedFilename()).toBe("leger-kelas-2a.csv")
+  expect(await download.failure()).toBeNull()
+})
+
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 1280, height: 900 },
+] as const) {
+  test(`cetak leger kelas 4–6 memakai tabel A4 landscape pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 4)
+    await openLeger(page, viewport.width)
+    await page.evaluate(() => {
+      const testWindow = window as Window & { __printCalls?: number }
+      testWindow.__printCalls = 0
+      window.print = () => {
+        testWindow.__printCalls = (testWindow.__printCalls ?? 0) + 1
+      }
+    })
+
+    await page.getByRole("button", { name: "Cetak leger" }).click()
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __printCalls?: number }).__printCalls ?? 0,
+        ),
+      )
+      .toBe(1)
+
+    await page.emulateMedia({ media: "print" })
+    await expect(page.locator(".leger-mobile-results")).toBeHidden()
+    await expect(
+      page.locator(".leger-upper-primary .leger-table-results"),
+    ).toBeVisible()
+  })
+}
+
+test("ekspor leger kelas 4–6 mengunduh CSV", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await openAuthenticatedDashboard(page, true, true, 4)
+  await openLeger(page, 1280)
+
+  const downloadPromise = page.waitForEvent("download")
+  await page.getByRole("button", { name: "Ekspor CSV" }).click()
+  const download = await downloadPromise
+
+  expect(download.suggestedFilename()).toBe("leger-kelas-4a.csv")
   expect(await download.failure()).toBeNull()
 })
 

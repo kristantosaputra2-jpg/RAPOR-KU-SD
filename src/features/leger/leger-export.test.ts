@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest"
 
 import type { LowerPrimaryLegerViewModel } from "./leger-view-model"
-import { buildLowerPrimaryLegerCsv, createLegerFilename } from "./leger-export"
+import {
+  buildLegerCsv,
+  buildLowerPrimaryLegerCsv,
+  buildUpperPrimaryLegerCsv,
+  createLegerFilename,
+} from "./leger-export"
 
 const leger: LowerPrimaryLegerViewModel = {
   templateGroup: "lower_primary",
@@ -65,5 +70,27 @@ describe("buildLowerPrimaryLegerCsv", () => {
 
   it("membuat nama file yang aman", () => {
     expect(createLegerFilename(leger)).toBe("leger-kelas-2a.csv")
+  })
+})
+
+describe("buildUpperPrimaryLegerCsv", () => {
+  const upperLeger = {
+    ...leger,
+    templateGroup: "upper_primary" as const,
+  }
+
+  it("mengekspor nilai, predikat, dan deskripsi setiap komponen secara terpisah", () => {
+    const csv = buildUpperPrimaryLegerCsv(upperLeger)
+
+    expect(csv).toContain("Matematika - Pengetahuan - Deskripsi")
+    expect(csv).toContain("Matematika - Keterampilan - Deskripsi")
+    expect(csv).toContain('1;001;"Ayu, Putri";86;B;;;;;Sebagian;')
+  })
+
+  it("memilih format ekspor berdasarkan kelompok template", () => {
+    expect(buildLegerCsv(upperLeger)).toBe(
+      buildUpperPrimaryLegerCsv(upperLeger),
+    )
+    expect(buildLegerCsv(leger)).toBe(buildLowerPrimaryLegerCsv(leger))
   })
 })

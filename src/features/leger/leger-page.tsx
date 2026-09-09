@@ -21,7 +21,7 @@ import {
 } from "@/features/students/student.service"
 
 import type { LegerViewModel } from "./leger-view-model"
-import { buildLowerPrimaryLegerCsv, createLegerFilename } from "./leger-export"
+import { buildLegerCsv, createLegerFilename } from "./leger-export"
 import { getLeger } from "./leger.service"
 
 type Props = Readonly<{
@@ -169,7 +169,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
 
   function handleExport() {
     if (!leger) return
-    const blob = new Blob(["\uFEFF", buildLowerPrimaryLegerCsv(leger)], {
+    const blob = new Blob(["\uFEFF", buildLegerCsv(leger)], {
       type: "text/csv;charset=utf-8",
     })
     const url = URL.createObjectURL(blob)
@@ -319,7 +319,11 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
 
         {leger && !isLoading ? (
           <section
-            className="leger-print-sheet mt-6"
+            className={`leger-print-sheet mt-6 ${
+              leger.templateGroup === "upper_primary"
+                ? "leger-upper-primary"
+                : ""
+            }`}
             aria-labelledby="leger-title"
           >
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
@@ -339,30 +343,22 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
                   {leger.rows.length} siswa · {leger.subjectColumns.length}{" "}
                   mapel
                 </span>
-                {leger.templateGroup === "lower_primary" ? (
-                  <>
-                    <button
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold transition active:scale-[0.98]"
-                      onClick={handleExport}
-                      type="button"
-                    >
-                      <Download aria-hidden="true" size={17} />
-                      Ekspor CSV
-                    </button>
-                    <button
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] active:scale-[0.98]"
-                      onClick={() => window.print()}
-                      type="button"
-                    >
-                      <Printer aria-hidden="true" size={17} />
-                      Cetak leger
-                    </button>
-                  </>
-                ) : (
-                  <span className="rounded-xl bg-[#fff7e8] px-3 py-2 text-xs font-bold text-[#875500]">
-                    Cetak dan ekspor kelas 4–6 disiapkan pada tahap berikutnya
-                  </span>
-                )}
+                <button
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold transition active:scale-[0.98]"
+                  onClick={handleExport}
+                  type="button"
+                >
+                  <Download aria-hidden="true" size={17} />
+                  Ekspor CSV
+                </button>
+                <button
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] active:scale-[0.98]"
+                  onClick={() => window.print()}
+                  type="button"
+                >
+                  <Printer aria-hidden="true" size={17} />
+                  Cetak leger
+                </button>
               </div>
             </div>
 

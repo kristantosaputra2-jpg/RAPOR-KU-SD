@@ -391,8 +391,10 @@ Fungsinya:
 - [x] Support nilai akhir
 - [x] Support predikat bila aktif
 - [x] Support deskripsi
-- [ ] Print
-- [ ] Export
+- [x] Print
+  - Tabel seluruh mapel dicetak A4 landscape; nilai Pengetahuan dan Keterampilan tetap berada pada kolom terpisah.
+- [x] Export
+  - CSV kelas 4–6 memisahkan nilai, predikat, dan deskripsi setiap komponen agar mudah dibuka di Excel.
 - [x] Test tabel lebar
 
 ---
@@ -609,7 +611,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
-| Leger               | In Progress |      85% | Leger kelas 1–6 sudah tampil responsif; cetak dan ekspor kelas 4–6 menjadi tahap berikutnya                                 |
+| Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                           |
 | Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |

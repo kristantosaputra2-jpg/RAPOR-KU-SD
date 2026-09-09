@@ -1956,6 +1956,12 @@ rangkaian query, lalu membagi hasilnya menjadi view model per siswa di memori.
 Pendekatan ini menghindari N+1 query. Setiap siswa tetap memakai template preview
 yang sama dan dipisahkan dengan page break sebelum dialog cetak browser dibuka.
 
+Leger kelas 4–6 menggunakan view model yang sama dengan tampilan layar. Hasil
+cetak memakai A4 landscape dengan seluruh mapel serta komponen Pengetahuan dan
+Keterampilan tetap terpisah. Ekspor CSV juga menyimpan nilai, predikat, dan
+deskripsi tiap komponen pada kolom tersendiri; sistem tidak membuat nilai gabungan
+baru yang tidak ditetapkan oleh aturan sekolah.
+
 ---
 
 Arsitektur aplikasi mengikuti pola:

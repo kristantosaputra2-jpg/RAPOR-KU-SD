@@ -1,4 +1,8 @@
-import type { LowerPrimaryLegerViewModel } from "./leger-view-model"
+import type {
+  LegerViewModel,
+  LowerPrimaryLegerViewModel,
+  UpperPrimaryLegerViewModel,
+} from "./leger-view-model"
 
 function escapeCsv(value: string | number | null) {
   const text = value === null ? "" : String(value)
@@ -8,11 +12,38 @@ function escapeCsv(value: string | number | null) {
 export function buildLowerPrimaryLegerCsv(
   leger: LowerPrimaryLegerViewModel,
 ): string {
+  return serializeLegerCsv(leger, false)
+}
+
+export function buildUpperPrimaryLegerCsv(
+  leger: UpperPrimaryLegerViewModel,
+): string {
+  return serializeLegerCsv(leger, true)
+}
+
+export function buildLegerCsv(leger: LegerViewModel): string {
+  return leger.templateGroup === "upper_primary"
+    ? buildUpperPrimaryLegerCsv(leger)
+    : buildLowerPrimaryLegerCsv(leger)
+}
+
+function serializeLegerCsv(
+  leger: LegerViewModel,
+  includeComponentDescriptions: boolean,
+): string {
   const scoreHeadings = leger.subjectColumns.flatMap((subject) =>
-    subject.components.flatMap((component) => [
-      `${subject.subjectName} - ${component.componentName} - Nilai`,
-      `${subject.subjectName} - ${component.componentName} - Predikat`,
-    ]),
+    subject.components.flatMap((component) => {
+      const headings = [
+        `${subject.subjectName} - ${component.componentName} - Nilai`,
+        `${subject.subjectName} - ${component.componentName} - Predikat`,
+      ]
+      return includeComponentDescriptions
+        ? [
+            ...headings,
+            `${subject.subjectName} - ${component.componentName} - Deskripsi`,
+          ]
+        : headings
+    }),
   )
   const rows = leger.rows.map((row, index) => {
     const scores = leger.subjectColumns.flatMap((subject) =>
@@ -22,7 +53,13 @@ export function buildLowerPrimaryLegerCsv(
           ?.components.find(
             (item) => item.componentId === component.componentId,
           )
-        return [value?.average ?? null, value?.predicate ?? null]
+        const values: Array<string | number | null> = [
+          value?.average ?? null,
+          value?.predicate ?? null,
+        ]
+        return includeComponentDescriptions
+          ? [...values, value?.description ?? null]
+          : values
       }),
     )
     return [
@@ -55,7 +92,7 @@ export function buildLowerPrimaryLegerCsv(
     .join("\r\n")
 }
 
-export function createLegerFilename(leger: LowerPrimaryLegerViewModel) {
+export function createLegerFilename(leger: LegerViewModel) {
   const safeClassName = leger.className
     .trim()
     .toLowerCase()

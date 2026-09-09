@@ -453,6 +453,15 @@ textarea:hover:not(:disabled) {
     font-size: 7px;
   }
 
+  .leger-upper-primary .leger-table-results table {
+    font-size: 6px;
+  }
+
+  .leger-upper-primary .leger-table-results th,
+  .leger-upper-primary .leger-table-results td {
+    padding: 2px !important;
+  }
+
   .leger-table-results th,
   .leger-table-results td {
     position: static !important;
