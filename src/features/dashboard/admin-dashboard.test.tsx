@@ -235,7 +235,7 @@ describe("AdminDashboard", () => {
     expect(onOpenReports).toHaveBeenCalledOnce()
   })
 
-  it("membuka Leger Kelas 1–3 dari navigasi", async () => {
+  it("membuka Leger Kelas 1–6 dari navigasi", async () => {
     const user = userEvent.setup()
     const onOpenLeger = vi.fn()
     render(
@@ -254,7 +254,7 @@ describe("AdminDashboard", () => {
     )
 
     await user.click(
-      screen.getAllByRole("button", { name: "Leger Kelas 1–3" })[0],
+      screen.getAllByRole("button", { name: "Leger Kelas 1–6" })[0],
     )
 
     expect(onOpenLeger).toHaveBeenCalledOnce()

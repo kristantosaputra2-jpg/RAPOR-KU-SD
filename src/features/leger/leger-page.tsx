@@ -20,9 +20,9 @@ import {
   getStudents,
 } from "@/features/students/student.service"
 
-import type { LowerPrimaryLegerViewModel } from "./leger-view-model"
+import type { LegerViewModel } from "./leger-view-model"
 import { buildLowerPrimaryLegerCsv, createLegerFilename } from "./leger-export"
-import { getLowerPrimaryLeger } from "./leger.service"
+import { getLeger } from "./leger.service"
 
 type Props = Readonly<{
   userName: string
@@ -75,7 +75,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
     semesters: [],
   })
   const [classId, setClassId] = useState("")
-  const [leger, setLeger] = useState<LowerPrimaryLegerViewModel | null>(null)
+  const [leger, setLeger] = useState<LegerViewModel | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [revision, setRevision] = useState(0)
@@ -90,18 +90,15 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
     ])
       .then(([allClasses, allStudents, allMemberships, loadedPeriods]) => {
         if (!active) return
-        const lowerClasses = allClasses.filter(
-          (item) => item.template_group === "lower_primary",
-        )
-        setClasses(lowerClasses)
+        setClasses(allClasses)
         setStudents(allStudents)
         setMemberships(allMemberships)
         setPeriods(loadedPeriods)
-        setIsLoading(Boolean(lowerClasses[0]))
+        setIsLoading(Boolean(allClasses[0]))
         setClassId((current) =>
-          lowerClasses.some((item) => item.id === current)
+          allClasses.some((item) => item.id === current)
             ? current
-            : (lowerClasses[0]?.id ?? ""),
+            : (allClasses[0]?.id ?? ""),
         )
       })
       .catch((reason: unknown) => {
@@ -152,12 +149,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
       return
     }
     let active = true
-    void getLowerPrimaryLeger(
-      selectedClass,
-      classStudents,
-      academicYear,
-      semester,
-    )
+    void getLeger(selectedClass, classStudents, academicYear, semester)
       .then((data) => active && setLeger(data))
       .catch((reason: unknown) => {
         if (active) {
@@ -207,7 +199,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
               <ClipboardList aria-hidden="true" size={22} />
             </span>
             <div className="min-w-0">
-              <p className="truncate font-bold">Leger Kelas 1–3</p>
+              <p className="truncate font-bold">Leger Kelas 1–6</p>
               <p className="truncate text-xs text-[var(--rapotku-muted)]">
                 {schoolName ?? "RapotKu"}
               </p>
@@ -240,7 +232,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
                 Ringkasan otomatis
               </p>
               <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-                Nilai satu kelas, terbaca dalam sekali lihat
+                Nilai kelas 1–6, terbaca dalam sekali lihat
               </h1>
               <p className="mt-2 text-sm leading-6 text-white/85">
                 Nilai Pengetahuan dan Keterampilan tetap dipisahkan. Leger hanya
@@ -252,7 +244,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
 
         <section className="leger-screen-only relative z-10 mx-2 -mt-3 rounded-2xl border border-white/70 bg-white/90 p-4 shadow-[0_16px_38px_rgba(80,30,33,0.09)] backdrop-blur sm:mx-5 sm:-mt-5 sm:p-5">
           <label className="block max-w-md text-sm font-bold">
-            Pilih kelas 1–3
+            Pilih kelas
             <select
               className={selectClass}
               value={classId}
@@ -310,9 +302,9 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
         ) : null}
         {!isLoading && classes.length === 0 ? (
           <div className="mt-6 rounded-3xl border border-dashed border-[var(--rapotku-border)] bg-white p-8 text-center">
-            <h2 className="text-lg font-bold">Belum ada kelas 1–3</h2>
+            <h2 className="text-lg font-bold">Belum ada kelas</h2>
             <p className="mt-2 text-sm text-[var(--rapotku-muted)]">
-              Tambahkan kelas rendah terlebih dahulu di Data Kelas.
+              Tambahkan kelas terlebih dahulu di Data Kelas.
             </p>
           </div>
         ) : null}
@@ -347,22 +339,30 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
                   {leger.rows.length} siswa · {leger.subjectColumns.length}{" "}
                   mapel
                 </span>
-                <button
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold transition active:scale-[0.98]"
-                  onClick={handleExport}
-                  type="button"
-                >
-                  <Download aria-hidden="true" size={17} />
-                  Ekspor CSV
-                </button>
-                <button
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] active:scale-[0.98]"
-                  onClick={() => window.print()}
-                  type="button"
-                >
-                  <Printer aria-hidden="true" size={17} />
-                  Cetak leger
-                </button>
+                {leger.templateGroup === "lower_primary" ? (
+                  <>
+                    <button
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold transition active:scale-[0.98]"
+                      onClick={handleExport}
+                      type="button"
+                    >
+                      <Download aria-hidden="true" size={17} />
+                      Ekspor CSV
+                    </button>
+                    <button
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] active:scale-[0.98]"
+                      onClick={() => window.print()}
+                      type="button"
+                    >
+                      <Printer aria-hidden="true" size={17} />
+                      Cetak leger
+                    </button>
+                  </>
+                ) : (
+                  <span className="rounded-xl bg-[#fff7e8] px-3 py-2 text-xs font-bold text-[#875500]">
+                    Cetak dan ekspor kelas 4–6 disiapkan pada tahap berikutnya
+                  </span>
+                )}
               </div>
             </div>
 

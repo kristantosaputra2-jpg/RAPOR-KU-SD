@@ -1,6 +1,6 @@
 # TODO.md — Aplikasi Rapor SD Kelas 1–6
 
-**Last Updated:** 2026-09-04
+**Last Updated:** 2026-09-09
 **Project:** Aplikasi Rapor SD  
 **Status Legend:** `[ ]` Todo · `[/]` In Progress · `[x]` Done · `[*]` Blocked · `[-]` Cancelled
 
@@ -386,14 +386,14 @@ Fungsinya:
 
 ## Leger Kelas 4–6
 
-- [ ] Buat query leger upper primary
-- [ ] Support komponen nilai
-- [ ] Support nilai akhir
-- [ ] Support predikat bila aktif
-- [ ] Support deskripsi
+- [x] Buat query leger upper primary
+- [x] Support komponen nilai
+- [x] Support nilai akhir
+- [x] Support predikat bila aktif
+- [x] Support deskripsi
 - [ ] Print
 - [ ] Export
-- [ ] Test tabel lebar
+- [x] Test tabel lebar
 
 ---
 
@@ -609,7 +609,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
-| Leger               | In Progress |      50% | Leger lower primary selesai termasuk tabel desktop/mobile, print A4 landscape, ekspor CSV, dan test                         |
+| Leger               | In Progress |      85% | Leger kelas 1–6 sudah tampil responsif; cetak dan ekspor kelas 4–6 menjadi tahap berikutnya                                 |
 | Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |

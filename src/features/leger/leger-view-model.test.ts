@@ -5,6 +5,7 @@ import type { ReportViewModel } from "@/features/reports/report-view-model"
 
 import {
   buildLowerPrimaryLegerViewModel,
+  buildUpperPrimaryLegerViewModel,
   LowerPrimaryLegerError,
 } from "./leger-view-model"
 
@@ -144,5 +145,28 @@ describe("buildLowerPrimaryLegerViewModel", () => {
         [],
       ),
     ).toThrow(LowerPrimaryLegerError)
+  })
+
+  it("menyusun nilai akhir, predikat, dan deskripsi kelas 4–6 per komponen", () => {
+    const leger = buildUpperPrimaryLegerViewModel(
+      [report("student-1", "Ayu", "upper_primary")],
+      [completeness("student-1")],
+    )
+
+    expect(leger.templateGroup).toBe("upper_primary")
+    expect(leger.rows[0]?.subjects[0]?.components).toMatchObject([
+      {
+        componentName: "Pengetahuan",
+        average: 86,
+        predicate: "B",
+        description: "Memahami bilangan dengan baik.",
+      },
+      {
+        componentName: "Keterampilan",
+        average: 92,
+        predicate: "A",
+        description: "Terampil menyelesaikan latihan.",
+      },
+    ])
   })
 })

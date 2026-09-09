@@ -13,7 +13,7 @@ export type LegerComponentValue = Readonly<{
   description: string | null
 }>
 
-export type LowerPrimaryLegerRow = Readonly<{
+export type LegerRow = Readonly<{
   studentId: string
   studentName: string
   nis: string
@@ -29,7 +29,8 @@ export type LowerPrimaryLegerRow = Readonly<{
   achievementSummary: ReadonlyArray<string>
 }>
 
-export type LowerPrimaryLegerViewModel = Readonly<{
+export type LegerViewModel = Readonly<{
+  templateGroup: "lower_primary" | "upper_primary"
   schoolName: string
   className: string
   academicYear: string
@@ -43,29 +44,36 @@ export type LowerPrimaryLegerViewModel = Readonly<{
       >
     }>
   >
-  rows: ReadonlyArray<LowerPrimaryLegerRow>
+  rows: ReadonlyArray<LegerRow>
 }>
 
-export class LowerPrimaryLegerError extends Error {
+export type LowerPrimaryLegerRow = LegerRow
+export type LowerPrimaryLegerViewModel = LegerViewModel
+export type UpperPrimaryLegerViewModel = LegerViewModel
+
+export class LegerError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = "LowerPrimaryLegerError"
+    this.name = "LegerError"
   }
 }
 
-export function buildLowerPrimaryLegerViewModel(
+export const LowerPrimaryLegerError = LegerError
+
+function buildLegerViewModel(
   reports: ReadonlyArray<ReportViewModel>,
   completeness: ReadonlyArray<StudentReportCompleteness>,
-): LowerPrimaryLegerViewModel {
+  templateGroup: "lower_primary" | "upper_primary",
+): LegerViewModel {
   const firstReport = reports[0]
   if (!firstReport) {
-    throw new LowerPrimaryLegerError(
-      "Belum ada siswa untuk ditampilkan di leger.",
-    )
+    throw new LegerError("Belum ada siswa untuk ditampilkan di leger.")
   }
-  if (reports.some((report) => report.templateGroup !== "lower_primary")) {
-    throw new LowerPrimaryLegerError(
-      "Leger ini hanya digunakan untuk kelas 1 sampai 3.",
+  if (reports.some((report) => report.templateGroup !== templateGroup)) {
+    throw new LegerError(
+      templateGroup === "lower_primary"
+        ? "Leger ini hanya digunakan untuk kelas 1 sampai 3."
+        : "Leger ini hanya digunakan untuk kelas 4 sampai 6.",
     )
   }
 
@@ -82,6 +90,7 @@ export function buildLowerPrimaryLegerViewModel(
   )
 
   return {
+    templateGroup,
     schoolName: firstReport.school.name,
     className: firstReport.academicPeriod.className,
     academicYear: firstReport.academicPeriod.academicYear,
@@ -119,4 +128,18 @@ export function buildLowerPrimaryLegerViewModel(
       }
     }),
   }
+}
+
+export function buildLowerPrimaryLegerViewModel(
+  reports: ReadonlyArray<ReportViewModel>,
+  completeness: ReadonlyArray<StudentReportCompleteness>,
+): LowerPrimaryLegerViewModel {
+  return buildLegerViewModel(reports, completeness, "lower_primary")
+}
+
+export function buildUpperPrimaryLegerViewModel(
+  reports: ReadonlyArray<ReportViewModel>,
+  completeness: ReadonlyArray<StudentReportCompleteness>,
+): UpperPrimaryLegerViewModel {
+  return buildLegerViewModel(reports, completeness, "upper_primary")
 }

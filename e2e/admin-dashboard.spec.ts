@@ -150,41 +150,49 @@ async function openAuthenticatedDashboard(
     })
   })
   await page.route("**/rest/v1/subjects*", async (route) => {
+    const subjectNames =
+      gradeLevel >= 4
+        ? [
+            "Matematika",
+            "Bahasa Indonesia",
+            "Pendidikan Pancasila",
+            "IPAS",
+            "Seni Budaya",
+            "PJOK",
+          ]
+        : ["Matematika"]
     await route.fulfill({
       status: 200,
       json: withGradeData
-        ? [
-            {
-              id: "subject-1",
-              name: "Matematika",
-              code: "MTK",
-              is_local_content: false,
-              display_order: 1,
-              is_active: true,
-              created_at: "2026-09-02T00:00:00.000Z",
-              updated_at: "2026-09-02T00:00:00.000Z",
-            },
-          ]
+        ? subjectNames.map((name, index) => ({
+            id: `subject-${index + 1}`,
+            name,
+            code: `MPL-${index + 1}`,
+            is_local_content: false,
+            display_order: index + 1,
+            is_active: true,
+            created_at: "2026-09-02T00:00:00.000Z",
+            updated_at: "2026-09-02T00:00:00.000Z",
+          }))
         : [],
     })
   })
   await page.route("**/rest/v1/teacher_assignments*", async (route) => {
+    const subjectCount = gradeLevel >= 4 ? 6 : 1
     await route.fulfill({
       status: 200,
       json: withGradeData
-        ? [
-            {
-              id: "assignment-1",
-              teacher_id: "teacher-1",
-              class_id: "class-1",
-              subject_id: "subject-1",
-              academic_year_id: "year-1",
-              semester_id: "semester-1",
-              is_active: true,
-              created_at: "2026-09-02T00:00:00.000Z",
-              updated_at: "2026-09-02T00:00:00.000Z",
-            },
-          ]
+        ? Array.from({ length: subjectCount }, (_, index) => ({
+            id: `assignment-${index + 1}`,
+            teacher_id: "teacher-1",
+            class_id: "class-1",
+            subject_id: `subject-${index + 1}`,
+            academic_year_id: "year-1",
+            semester_id: "semester-1",
+            is_active: true,
+            created_at: "2026-09-02T00:00:00.000Z",
+            updated_at: "2026-09-02T00:00:00.000Z",
+          }))
         : [],
     })
   })
@@ -631,19 +639,19 @@ async function openReportPreview(page: Page, width: number) {
   ).toBeVisible()
 }
 
-async function openLowerPrimaryLeger(page: Page, width: number) {
+async function openLeger(page: Page, width: number) {
   if (width < 1024) {
     await page.getByRole("button", { name: "Buka menu" }).click()
     await page
       .getByLabel("Menu Admin")
-      .getByRole("button", { name: "Leger Kelas 1–3" })
+      .getByRole("button", { name: "Leger Kelas 1–6" })
       .click()
   } else {
-    await page.getByRole("button", { name: "Leger Kelas 1–3" }).click()
+    await page.getByRole("button", { name: "Leger Kelas 1–6" }).click()
   }
   await expect(
     page.getByRole("heading", {
-      name: "Nilai satu kelas, terbaca dalam sekali lihat",
+      name: "Nilai kelas 1–6, terbaca dalam sekali lihat",
     }),
   ).toBeVisible()
 }
@@ -661,7 +669,7 @@ for (const viewport of [
   test(`Leger Kelas 1–3 nyaman pada ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport)
     await openAuthenticatedDashboard(page, true, true, 2)
-    await openLowerPrimaryLeger(page, viewport.width)
+    await openLeger(page, viewport.width)
 
     await expect(
       page.getByRole("heading", { name: "Leger Kelas 2A" }),
@@ -684,6 +692,51 @@ for (const viewport of [
 }
 
 for (const viewport of [
+  { width: 360, height: 800 },
+  { width: 768, height: 1024 },
+  { width: 1280, height: 900 },
+] as const) {
+  test(`Leger Kelas 4–6 nyaman pada ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 4)
+    await openLeger(page, viewport.width)
+
+    await expect(
+      page.getByRole("heading", { name: "Leger Kelas 4A" }),
+    ).toBeVisible()
+    await expect(
+      page.getByText(
+        "Cetak dan ekspor kelas 4–6 disiapkan pada tahap berikutnya",
+      ),
+    ).toBeVisible()
+
+    const legerSurface =
+      viewport.width < 768
+        ? page.locator("article").first()
+        : page.locator(".leger-table-results")
+    for (const subjectName of ["Matematika", "IPAS", "PJOK"]) {
+      await expect(legerSurface.getByText(subjectName).first()).toBeVisible()
+    }
+    await expect(legerSurface.getByText("Pengetahuan").first()).toBeVisible()
+    await expect(legerSurface.getByText("Keterampilan").first()).toBeVisible()
+
+    if (viewport.width >= 768) {
+      const tableWidth = await legerSurface.evaluate((element) => ({
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth,
+      }))
+      expect(tableWidth.scrollWidth).toBeGreaterThan(tableWidth.clientWidth)
+    }
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+for (const viewport of [
   { width: 390, height: 844 },
   { width: 1280, height: 900 },
 ] as const) {
@@ -692,7 +745,7 @@ for (const viewport of [
   }) => {
     await page.setViewportSize(viewport)
     await openAuthenticatedDashboard(page, true, true, 2)
-    await openLowerPrimaryLeger(page, viewport.width)
+    await openLeger(page, viewport.width)
     await page.evaluate(() => {
       const testWindow = window as Window & { __printCalls?: number }
       testWindow.__printCalls = 0
@@ -723,7 +776,7 @@ test("ekspor leger mengunduh file CSV yang dapat dibuka di Excel", async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await openAuthenticatedDashboard(page, true, true, 2)
-  await openLowerPrimaryLeger(page, 1280)
+  await openLeger(page, 1280)
 
   const downloadPromise = page.waitForEvent("download")
   await page.getByRole("button", { name: "Ekspor CSV" }).click()

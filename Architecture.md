@@ -952,6 +952,12 @@ memakai CSV UTF-8 berseparator titik koma agar ringan, gratis, dan dapat dibuka
 di Excel tanpa dependency tambahan. Kolom nilai angka dan predikat tetap
 dipisahkan supaya hasil dapat diolah tanpa membaca teks gabungan.
 
+Kelas 4–6 memakai pipeline query batch dan komponen yang sama, tetapi diproses
+sebagai `upper_primary`. Tabelnya mendukung banyak mata pelajaran melalui area
+scroll mendatar terkontrol pada tablet/desktop dan kartu per siswa pada HP.
+Nilai akhir, predikat, dan deskripsi tetap disusun per komponen Pengetahuan dan
+Keterampilan; sistem tidak membuat nilai gabungan baru.
+
 ---
 
 # 30. Report Generation Architecture

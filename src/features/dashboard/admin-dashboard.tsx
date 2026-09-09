@@ -124,7 +124,7 @@ const navigationGroups: ReadonlyArray<
         icon: ClipboardCheck,
         action: "report-completeness",
       },
-      { label: "Leger Kelas 1–3", icon: ClipboardList, action: "leger" },
+      { label: "Leger Kelas 1–6", icon: ClipboardList, action: "leger" },
       { label: "Laporan", icon: FileText, action: "reports" },
       { label: "Pengaturan Rapor", icon: Settings },
     ],

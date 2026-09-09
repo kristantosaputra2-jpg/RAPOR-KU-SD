@@ -4,6 +4,7 @@ import type { LowerPrimaryLegerViewModel } from "./leger-view-model"
 import { buildLowerPrimaryLegerCsv, createLegerFilename } from "./leger-export"
 
 const leger: LowerPrimaryLegerViewModel = {
+  templateGroup: "lower_primary",
   schoolName: "SD Uji",
   className: "Kelas 2A",
   academicYear: "2026/2027",
