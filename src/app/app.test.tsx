@@ -33,6 +33,10 @@ const classMocks = vi.hoisted(() => ({
   getClasses: vi.fn(),
 }))
 
+const homeroomDashboardMocks = vi.hoisted(() => ({
+  getHomeroomDashboardData: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
@@ -65,6 +69,17 @@ vi.mock("@/features/classes/class.service", async (importOriginal) => {
 
   return { ...original, ...classMocks }
 })
+
+vi.mock(
+  "@/features/dashboard/homeroom-dashboard.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/dashboard/homeroom-dashboard.service")
+      >()
+    return { ...original, ...homeroomDashboardMocks }
+  },
+)
 
 vi.mock(
   "@/features/academic-periods/academic-periods.service",
@@ -126,6 +141,13 @@ describe("App", () => {
     teacherMocks.getTeachers.mockResolvedValue([])
     classMocks.getClasses.mockReset()
     classMocks.getClasses.mockResolvedValue([])
+    homeroomDashboardMocks.getHomeroomDashboardData.mockReset()
+    homeroomDashboardMocks.getHomeroomDashboardData.mockResolvedValue({
+      academicYear: "2026/2027",
+      semester: 1,
+      classes: [],
+      studentCount: 0,
+    })
   })
 
   it("menampilkan login ketika tidak ada sesi aktif", async () => {
@@ -256,5 +278,24 @@ describe("App", () => {
     expect(
       await screen.findByText("Periode belum tersedia"),
     ).toBeInTheDocument()
+  })
+
+  it("membuka Dashboard Wali Kelas sesuai peran akun", async () => {
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue({
+      ...account,
+      profile: {
+        ...account.profile,
+        full_name: "Rina Wulandari",
+        role: "homeroom_teacher",
+      },
+    })
+
+    render(<App />)
+
+    expect(
+      await screen.findByText("Selamat datang, Rina Wulandari"),
+    ).toBeInTheDocument()
+    expect(screen.getAllByText("Wali Kelas").length).toBeGreaterThan(0)
+    expect(screen.queryByText("Dashboard Admin")).not.toBeInTheDocument()
   })
 })

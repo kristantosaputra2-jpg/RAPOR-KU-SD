@@ -1962,6 +1962,13 @@ Keterampilan tetap terpisah. Ekspor CSV juga menyimpan nilai, predikat, dan
 deskripsi tiap komponen pada kolom tersendiri; sistem tidak membuat nilai gabungan
 baru yang tidak ditetapkan oleh aturan sekolah.
 
+Dashboard Wali Kelas membaca profil guru yang terhubung dengan akun Auth, lalu
+memfilter kelas berdasarkan `homeroom_teacher_id` dan semester aktif. Daftar
+siswa hanya dihitung dari keanggotaan kelas tersebut. RLS pada `students` dan
+`class_members` memberikan akses baca kepada Wali Kelas hanya jika kelas memang
+terhubung dengan profil gurunya; navigasi frontend tetap hanya berfungsi sebagai
+lapisan UX, bukan sumber authorization.
+
 ---
 
 Arsitektur aplikasi mengikuti pola:

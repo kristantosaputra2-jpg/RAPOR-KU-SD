@@ -97,6 +97,11 @@ const LegerPage = lazy(() =>
     default: module.LegerPage,
   })),
 )
+const HomeroomDashboard = lazy(() =>
+  import("@/features/dashboard/homeroom-dashboard").then((module) => ({
+    default: module.HomeroomDashboard,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -129,6 +134,16 @@ export function App() {
     | "assignments"
     | "learning-outcomes"
     | "grades"
+    | "attendance"
+    | "extracurriculars"
+    | "achievements"
+    | "homeroom-notes"
+    | "report-completeness"
+    | "leger"
+    | "reports"
+  >("dashboard")
+  const [homeroomView, setHomeroomView] = useState<
+    | "dashboard"
     | "attendance"
     | "extracurriculars"
     | "achievements"
@@ -197,6 +212,7 @@ export function App() {
   async function handleLogout() {
     await signOut()
     setAdminView("dashboard")
+    setHomeroomView("dashboard")
     setAppState({ status: "signed_out" })
   }
 
@@ -497,13 +513,119 @@ export function App() {
   }
 
   if (profile.role === "homeroom_teacher") {
+    if (homeroomView === "attendance") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <AttendancePage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "extracurriculars") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ExtracurricularPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "achievements") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <AchievementPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "homeroom-notes") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <HomeroomNotePage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "report-completeness") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ReportCompletenessPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "leger") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <LegerPage
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (homeroomView === "reports") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ReportPreviewPage
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     return (
       <Suspense fallback={<PageLoadingState />}>
-        <AttendancePage
+        <HomeroomDashboard
           userId={appState.account.user.id}
           userName={profile.full_name}
           schoolName={schoolIdentity?.schoolName}
           onLogout={handleLogout}
+          onOpenAttendance={() => setHomeroomView("attendance")}
+          onOpenExtracurriculars={() => setHomeroomView("extracurriculars")}
+          onOpenAchievements={() => setHomeroomView("achievements")}
+          onOpenHomeroomNotes={() => setHomeroomView("homeroom-notes")}
+          onOpenReportCompleteness={() =>
+            setHomeroomView("report-completeness")
+          }
+          onOpenLeger={() => setHomeroomView("leger")}
+          onOpenReports={() => setHomeroomView("reports")}
         />
       </Suspense>
     )

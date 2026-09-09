@@ -103,7 +103,8 @@ Fungsinya:
 
 - [/] Buat RLS untuk Admin
   - Policy Admin telah diterapkan pada `schools`, `academic_years`, dan `semesters`; tabel berikutnya tetap harus memiliki policy masing-masing.
-- [ ] Buat RLS untuk Wali Kelas
+- [/] Buat RLS untuk Wali Kelas
+  - Wali kelas dapat membaca kelas dan siswa aktif pada kelasnya serta mengelola komponen wali kelas yang sudah tersedia. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
 - [ ] Buat RLS untuk Guru Mapel
 - [/] Pastikan anonymous user tidak dapat mengakses data
   - Anonymous tidak memiliki akses pada tabel internal termasuk master data dan `teacher_assignments`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
@@ -121,7 +122,8 @@ Fungsinya:
 
 - [x] Buat dashboard Admin
   - Dashboard mobile-first memiliki sidebar/drawer, status akun, ringkasan tanpa data rekaan, panduan pengaturan awal, dan empty state aktivitas.
-- [ ] Buat dashboard Wali Kelas
+- [x] Buat dashboard Wali Kelas
+  - Dashboard mobile-first menampilkan kelas sendiri, jumlah siswa aktif, jalur kerja wali kelas, serta loading, retry, dan empty state. Migration akses baca siswa kelas sendiri sudah diterapkan ke Supabase.
 - [ ] Buat dashboard Guru Mapel
 - [x] Tampilkan tahun ajaran aktif
 - [x] Tampilkan semester aktif
@@ -759,6 +761,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Ubah Input Nilai menjadi matriks seluruh CP aktif kelas 1–6 dengan tab Pengetahuan/Keterampilan, kartu HP, dan nama siswa sticky pada desktop.
 - [x] Tampilkan rata-rata, predikat, dan deskripsi terpisah untuk setiap komponen serta pilihan Single/Multi KKM bagi Admin.
 - [x] Verifikasi 141 unit/integration test dan 42 E2E responsif lulus pada 360px, 390px, 768px, dan 1280px setelah pemisahan komponen nilai.
+- [x] Buat Dashboard Wali Kelas dengan navigasi responsif menuju kelengkapan, absensi, ekstrakurikuler, prestasi, catatan, leger, dan preview rapor.
+- [x] Terapkan RLS baca siswa aktif hanya untuk kelas yang menjadi tanggung jawab Wali Kelas dan selaraskan riwayat migration Supabase tanpa mengubah schema atau data lama.
+- [x] Verifikasi Dashboard Wali Kelas dengan 187 unit/integration test dan 5 E2E khusus pada 360px, 390px, 768px, serta 1280px.
 
 ---
 

@@ -19,6 +19,7 @@ async function openAuthenticatedDashboard(
   withClassPeriod = false,
   withGradeData = false,
   gradeLevel = 2,
+  profileRole: "admin" | "homeroom_teacher" = "admin",
 ) {
   const supabaseUrl = process.env.RAPOTKU_E2E_SUPABASE_URL
 
@@ -40,8 +41,8 @@ async function openAuthenticatedDashboard(
       status: 200,
       json: {
         id: adminUser.id,
-        full_name: "Admin Sekolah",
-        role: "admin",
+        full_name: profileRole === "admin" ? "Admin Sekolah" : "Rina Wulandari",
+        role: profileRole,
         is_active: true,
       },
     })
@@ -87,7 +88,10 @@ async function openAuthenticatedDashboard(
     })
   })
   await page.route("**/rest/v1/teacher_profiles*", async (route) => {
-    await route.fulfill({ status: 200, json: [] })
+    await route.fulfill({
+      status: 200,
+      json: profileRole === "homeroom_teacher" ? { id: "teacher-1" } : [],
+    })
   })
   await page.route("**/rest/v1/classes*", async (route) => {
     await route.fulfill({
@@ -100,7 +104,8 @@ async function openAuthenticatedDashboard(
               semester_id: "semester-1",
               grade_level: gradeLevel,
               name: `Kelas ${gradeLevel}A`,
-              homeroom_teacher_id: null,
+              homeroom_teacher_id:
+                profileRole === "homeroom_teacher" ? "teacher-1" : null,
               template_group:
                 gradeLevel <= 3 ? "lower_primary" : "upper_primary",
               created_at: "2026-09-02T00:00:00.000Z",
@@ -383,13 +388,65 @@ async function openAuthenticatedDashboard(
   )
 
   await page.goto("/")
-  await expect(
-    page.getByRole("heading", { name: "Ringkasan hari ini" }),
-  ).toBeVisible()
+  if (profileRole === "admin") {
+    await expect(
+      page.getByRole("heading", { name: "Ringkasan hari ini" }),
+    ).toBeVisible()
+  } else {
+    await expect(
+      page.getByRole("heading", { name: "Selamat datang, Rina Wulandari" }),
+    ).toBeVisible()
+  }
   await expect(
     page.getByText("RapotKu - SD Negeri Tumbang Kawei"),
   ).toBeVisible()
 }
+
+for (const viewport of [
+  { width: 360, height: 800 },
+  { width: 390, height: 844 },
+  { width: 768, height: 1024 },
+  { width: 1280, height: 900 },
+] as const) {
+  test(`Dashboard Wali Kelas nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 4, "homeroom_teacher")
+
+    await expect(page.getByText("Kelas 4A")).toBeVisible()
+    await expect(page.getByText("3")).toBeVisible()
+    await expect(
+      page.getByRole("heading", {
+        name: "Selesaikan rapor dalam urutan yang mudah",
+      }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole("button", { name: /Preview dan Cetak Rapor/ }).last(),
+    ).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+test("Wali Kelas membuka monitoring dari menu HP", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openAuthenticatedDashboard(page, true, true, 4, "homeroom_teacher")
+
+  await page.getByRole("button", { name: "Buka menu" }).click()
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Pantau Kelengkapan" })
+    .click()
+
+  await expect(
+    page.getByRole("heading", { name: "Kelengkapan rapor siswa" }),
+  ).toBeVisible()
+})
 
 async function openSignedOutLogin(page: Page) {
   await page.route("**/rest/v1/public_school_identity*", async (route) => {
