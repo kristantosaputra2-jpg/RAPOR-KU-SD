@@ -25,6 +25,7 @@ import {
 } from "./homeroom-dashboard.service"
 
 type HomeroomAction =
+  | "students"
   | "attendance"
   | "extracurriculars"
   | "achievements"
@@ -38,6 +39,7 @@ type Props = Readonly<{
   userName: string
   schoolName?: string
   onLogout: () => Promise<void>
+  onOpenStudents: () => void
   onOpenAttendance: () => void
   onOpenExtracurriculars: () => void
   onOpenAchievements: () => void
@@ -55,6 +57,12 @@ type WorkItem = Readonly<{
 }>
 
 const workItems: ReadonlyArray<WorkItem> = [
+  {
+    label: "Biodata Siswa",
+    description: "Lengkapi foto 3×4 dan data keluarga siswa.",
+    icon: Users,
+    action: "students",
+  },
   {
     label: "Pantau Kelengkapan",
     description: "Lihat bagian rapor yang masih perlu dilengkapi.",
@@ -111,6 +119,7 @@ export function HomeroomDashboard({
   userName,
   schoolName,
   onLogout,
+  onOpenStudents,
   onOpenAttendance,
   onOpenExtracurriculars,
   onOpenAchievements,
@@ -127,6 +136,7 @@ export function HomeroomDashboard({
   const [revision, setRevision] = useState(0)
 
   const actions: Record<HomeroomAction, () => void> = {
+    students: onOpenStudents,
     attendance: onOpenAttendance,
     extracurriculars: onOpenExtracurriculars,
     achievements: onOpenAchievements,

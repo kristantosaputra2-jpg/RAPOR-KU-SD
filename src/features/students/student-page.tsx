@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpenCheck,
   CheckCircle2,
+  ContactRound,
   FileUp,
   GraduationCap,
   LoaderCircle,
@@ -23,6 +24,7 @@ import {
   type AcademicPeriods,
 } from "@/features/academic-periods/academic-periods.service"
 import { getClasses, type SchoolClass } from "@/features/classes/class.service"
+import { StudentBiodataDialog } from "@/features/students/student-biodata-dialog"
 import {
   assignStudentToClass,
   createStudent,
@@ -39,11 +41,12 @@ import {
 type StudentPageProps = Readonly<{
   userId: string
   userName: string
+  userRole: "admin" | "homeroom_teacher"
   schoolName?: string
   onBack: () => void
   onLogout: () => Promise<void>
-  onOpenAcademicPeriods: () => void
-  onOpenImport: () => void
+  onOpenAcademicPeriods?: () => void
+  onOpenImport?: () => void
 }>
 
 const emptyPeriods: AcademicPeriods = {
@@ -100,6 +103,7 @@ function genderLabel(student: Student) {
 export function StudentPage({
   userId,
   userName,
+  userRole,
   schoolName,
   onBack,
   onLogout,
@@ -126,6 +130,7 @@ export function StudentPage({
   const [formError, setFormError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
   const [statusTarget, setStatusTarget] = useState<Student | null>(null)
+  const [biodataTarget, setBiodataTarget] = useState<Student | null>(null)
   const [isChangingStatus, setIsChangingStatus] = useState(false)
   const [logoutError, setLogoutError] = useState("")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -402,7 +407,9 @@ export function StudentPage({
           </div>
           <div className="hidden text-right sm:block">
             <p className="text-sm font-bold">{userName}</p>
-            <p className="text-xs text-[var(--rapotku-muted)]">Admin</p>
+            <p className="text-xs text-[var(--rapotku-muted)]">
+              {userRole === "admin" ? "Admin" : "Wali Kelas"}
+            </p>
           </div>
           <button
             className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--rapotku-border)] bg-white px-3 text-sm font-semibold disabled:opacity-60"
@@ -428,27 +435,31 @@ export function StudentPage({
               Data Siswa
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--rapotku-muted)] sm:text-base">
-              Kelola identitas siswa dan tempatkan ke kelas pada semester aktif.
+              {userRole === "admin"
+                ? "Kelola identitas siswa dan tempatkan ke kelas pada semester aktif."
+                : "Lengkapi foto 3×4 dan biodata keluarga siswa di kelas Anda."}
             </p>
           </div>
-          <div className="grid gap-2 sm:flex">
-            <button
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-brand)] bg-white px-5 font-bold text-[var(--rapotku-brand)] transition hover:bg-[var(--rapotku-brand-soft)]"
-              type="button"
-              onClick={onOpenImport}
-            >
-              <FileUp aria-hidden="true" size={20} />
-              Import Excel
-            </button>
-            <button
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white shadow-[0_8px_18px_rgba(201,29,36,0.2)] transition hover:bg-[var(--rapotku-brand-strong)]"
-              type="button"
-              onClick={openCreateForm}
-            >
-              <Plus aria-hidden="true" size={20} />
-              Tambah Siswa
-            </button>
-          </div>
+          {userRole === "admin" ? (
+            <div className="grid gap-2 sm:flex">
+              <button
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-brand)] bg-white px-5 font-bold text-[var(--rapotku-brand)] transition hover:bg-[var(--rapotku-brand-soft)]"
+                type="button"
+                onClick={onOpenImport}
+              >
+                <FileUp aria-hidden="true" size={20} />
+                Import Excel
+              </button>
+              <button
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white shadow-[0_8px_18px_rgba(201,29,36,0.2)] transition hover:bg-[var(--rapotku-brand-strong)]"
+                type="button"
+                onClick={openCreateForm}
+              >
+                <Plus aria-hidden="true" size={20} />
+                Tambah Siswa
+              </button>
+            </div>
+          ) : null}
         </section>
 
         {logoutError || loadError ? (
@@ -515,7 +526,7 @@ export function StudentPage({
           </article>
         </section>
 
-        {!activeSemester ? (
+        {userRole === "admin" && !activeSemester ? (
           <section className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#f4d7a5] bg-[#fff9ed] p-4 text-sm text-[var(--rapotku-warning)] sm:flex-row sm:items-center sm:justify-between">
             <p>
               <strong>Semester aktif belum dipilih.</strong> Siswa tetap dapat
@@ -610,16 +621,19 @@ export function StudentPage({
                 </span>
                 <h2 className="mt-4 text-lg font-bold">Belum ada data siswa</h2>
                 <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--rapotku-muted)]">
-                  Tambahkan siswa satu per satu atau import bersama-sama dari
-                  file Excel.
+                  {userRole === "admin"
+                    ? "Tambahkan siswa satu per satu atau import bersama-sama dari file Excel."
+                    : "Belum ada siswa aktif pada kelas yang ditugaskan kepada Anda."}
                 </p>
-                <button
-                  className="mt-5 min-h-11 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white"
-                  type="button"
-                  onClick={openCreateForm}
-                >
-                  Tambah Siswa
-                </button>
+                {userRole === "admin" ? (
+                  <button
+                    className="mt-5 min-h-11 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white"
+                    type="button"
+                    onClick={openCreateForm}
+                  >
+                    Tambah Siswa
+                  </button>
+                ) : null}
               </div>
             </div>
           ) : filteredStudents.length === 0 ? (
@@ -699,35 +713,47 @@ export function StudentPage({
                           {schoolClass?.name ?? "Belum ditempatkan"}
                         </span>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
-                          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-border)] px-3 text-sm font-semibold"
+                          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-brand)] px-3 text-sm font-semibold text-[var(--rapotku-brand)]"
                           type="button"
-                          onClick={() => openEditForm(student)}
+                          onClick={() => setBiodataTarget(student)}
                         >
-                          <Pencil aria-hidden="true" size={17} />
-                          Edit
+                          <ContactRound aria-hidden="true" size={17} />
+                          Biodata
                         </button>
-                        <button
-                          className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--rapotku-border)]"
-                          type="button"
-                          aria-label={
-                            student.is_active
-                              ? `Nonaktifkan ${student.full_name}`
-                              : `Aktifkan ${student.full_name}`
-                          }
-                          onClick={() =>
-                            student.is_active
-                              ? setStatusTarget(student)
-                              : void handleStatusChange(student)
-                          }
-                        >
-                          {student.is_active ? (
-                            <UserRoundX aria-hidden="true" size={18} />
-                          ) : (
-                            <UserRoundCheck aria-hidden="true" size={18} />
-                          )}
-                        </button>
+                        {userRole === "admin" ? (
+                          <>
+                            <button
+                              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-border)] px-3 text-sm font-semibold"
+                              type="button"
+                              onClick={() => openEditForm(student)}
+                            >
+                              <Pencil aria-hidden="true" size={17} />
+                              Edit
+                            </button>
+                            <button
+                              className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--rapotku-border)]"
+                              type="button"
+                              aria-label={
+                                student.is_active
+                                  ? `Nonaktifkan ${student.full_name}`
+                                  : `Aktifkan ${student.full_name}`
+                              }
+                              onClick={() =>
+                                student.is_active
+                                  ? setStatusTarget(student)
+                                  : void handleStatusChange(student)
+                              }
+                            >
+                              {student.is_active ? (
+                                <UserRoundX aria-hidden="true" size={18} />
+                              ) : (
+                                <UserRoundCheck aria-hidden="true" size={18} />
+                              )}
+                            </button>
+                          </>
+                        ) : null}
                       </div>
                     </li>
                   )
@@ -738,7 +764,16 @@ export function StudentPage({
         </section>
       </main>
 
-      {isFormOpen ? (
+      {biodataTarget ? (
+        <StudentBiodataDialog
+          student={biodataTarget}
+          userId={userId}
+          onClose={() => setBiodataTarget(null)}
+          onSaved={setSuccessMessage}
+        />
+      ) : null}
+
+      {userRole === "admin" && isFormOpen ? (
         <div className="fixed inset-0 z-50 grid items-end bg-[#1d222b]/50 sm:items-center sm:p-5">
           <button
             className="absolute inset-0"

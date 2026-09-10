@@ -91,11 +91,15 @@ const student = {
   updated_at: "2026-09-02T00:00:00.000Z",
 }
 
-function renderPage(onOpenAcademicPeriods = vi.fn()) {
+function renderPage(
+  onOpenAcademicPeriods = vi.fn(),
+  userRole: "admin" | "homeroom_teacher" = "admin",
+) {
   return render(
     <StudentPage
       userId="admin-1"
       userName="Admin Sekolah"
+      userRole={userRole}
       schoolName="SD Negeri Tumbang Kawei"
       onBack={vi.fn()}
       onLogout={vi.fn()}
@@ -199,5 +203,22 @@ describe("StudentPage", () => {
     expect(await screen.findByText("Budi Santoso")).toBeVisible()
     expect(screen.getAllByText("4A").length).toBeGreaterThan(0)
     expect(screen.getByText("Belum ada")).toBeVisible()
+  })
+
+  it("membatasi Wali Kelas pada pengisian biodata siswa", async () => {
+    studentMocks.getStudents.mockResolvedValue([student])
+    renderPage(vi.fn(), "homeroom_teacher")
+
+    expect(await screen.findByText("Budi Santoso")).toBeVisible()
+    expect(screen.getByRole("button", { name: "Biodata" })).toBeVisible()
+    expect(
+      screen.queryByRole("button", { name: "Tambah Siswa" }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "Edit" }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: /Nonaktifkan Budi/ }),
+    ).not.toBeInTheDocument()
   })
 })

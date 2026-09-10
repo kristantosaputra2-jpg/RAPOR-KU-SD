@@ -155,6 +155,7 @@ export function App() {
   >("dashboard")
   const [homeroomView, setHomeroomView] = useState<
     | "dashboard"
+    | "students"
     | "attendance"
     | "extracurriculars"
     | "achievements"
@@ -416,6 +417,7 @@ export function App() {
           <StudentPage
             userId={appState.account.user.id}
             userName={profile.full_name}
+            userRole={profile.role}
             schoolName={schoolIdentity?.schoolName}
             onBack={() => setAdminView("dashboard")}
             onLogout={handleLogout}
@@ -574,6 +576,21 @@ export function App() {
   }
 
   if (profile.role === "homeroom_teacher") {
+    if (homeroomView === "students") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <StudentPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (homeroomView === "attendance") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -678,6 +695,7 @@ export function App() {
           userName={profile.full_name}
           schoolName={schoolIdentity?.schoolName}
           onLogout={handleLogout}
+          onOpenStudents={() => setHomeroomView("students")}
           onOpenAttendance={() => setHomeroomView("attendance")}
           onOpenExtracurriculars={() => setHomeroomView("extracurriculars")}
           onOpenAchievements={() => setHomeroomView("achievements")}

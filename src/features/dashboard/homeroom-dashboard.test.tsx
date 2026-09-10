@@ -19,6 +19,7 @@ const props = {
   userName: "Rina Wulandari",
   schoolName: "SD Negeri Tumbang Kawei",
   onLogout: vi.fn(),
+  onOpenStudents: vi.fn(),
   onOpenAttendance: vi.fn(),
   onOpenExtracurriculars: vi.fn(),
   onOpenAchievements: vi.fn(),

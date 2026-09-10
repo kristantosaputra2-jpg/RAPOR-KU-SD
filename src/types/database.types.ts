@@ -1022,6 +1022,85 @@ export type Database = {
           },
         ]
       }
+      student_biodata: {
+        Row: {
+          created_at: string
+          created_by: string
+          father_address: string | null
+          father_education: string | null
+          father_name: string | null
+          father_occupation: string | null
+          father_phone: string | null
+          guardian_address: string | null
+          guardian_education: string | null
+          guardian_name: string | null
+          guardian_occupation: string | null
+          guardian_phone: string | null
+          mother_address: string | null
+          mother_education: string | null
+          mother_name: string | null
+          mother_occupation: string | null
+          mother_phone: string | null
+          photo_path: string | null
+          student_id: string
+          student_phone: string | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          father_address?: string | null
+          father_education?: string | null
+          father_name?: string | null
+          father_occupation?: string | null
+          father_phone?: string | null
+          guardian_address?: string | null
+          guardian_education?: string | null
+          guardian_name?: string | null
+          guardian_occupation?: string | null
+          guardian_phone?: string | null
+          mother_address?: string | null
+          mother_education?: string | null
+          mother_name?: string | null
+          mother_occupation?: string | null
+          mother_phone?: string | null
+          photo_path?: string | null
+          student_id: string
+          student_phone?: string | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          father_address?: string | null
+          father_education?: string | null
+          father_name?: string | null
+          father_occupation?: string | null
+          father_phone?: string | null
+          guardian_address?: string | null
+          guardian_education?: string | null
+          guardian_name?: string | null
+          guardian_occupation?: string | null
+          guardian_phone?: string | null
+          mother_address?: string | null
+          mother_education?: string | null
+          mother_name?: string | null
+          mother_occupation?: string | null
+          mother_phone?: string | null
+          photo_path?: string | null
+          student_phone?: string | null
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_biodata_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           address: string | null

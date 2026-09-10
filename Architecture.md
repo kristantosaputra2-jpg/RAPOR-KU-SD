@@ -535,7 +535,9 @@ created_at / updated_at
 
 `class_members` menghubungkan `student_id` ke `class_id` dan `semester_id`. Constraint database memastikan satu siswa hanya memiliki satu kelas dalam satu semester. NIS wajib dan unik. NISN boleh kosong untuk kasus siswa yang belum memilikinya; jika diisi harus unik dan terdiri dari 10 angka.
 
-Pada tahap ini akses data siswa dibatasi untuk Admin aktif. Akses Wali Kelas dan Guru Mata Pelajaran baru dibuka melalui RLS setelah `teacher_assignments` tersedia, supaya guru tidak dapat membaca siswa di luar penugasannya.
+`student_biodata` menyimpan data keluarga serta lokasi foto secara terpisah dari identitas inti siswa. Pemisahan ini memungkinkan Wali Kelas melengkapi foto 3×4, nomor telepon, serta nama, pendidikan, pekerjaan, alamat, dan nomor telepon ayah/ibu/wali tanpa memperoleh hak untuk mengubah NIS, NISN, status, atau penempatan kelas. Admin dapat mengelola seluruh biodata; Wali Kelas dibatasi RLS hanya pada siswa dalam kelas yang menjadi tanggung jawabnya. Tinggi/berat badan dan kondisi kesehatan tidak disimpan sesuai keputusan produk terbaru.
+
+Akses baca `students` dan `class_members` untuk Wali Kelas serta Guru Mata Pelajaran mengikuti penugasan aktif. Akses tulis identitas inti siswa tetap khusus Admin.
 
 ---
 
@@ -1277,10 +1279,11 @@ audit_events.
 Supabase Storage digunakan jika diperlukan untuk:
 
 - logo sekolah;
-- foto siswa jika nanti dibutuhkan;
+- foto siswa 3×4 pada bucket privat `student-photos`, maksimal 2 MB dan hanya JPG/PNG;
 - attachment tertentu.
 
 Jangan simpan file binary di PostgreSQL.
+Foto siswa tidak memiliki URL publik. Admin dan Wali Kelas yang ditugaskan memperoleh akses melalui policy Storage dan URL sementara.
 
 ---
 

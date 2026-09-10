@@ -208,6 +208,10 @@ Fungsinya:
   - NISN opsional sesuai edge case PRD; bila diisi wajib unik dan terdiri dari 10 angka.
 - [x] Tambahkan pencarian siswa
 - [x] Tambahkan filter kelas
+- [x] Tambahkan foto 3×4 dan biodata keluarga siswa
+  - Admin dan Wali Kelas dapat mengisi foto serta biodata keluarga; Wali Kelas hanya untuk siswa pada kelasnya.
+  - Tinggi/berat badan dan kondisi kesehatan tidak dibuat sesuai keputusan terbaru.
+  - Foto disimpan pada bucket privat JPG/PNG maksimal 2 MB; form responsif dan 211 unit/integration test lulus.
 
 ## Import Excel
 
@@ -790,6 +794,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi 203 unit/integration test, production build, serta tampilan Data Siswa dan Import tanpa horizontal overflow pada 360px, 390px, 768px, dan 1280px.
 - [x] Tambahkan CI GitHub gratis untuk instalasi terkunci, typecheck, lint, format, 205 unit/integration test, dan production build pada setiap push ke `main` serta pull request.
 - [x] Deploy Cloudflare Pages gratis di `rapotku-sdtbgkawei.pages.dev`, hubungkan repository RapotKu branch `main`, pasang konfigurasi Supabase build-time, dan verifikasi login responsif pada 360px serta 390px.
+- [x] Tambahkan foto siswa berbingkai 3×4 dan biodata ayah, ibu, serta wali pada Data Siswa tanpa menambahkan tinggi/berat atau kondisi kesehatan.
+- [x] Pisahkan biodata keluarga dari identitas inti agar Wali Kelas hanya dapat mengisi biodata siswa di kelasnya, sementara Admin tetap mengelola data inti siswa.
+- [x] Simpan foto pada bucket Supabase privat `student-photos` dengan batas JPG/PNG 2 MB, RLS, dan URL sementara; anonymous tidak memiliki akses tabel.
 
 ---
 
