@@ -529,15 +529,16 @@ Fungsinya:
 - [ ] Gunakan Conventional Commits
 - [ ] Buat PR template
 - [ ] Lindungi branch utama
-- [ ] Tambahkan CI
+- [x] Tambahkan CI
+  - GitHub Actions menjalankan pemeriksaan pada push ke `main` dan pull request dengan izin baca saja, cache pnpm, pembatalan proses lama, dan batas waktu 15 menit.
 
 ## CI
 
-- [ ] Install dependencies
-- [ ] Typecheck
-- [ ] Lint
-- [ ] Unit test
-- [ ] Build
+- [x] Install dependencies
+- [x] Typecheck
+- [x] Lint
+- [x] Unit test
+- [x] Build
 - [ ] Deploy
 
 ## Cloudflare
@@ -623,7 +624,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
-| Testing             | In Progress |      72% | 203 unit/integration test lulus; skenario browser Data Siswa dan Import diperiksa pada 360px, 390px, 768px, serta 1280px    |
+| Testing             | In Progress |      75% | 205 unit/integration test lulus; CI GitHub memeriksa typecheck, lint, format, test, dan production build secara otomatis   |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |
 
@@ -780,6 +781,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Deteksi NIS/NISN ganda di file maupun database, tanggal lahir dan jenis kelamin tidak valid, kolom wajib kosong, serta kandidat siswa yang sama.
 - [x] Terapkan batch import atomik melalui fungsi database `SECURITY INVOKER`; anonymous tidak dapat mengeksekusi dan seluruh fixture transaksi berhasil di-rollback tanpa residu.
 - [x] Verifikasi 203 unit/integration test, production build, serta tampilan Data Siswa dan Import tanpa horizontal overflow pada 360px, 390px, 768px, dan 1280px.
+- [x] Tambahkan CI GitHub gratis untuk instalasi terkunci, typecheck, lint, format, 205 unit/integration test, dan production build pada setiap push ke `main` serta pull request.
 
 ---
 
