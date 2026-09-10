@@ -1969,6 +1969,14 @@ siswa hanya dihitung dari keanggotaan kelas tersebut. RLS pada `students` dan
 terhubung dengan profil gurunya; navigasi frontend tetap hanya berfungsi sebagai
 lapisan UX, bukan sumber authorization.
 
+Dashboard Guru Mata Pelajaran membaca profil guru yang terhubung dengan akun
+Auth, kemudian mengambil `teacher_assignments` aktif pada semester aktif. Kelas
+dan mata pelajaran ditampilkan dari referensi yang lolos RLS, bukan dari daftar
+yang ditanam di frontend. Dashboard menjadi pusat navigasi menuju Input Nilai dan
+CP/Deskripsi. RLS pada `students` dan `class_members` memberi akses baca hanya
+untuk kelas yang memiliki penugasan aktif bagi guru tersebut; akses nilai tetap
+dibatasi lagi oleh kombinasi kelas, mata pelajaran, dan semester.
+
 ---
 
 Arsitektur aplikasi mengikuti pola:

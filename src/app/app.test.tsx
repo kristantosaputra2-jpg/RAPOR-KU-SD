@@ -37,6 +37,10 @@ const homeroomDashboardMocks = vi.hoisted(() => ({
   getHomeroomDashboardData: vi.fn(),
 }))
 
+const subjectTeacherDashboardMocks = vi.hoisted(() => ({
+  getSubjectTeacherDashboardData: vi.fn(),
+}))
+
 vi.mock("@/features/auth/auth.service", async (importOriginal) => {
   const original =
     await importOriginal<typeof import("@/features/auth/auth.service")>()
@@ -78,6 +82,17 @@ vi.mock(
         typeof import("@/features/dashboard/homeroom-dashboard.service")
       >()
     return { ...original, ...homeroomDashboardMocks }
+  },
+)
+
+vi.mock(
+  "@/features/dashboard/subject-teacher-dashboard.service",
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import("@/features/dashboard/subject-teacher-dashboard.service")
+      >()
+    return { ...original, ...subjectTeacherDashboardMocks }
   },
 )
 
@@ -148,6 +163,16 @@ describe("App", () => {
       classes: [],
       studentCount: 0,
     })
+    subjectTeacherDashboardMocks.getSubjectTeacherDashboardData.mockReset()
+    subjectTeacherDashboardMocks.getSubjectTeacherDashboardData.mockResolvedValue(
+      {
+        academicYear: "2026/2027",
+        semester: 1,
+        assignments: [],
+        classCount: 0,
+        subjectCount: 0,
+      },
+    )
   })
 
   it("menampilkan login ketika tidak ada sesi aktif", async () => {
@@ -297,5 +322,31 @@ describe("App", () => {
     ).toBeInTheDocument()
     expect(screen.getAllByText("Wali Kelas").length).toBeGreaterThan(0)
     expect(screen.queryByText("Dashboard Admin")).not.toBeInTheDocument()
+  })
+
+  it("membuka Dashboard Guru Mata Pelajaran lalu menuju Input Nilai", async () => {
+    const user = userEvent.setup()
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue({
+      ...account,
+      profile: {
+        ...account.profile,
+        full_name: "Budi Santoso",
+        role: "subject_teacher",
+      },
+    })
+
+    render(<App />)
+
+    expect(
+      await screen.findByText("Selamat datang, Budi Santoso"),
+    ).toBeInTheDocument()
+    expect(screen.getAllByText("Guru Mata Pelajaran").length).toBeGreaterThan(0)
+
+    await user.click(
+      screen.getAllByRole("button", { name: /Input Nilai/ }).at(-1)!,
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Nilai seluruh siswa" }),
+    ).toBeInTheDocument()
   })
 })

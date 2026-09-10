@@ -102,6 +102,11 @@ const HomeroomDashboard = lazy(() =>
     default: module.HomeroomDashboard,
   })),
 )
+const SubjectTeacherDashboard = lazy(() =>
+  import("@/features/dashboard/subject-teacher-dashboard").then((module) => ({
+    default: module.SubjectTeacherDashboard,
+  })),
+)
 
 type AppState =
   | { status: "loading" }
@@ -151,6 +156,9 @@ export function App() {
     | "report-completeness"
     | "leger"
     | "reports"
+  >("dashboard")
+  const [subjectTeacherView, setSubjectTeacherView] = useState<
+    "dashboard" | "grades" | "learning-outcomes"
   >("dashboard")
   const [schoolIdentity, setSchoolIdentity] = useState<SchoolIdentity | null>(
     null,
@@ -213,6 +221,7 @@ export function App() {
     await signOut()
     setAdminView("dashboard")
     setHomeroomView("dashboard")
+    setSubjectTeacherView("dashboard")
     setAppState({ status: "signed_out" })
   }
 
@@ -499,14 +508,46 @@ export function App() {
   }
 
   if (profile.role === "subject_teacher") {
+    if (subjectTeacherView === "grades") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <GradeEntryPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setSubjectTeacherView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
+    if (subjectTeacherView === "learning-outcomes") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <LearningOutcomePage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setSubjectTeacherView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     return (
       <Suspense fallback={<PageLoadingState />}>
-        <GradeEntryPage
+        <SubjectTeacherDashboard
           userId={appState.account.user.id}
           userName={profile.full_name}
-          userRole={profile.role}
           schoolName={schoolIdentity?.schoolName}
           onLogout={handleLogout}
+          onOpenGrades={() => setSubjectTeacherView("grades")}
+          onOpenLearningOutcomes={() =>
+            setSubjectTeacherView("learning-outcomes")
+          }
         />
       </Suspense>
     )

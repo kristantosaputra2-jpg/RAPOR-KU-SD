@@ -19,7 +19,7 @@ async function openAuthenticatedDashboard(
   withClassPeriod = false,
   withGradeData = false,
   gradeLevel = 2,
-  profileRole: "admin" | "homeroom_teacher" = "admin",
+  profileRole: "admin" | "homeroom_teacher" | "subject_teacher" = "admin",
 ) {
   const supabaseUrl = process.env.RAPOTKU_E2E_SUPABASE_URL
 
@@ -41,7 +41,12 @@ async function openAuthenticatedDashboard(
       status: 200,
       json: {
         id: adminUser.id,
-        full_name: profileRole === "admin" ? "Admin Sekolah" : "Rina Wulandari",
+        full_name:
+          profileRole === "admin"
+            ? "Admin Sekolah"
+            : profileRole === "homeroom_teacher"
+              ? "Rina Wulandari"
+              : "Budi Santoso",
         role: profileRole,
         is_active: true,
       },
@@ -90,7 +95,7 @@ async function openAuthenticatedDashboard(
   await page.route("**/rest/v1/teacher_profiles*", async (route) => {
     await route.fulfill({
       status: 200,
-      json: profileRole === "homeroom_teacher" ? { id: "teacher-1" } : [],
+      json: profileRole === "admin" ? [] : { id: "teacher-1" },
     })
   })
   await page.route("**/rest/v1/classes*", async (route) => {
@@ -392,9 +397,13 @@ async function openAuthenticatedDashboard(
     await expect(
       page.getByRole("heading", { name: "Ringkasan hari ini" }),
     ).toBeVisible()
-  } else {
+  } else if (profileRole === "homeroom_teacher") {
     await expect(
       page.getByRole("heading", { name: "Selamat datang, Rina Wulandari" }),
+    ).toBeVisible()
+  } else {
+    await expect(
+      page.getByRole("heading", { name: "Selamat datang, Budi Santoso" }),
     ).toBeVisible()
   }
   await expect(
@@ -445,6 +454,54 @@ test("Wali Kelas membuka monitoring dari menu HP", async ({ page }) => {
 
   await expect(
     page.getByRole("heading", { name: "Kelengkapan rapor siswa" }),
+  ).toBeVisible()
+})
+
+for (const viewport of [
+  { width: 360, height: 800 },
+  { width: 390, height: 844 },
+  { width: 768, height: 1024 },
+  { width: 1280, height: 900 },
+] as const) {
+  test(`Dashboard Guru Mata Pelajaran nyaman pada ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport)
+    await openAuthenticatedDashboard(page, true, true, 4, "subject_teacher")
+
+    await expect(page.getByText("Matematika").last()).toBeVisible()
+    await expect(page.getByText("Kelas 4A").last()).toBeVisible()
+    await expect(
+      page.getByRole("heading", {
+        name: "Mulai dari tugas yang ingin dikerjakan",
+      }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole("button", { name: /Input Nilai/ }).last(),
+    ).toBeVisible()
+
+    const layout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(layout.scrollWidth).toBe(layout.clientWidth)
+  })
+}
+
+test("Guru Mata Pelajaran membuka Input Nilai dari menu HP", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openAuthenticatedDashboard(page, true, true, 4, "subject_teacher")
+
+  await page.getByRole("button", { name: "Buka menu" }).click()
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Input Nilai" })
+    .click()
+
+  await expect(
+    page.getByRole("heading", { name: "Nilai seluruh siswa" }),
   ).toBeVisible()
 })
 
@@ -958,7 +1015,7 @@ for (const viewport of [...mobileViewports, { width: 1280, height: 900 }]) {
     await openAuthenticatedDashboard(page, true, true)
     await openReportPreview(page, viewport.width)
 
-    await expect(page.getByText("Rapor Siswa")).toBeVisible()
+    await expect(page.getByText("Rapor Siswa", { exact: true })).toBeVisible()
     const resultLayout =
       viewport.width >= 768
         ? page.locator("table")

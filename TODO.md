@@ -1,6 +1,6 @@
 # TODO.md — Aplikasi Rapor SD Kelas 1–6
 
-**Last Updated:** 2026-09-09
+**Last Updated:** 2026-09-10
 **Project:** Aplikasi Rapor SD  
 **Status Legend:** `[ ]` Todo · `[/]` In Progress · `[x]` Done · `[*]` Blocked · `[-]` Cancelled
 
@@ -105,7 +105,8 @@ Fungsinya:
   - Policy Admin telah diterapkan pada `schools`, `academic_years`, dan `semesters`; tabel berikutnya tetap harus memiliki policy masing-masing.
 - [/] Buat RLS untuk Wali Kelas
   - Wali kelas dapat membaca kelas dan siswa aktif pada kelasnya serta mengelola komponen wali kelas yang sudah tersedia. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
-- [ ] Buat RLS untuk Guru Mapel
+- [/] Buat RLS untuk Guru Mapel
+  - Akses siswa dan keanggotaan kelas sudah dibatasi ke penugasan aktif; nilai, CP, kelas, serta mapel juga memakai scope penugasan. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
 - [/] Pastikan anonymous user tidak dapat mengakses data
   - Anonymous tidak memiliki akses pada tabel internal termasuk master data dan `teacher_assignments`. Hanya nama/logo dari tabel branding terpisah yang sengaja dapat dibaca pada login; audit harus diulang untuk setiap tabel baru.
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
@@ -113,6 +114,8 @@ Fungsinya:
 - [/] Tambahkan test permission
   - Uji database langsung sudah membuktikan Admin aktif dapat mengelola data, guru hanya melihat penugasan aktif miliknya, dan Guru Mapel yang ditugaskan dapat mengelola CP sesuai mapel, jenjang kelas, serta semester. Permission nilai dan rapor masih menyusul.
 - [ ] Audit seluruh query Supabase sebelum production
+- [ ] Evaluasi konsolidasi policy SELECT per role pada `students` dan `class_members` setelah tersedia data penggunaan nyata
+  - Advisor hanya memberi peringatan performa multiple permissive policies; tidak ditemukan akses data terbuka.
 
 ---
 
@@ -124,7 +127,8 @@ Fungsinya:
   - Dashboard mobile-first memiliki sidebar/drawer, status akun, ringkasan tanpa data rekaan, panduan pengaturan awal, dan empty state aktivitas.
 - [x] Buat dashboard Wali Kelas
   - Dashboard mobile-first menampilkan kelas sendiri, jumlah siswa aktif, jalur kerja wali kelas, serta loading, retry, dan empty state. Migration akses baca siswa kelas sendiri sudah diterapkan ke Supabase.
-- [ ] Buat dashboard Guru Mapel
+- [x] Buat dashboard Guru Mapel
+  - Dashboard mobile-first menampilkan penugasan, jumlah kelas/mapel, periode aktif, serta navigasi menuju Input Nilai dan CP/Deskripsi berdasarkan assignment.
 - [x] Tampilkan tahun ajaran aktif
 - [x] Tampilkan semester aktif
 - [ ] Tampilkan jumlah siswa
@@ -607,14 +611,14 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
 | Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
 | Database Design     | In Progress |      55% | Entry nilai dan deskripsi sudah terpisah per komponen Pengetahuan/Keterampilan; output rapor menyusul                       |
-| Permissions         | In Progress |      65% | RLS nilai membatasi perubahan ke Admin atau guru yang ditugaskan; wali kelas hanya dapat memantau kelasnya                  |
+| Permissions         | In Progress |      75% | RLS nilai dan data siswa membatasi Guru Mapel ke kelas/mapel yang ditugaskan; wali kelas hanya memantau kelasnya             |
 | Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                           |
-| Testing             | In Progress |      60% | 141 unit/integration test dan 42 E2E responsif lulus termasuk resolver Single/Multi KKM                                     |
+| Testing             | In Progress |      70% | 193 unit/integration test dan 97 E2E responsif lulus termasuk dashboard ketiga role                                         |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |
 
@@ -764,6 +768,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat Dashboard Wali Kelas dengan navigasi responsif menuju kelengkapan, absensi, ekstrakurikuler, prestasi, catatan, leger, dan preview rapor.
 - [x] Terapkan RLS baca siswa aktif hanya untuk kelas yang menjadi tanggung jawab Wali Kelas dan selaraskan riwayat migration Supabase tanpa mengubah schema atau data lama.
 - [x] Verifikasi Dashboard Wali Kelas dengan 187 unit/integration test dan 5 E2E khusus pada 360px, 390px, 768px, serta 1280px.
+- [x] Buat Dashboard Guru Mata Pelajaran berbasis penugasan aktif dengan ringkasan kelas/mapel dan navigasi ke Input Nilai serta CP/Deskripsi.
+- [x] Terapkan dan verifikasi RLS agar Guru Mata Pelajaran hanya membaca siswa serta keanggotaan kelas yang ditugaskan; data uji permission berhasil di-rollback tanpa residu.
+- [x] Verifikasi 193 unit/integration test dan seluruh 97 E2E responsif lulus setelah tahap Dashboard Guru Mata Pelajaran.
 
 ---
 
