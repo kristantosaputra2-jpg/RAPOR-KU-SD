@@ -539,16 +539,23 @@ Fungsinya:
 - [x] Lint
 - [x] Unit test
 - [x] Build
-- [ ] Deploy
+- [x] Deploy
+  - Production pertama berhasil dari branch `main` melalui Cloudflare Pages.
 
 ## Cloudflare
 
-- [ ] Buat Cloudflare Pages project
-- [ ] Hubungkan GitHub
-- [ ] Setup environment variables
-- [ ] Setup domain
-- [ ] Test production build
-- [ ] Test mobile production
+- [x] Buat Cloudflare Pages project
+  - Project terpisah bernama `rapotku-sdtbgkawei` menggunakan paket gratis.
+- [x] Hubungkan GitHub
+  - Repository `kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei` terhubung ke branch produksi `main`; push berikutnya memicu build otomatis.
+- [x] Setup environment variables
+  - Variabel publik Supabase untuk Vite sudah tersedia pada build Production dan Preview tanpa memasukkan nilainya ke repository.
+- [x] Setup domain
+  - Domain gratis aktif di `https://rapotku-sdtbgkawei.pages.dev`; custom domain belum diperlukan.
+- [x] Test production build
+  - Build `pnpm build` dari commit `8785800` berhasil dan deployment produksi berstatus sukses.
+- [x] Test mobile production
+  - Login produksi menampilkan identitas sekolah dan tombol masuk tanpa horizontal overflow pada viewport 360px dan 390px.
 
 ## Production Readiness
 
@@ -624,9 +631,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
-| Testing             | In Progress |      75% | 205 unit/integration test lulus; CI GitHub memeriksa typecheck, lint, format, test, dan production build secara otomatis   |
-| Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
-| Production          | Todo        |       0% | Belum siap                                                                                                                  |
+| Testing             | In Progress |      80% | 205 unit/integration test dan CI lulus; smoke test login produksi lulus pada desktop serta HP 360/390px                   |
+| Cloudflare          | Done        |     100% | Pages gratis aktif, terhubung ke GitHub `main`, dan memakai konfigurasi Supabase produksi                                  |
+| Production          | In Progress |      20% | Deployment awal aktif; audit RLS, periode akademik, preview rapor, cetak, dan backup masih harus diverifikasi             |
 
 ---
 
@@ -782,6 +789,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Terapkan batch import atomik melalui fungsi database `SECURITY INVOKER`; anonymous tidak dapat mengeksekusi dan seluruh fixture transaksi berhasil di-rollback tanpa residu.
 - [x] Verifikasi 203 unit/integration test, production build, serta tampilan Data Siswa dan Import tanpa horizontal overflow pada 360px, 390px, 768px, dan 1280px.
 - [x] Tambahkan CI GitHub gratis untuk instalasi terkunci, typecheck, lint, format, 205 unit/integration test, dan production build pada setiap push ke `main` serta pull request.
+- [x] Deploy Cloudflare Pages gratis di `rapotku-sdtbgkawei.pages.dev`, hubungkan repository RapotKu branch `main`, pasang konfigurasi Supabase build-time, dan verifikasi login responsif pada 360px serta 390px.
 
 ---
 
