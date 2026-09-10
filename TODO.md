@@ -209,20 +209,23 @@ Fungsinya:
 
 ## Import Excel
 
-- [ ] Buat upload file Excel
-- [ ] Parse data Excel
-- [ ] Mapping kolom
-- [ ] Preview data
-- [ ] Validasi baris
-- [ ] Deteksi duplicate NIS
-- [ ] Deteksi duplicate NISN
-- [ ] Validasi format tanggal
-- [ ] Tampilkan error per baris
-- [ ] Konfirmasi sebelum insert
-- [ ] Batch insert
-- [ ] Test file Excel valid
-- [ ] Test file Excel rusak
-- [ ] Test data duplicate
+- [x] Buat upload file Excel
+  - File `.xlsx` dibaca lokal di browser, maksimal 5 MB dan 500 siswa agar tetap ringan di HP.
+- [x] Parse data Excel
+  - Sheet pertama digunakan; baris judul dan baris kosong ditangani sebelum mapping.
+- [x] Mapping kolom
+- [x] Preview data
+- [x] Validasi baris
+- [x] Deteksi duplicate NIS
+- [x] Deteksi duplicate NISN
+- [x] Validasi format tanggal
+- [x] Tampilkan error per baris
+- [x] Konfirmasi sebelum insert
+- [x] Batch insert
+  - Satu file ditujukan ke satu kelas semester aktif; siswa dan penempatan kelas disimpan atomik melalui fungsi database `SECURITY INVOKER`.
+- [x] Test file Excel valid
+- [x] Test file Excel rusak
+- [x] Test data duplicate
 
 ## Mata Pelajaran
 
@@ -611,14 +614,14 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
 | Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
 | Database Design     | In Progress |      55% | Entry nilai dan deskripsi sudah terpisah per komponen Pengetahuan/Keterampilan; output rapor menyusul                       |
-| Permissions         | In Progress |      75% | RLS nilai dan data siswa membatasi Guru Mapel ke kelas/mapel yang ditugaskan; wali kelas hanya memantau kelasnya             |
+| Permissions         | In Progress |      75% | RLS nilai dan data siswa membatasi Guru Mapel ke kelas/mapel yang ditugaskan; wali kelas hanya memantau kelasnya            |
 | Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
 | Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
-| Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                           |
-| Testing             | In Progress |      70% | 193 unit/integration test dan 97 E2E responsif lulus termasuk dashboard ketiga role                                         |
+| Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
+| Testing             | In Progress |      72% | 203 unit/integration test lulus; skenario browser Data Siswa dan Import diperiksa pada 360px, 390px, 768px, serta 1280px    |
 | Cloudflare          | Todo        |       0% | Belum deployment                                                                                                            |
 | Production          | Todo        |       0% | Belum siap                                                                                                                  |
 
@@ -771,6 +774,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Buat Dashboard Guru Mata Pelajaran berbasis penugasan aktif dengan ringkasan kelas/mapel dan navigasi ke Input Nilai serta CP/Deskripsi.
 - [x] Terapkan dan verifikasi RLS agar Guru Mata Pelajaran hanya membaca siswa serta keanggotaan kelas yang ditugaskan; data uji permission berhasil di-rollback tanpa residu.
 - [x] Verifikasi 193 unit/integration test dan seluruh 97 E2E responsif lulus setelah tahap Dashboard Guru Mata Pelajaran.
+- [x] Buat Import Excel siswa dengan upload `.xlsx`, mapping kolom, validasi per baris, preview responsif, dan konfirmasi sebelum simpan.
+- [x] Deteksi NIS/NISN ganda di file maupun database, tanggal lahir dan jenis kelamin tidak valid, kolom wajib kosong, serta kandidat siswa yang sama.
+- [x] Terapkan batch import atomik melalui fungsi database `SECURITY INVOKER`; anonymous tidak dapat mengeksekusi dan seluruh fixture transaksi berhasil di-rollback tanpa residu.
+- [x] Verifikasi 203 unit/integration test, production build, serta tampilan Data Siswa dan Import tanpa horizontal overflow pada 360px, 390px, 768px, dan 1280px.
 
 ---
 

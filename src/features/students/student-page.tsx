@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpenCheck,
   CheckCircle2,
+  FileUp,
   GraduationCap,
   LoaderCircle,
   LogOut,
@@ -42,6 +43,7 @@ type StudentPageProps = Readonly<{
   onBack: () => void
   onLogout: () => Promise<void>
   onOpenAcademicPeriods: () => void
+  onOpenImport: () => void
 }>
 
 const emptyPeriods: AcademicPeriods = {
@@ -102,6 +104,7 @@ export function StudentPage({
   onBack,
   onLogout,
   onOpenAcademicPeriods,
+  onOpenImport,
 }: StudentPageProps) {
   const [students, setStudents] = useState<ReadonlyArray<Student>>([])
   const [memberships, setMemberships] = useState<
@@ -428,14 +431,24 @@ export function StudentPage({
               Kelola identitas siswa dan tempatkan ke kelas pada semester aktif.
             </p>
           </div>
-          <button
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white shadow-[0_8px_18px_rgba(201,29,36,0.2)] transition hover:bg-[var(--rapotku-brand-strong)]"
-            type="button"
-            onClick={openCreateForm}
-          >
-            <Plus aria-hidden="true" size={20} />
-            Tambah Siswa
-          </button>
+          <div className="grid gap-2 sm:flex">
+            <button
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--rapotku-brand)] bg-white px-5 font-bold text-[var(--rapotku-brand)] transition hover:bg-[var(--rapotku-brand-soft)]"
+              type="button"
+              onClick={onOpenImport}
+            >
+              <FileUp aria-hidden="true" size={20} />
+              Import Excel
+            </button>
+            <button
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white shadow-[0_8px_18px_rgba(201,29,36,0.2)] transition hover:bg-[var(--rapotku-brand-strong)]"
+              type="button"
+              onClick={openCreateForm}
+            >
+              <Plus aria-hidden="true" size={20} />
+              Tambah Siswa
+            </button>
+          </div>
         </section>
 
         {logoutError || loadError ? (
@@ -597,8 +610,8 @@ export function StudentPage({
                 </span>
                 <h2 className="mt-4 text-lg font-bold">Belum ada data siswa</h2>
                 <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--rapotku-muted)]">
-                  Tambahkan siswa pertama. Import Excel akan dibuat pada tahap
-                  tersendiri agar prosesnya aman.
+                  Tambahkan siswa satu per satu atau import bersama-sama dari
+                  file Excel.
                 </p>
                 <button
                   className="mt-5 min-h-11 rounded-xl bg-[var(--rapotku-brand)] px-5 font-bold text-white"

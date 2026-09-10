@@ -42,6 +42,11 @@ const StudentPage = lazy(() =>
     default: module.StudentPage,
   })),
 )
+const StudentImportPage = lazy(() =>
+  import("@/features/students/student-import-page").then((module) => ({
+    default: module.StudentImportPage,
+  })),
+)
 const SubjectPage = lazy(() =>
   import("@/features/subjects/subject-page").then((module) => ({
     default: module.SubjectPage,
@@ -135,6 +140,7 @@ export function App() {
     | "teachers"
     | "classes"
     | "students"
+    | "student-import"
     | "subjects"
     | "assignments"
     | "learning-outcomes"
@@ -414,6 +420,20 @@ export function App() {
             onBack={() => setAdminView("dashboard")}
             onLogout={handleLogout}
             onOpenAcademicPeriods={() => setAdminView("academic-periods")}
+            onOpenImport={() => setAdminView("student-import")}
+          />
+        </Suspense>
+      )
+    }
+
+    if (adminView === "student-import") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <StudentImportPage
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("students")}
+            onLogout={handleLogout}
           />
         </Suspense>
       )

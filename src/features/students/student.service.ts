@@ -49,7 +49,7 @@ export type StudentInput = Readonly<{
   guardianName: string
 }>
 
-type NormalizedStudentInput = Readonly<{
+export type NormalizedStudentInput = Readonly<{
   full_name: string
   nis: string
   nisn: string | null

@@ -1082,6 +1082,17 @@ transaction/batch insert
 
 Jika sebagian gagal, sistem harus menjelaskan row yang gagal.
 
+Keputusan implementasi MVP:
+
+- satu file `.xlsx` ditujukan ke satu kelas pada semester aktif;
+- sheet pertama digunakan sebagai sumber data;
+- maksimal 5 MB dan 500 siswa per import agar tetap ringan di HP;
+- file dibaca di browser, tanpa upload file mentah ke server;
+- seluruh baris divalidasi dan ditampilkan sebelum konfirmasi;
+- penyimpanan siswa dan `class_members` dilakukan oleh satu fungsi database
+  `SECURITY INVOKER`, sehingga seluruh batch otomatis batal bila satu insert gagal;
+- fungsi hanya dapat dieksekusi role `authenticated` dan tetap memeriksa Admin aktif.
+
 ---
 
 # 36. Mobile Architecture

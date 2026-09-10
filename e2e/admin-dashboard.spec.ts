@@ -1240,6 +1240,20 @@ for (const viewport of settingsViewports) {
     await expect(page.getByLabel("Filter kelas")).toBeVisible()
     await expect(page.getByText("Belum ada data siswa")).toBeVisible()
 
+    await page.getByRole("button", { name: "Import Excel" }).click()
+    await expect(
+      page.getByRole("heading", { name: "Import Siswa dari Excel" }),
+    ).toBeVisible()
+    await expect(page.getByLabel("Pilih file Excel siswa")).toBeAttached()
+
+    const importLayout = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(importLayout.scrollWidth).toBe(importLayout.clientWidth)
+
+    await page.getByRole("button", { name: "Kembali ke Data Siswa" }).click()
+
     await page.getByRole("button", { name: "Tambah Siswa" }).first().click()
     await expect(page.getByRole("dialog")).toBeVisible()
     await expect(page.getByLabel(/Nama Lengkap/)).toBeVisible()

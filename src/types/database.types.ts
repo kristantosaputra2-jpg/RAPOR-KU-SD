@@ -1290,6 +1290,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      import_students_to_class: {
+        Args: {
+          p_class_id: string
+          p_semester_id: string
+          p_students: Json
+        }
+        Returns: number
+      }
       set_active_academic_year: {
         Args: { p_academic_year_id: string }
         Returns: undefined

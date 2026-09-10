@@ -100,6 +100,7 @@ function renderPage(onOpenAcademicPeriods = vi.fn()) {
       onBack={vi.fn()}
       onLogout={vi.fn()}
       onOpenAcademicPeriods={onOpenAcademicPeriods}
+      onOpenImport={vi.fn()}
     />,
   )
 }
