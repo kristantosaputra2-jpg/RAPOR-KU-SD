@@ -1009,6 +1009,24 @@ test("dashboard nyaman pada desktop 1280px", async ({ page }) => {
   ).toBeVisible()
 })
 
+test("dashboard Admin menampilkan ringkasan semester aktif", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openAuthenticatedDashboard(page, true, true)
+
+  await expect(
+    page.getByRole("article", { name: "Siswa Aktif" }).getByText("3"),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("article", { name: "Kelas" }).getByText("1"),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("article", { name: "Rapor Siap Cetak" }).getByText("0"),
+  ).toBeVisible()
+  await expect(page.getByText("3 rapor belum siap")).toBeVisible()
+})
+
 for (const viewport of [...mobileViewports, { width: 1280, height: 900 }]) {
   test(`preview rapor nyaman pada ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport)

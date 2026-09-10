@@ -131,11 +131,13 @@ Fungsinya:
   - Dashboard mobile-first menampilkan penugasan, jumlah kelas/mapel, periode aktif, serta navigasi menuju Input Nilai dan CP/Deskripsi berdasarkan assignment.
 - [x] Tampilkan tahun ajaran aktif
 - [x] Tampilkan semester aktif
-- [ ] Tampilkan jumlah siswa
-- [ ] Tampilkan jumlah kelas
-- [ ] Tampilkan status kelengkapan nilai
-- [ ] Tampilkan jumlah rapor siap cetak
-- [ ] Tambahkan warning data belum lengkap
+- [x] Tampilkan jumlah siswa
+- [x] Tampilkan jumlah kelas
+- [x] Tampilkan status kelengkapan nilai
+- [x] Tampilkan jumlah rapor siap cetak
+- [x] Tambahkan warning data belum lengkap
+  - Dashboard Admin membaca data aktif dari Supabase, memakai aturan kelengkapan yang sama dengan Monitoring, menampilkan loading/error/retry, dan menghindari permintaan berulang per kelas.
+  - Lulus 205 unit/integration test, lint, format, typecheck/build, serta 5 E2E Dashboard Admin pada viewport 360px, 390px, 768px, dan 1280px.
 
 ## Data Sekolah
 

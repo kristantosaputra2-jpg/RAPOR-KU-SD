@@ -10,6 +10,7 @@ import {
   FileText,
   GraduationCap,
   LayoutDashboard,
+  LoaderCircle,
   LogOut,
   Menu,
   School,
@@ -27,6 +28,10 @@ import {
   type ActiveAcademicPeriod,
 } from "@/features/academic-periods/academic-periods.service"
 import { MotionHeroImage } from "@/components/motion-hero-image"
+import {
+  getAdminDashboardSummary,
+  type AdminDashboardSummary,
+} from "./admin-dashboard.service"
 
 type AdminDashboardProps = Readonly<{
   userName: string
@@ -133,21 +138,25 @@ const navigationGroups: ReadonlyArray<
 
 const summaryCards = [
   {
+    key: "activeStudents",
     label: "Siswa Aktif",
     icon: Users,
     color: "bg-[#fff0f1] text-[var(--rapotku-brand)]",
   },
   {
+    key: "activeClasses",
     label: "Kelas",
     icon: GraduationCap,
     color: "bg-[#fff7e8] text-[#9a5a00]",
   },
   {
+    key: "activeTeachers",
     label: "Guru",
     icon: UserCheck,
     color: "bg-[#eef6ff] text-[#245da8]",
   },
   {
+    key: "readyReports",
     label: "Rapor Siap Cetak",
     icon: ClipboardCheck,
     color: "bg-[#ecf8f2] text-[var(--rapotku-success)]",
@@ -374,24 +383,53 @@ export function AdminDashboard({
     academicYear: null,
     semester: null,
   })
+  const [summary, setSummary] = useState<AdminDashboardSummary | null>(null)
+  const [summaryStatus, setSummaryStatus] = useState<
+    "loading" | "ready" | "error"
+  >("loading")
+  const [loadAttempt, setLoadAttempt] = useState(0)
 
   useEffect(() => {
     let isMounted = true
 
-    void getAcademicPeriods()
-      .then((periods) => {
+    async function loadDashboard() {
+      setSummaryStatus("loading")
+      let period: ActiveAcademicPeriod = {
+        academicYear: null,
+        semester: null,
+      }
+
+      try {
+        const periods = await getAcademicPeriods()
+        period = getActiveAcademicPeriod(periods)
+      } catch {
+        // Master-data counts can still load when the period summary is unavailable.
+      }
+
+      if (!isMounted) return
+      setActivePeriod(period)
+
+      try {
+        const dashboardSummary = await getAdminDashboardSummary(
+          period.semester?.id ?? null,
+        )
         if (isMounted) {
-          setActivePeriod(getActiveAcademicPeriod(periods))
+          setSummary(dashboardSummary)
+          setSummaryStatus("ready")
         }
-      })
-      .catch(() => {
-        // The dashboard stays usable when the period summary cannot be loaded.
-      })
+      } catch {
+        if (isMounted) {
+          setSummaryStatus("error")
+        }
+      }
+    }
+
+    void loadDashboard()
 
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [loadAttempt])
 
   async function handleLogout() {
     setLogoutError("")
@@ -410,7 +448,61 @@ export function AdminDashboard({
   const hasActivePeriod = Boolean(
     activePeriod.academicYear && activePeriod.semester,
   )
-  const completedSetupSteps = (schoolName ? 1 : 0) + (hasActivePeriod ? 1 : 0)
+  const setupChecks = [
+    summary?.schoolIdentityComplete ?? false,
+    hasActivePeriod,
+    Boolean(summary && summary.activeTeachers > 0 && summary.activeClasses > 0),
+    Boolean(summary && summary.activeStudents > 0 && summary.hasSubjects),
+  ]
+  const completedSetupSteps = setupChecks.filter(Boolean).length
+  const gradeCompletionPercent = summary?.enrolledStudents
+    ? Math.round((summary.completeGrades / summary.enrolledStudents) * 100)
+    : 0
+  const summaryCardValues = summaryCards.map((card) => ({
+    ...card,
+    value: summary?.[card.key],
+  }))
+  const dashboardMessage = (() => {
+    if (summaryStatus === "loading") {
+      return {
+        title: "Memeriksa kondisi data sekolah",
+        description: "Ringkasan siswa, kelas, nilai, dan rapor sedang dimuat.",
+      }
+    }
+    if (summaryStatus === "error") {
+      return {
+        title: "Ringkasan belum dapat dimuat",
+        description:
+          "Periksa koneksi internet lalu muat kembali. Menu lainnya tetap dapat digunakan.",
+      }
+    }
+    if (completedSetupSteps < setupSteps.length) {
+      return {
+        title: "Pengaturan awal belum lengkap",
+        description:
+          "Lengkapi langkah yang belum selesai agar pengisian nilai dan rapor dapat berjalan lancar.",
+      }
+    }
+    if (!summary?.enrolledStudents) {
+      return {
+        title: "Belum ada siswa pada semester aktif",
+        description:
+          "Tempatkan siswa ke kelas semester aktif sebelum memulai pengisian nilai.",
+      }
+    }
+    if (summary.incompleteReports > 0) {
+      return {
+        title: `${summary.incompleteReports} rapor masih perlu dilengkapi`,
+        description:
+          "Buka Monitoring untuk melihat nilai atau bagian rapor yang belum selesai.",
+      }
+    }
+    return {
+      title: "Semua rapor sudah siap dicetak",
+      description:
+        "Seluruh siswa pada semester aktif telah melewati pemeriksaan kelengkapan.",
+    }
+  })()
 
   return (
     <div className="app-shell min-h-screen bg-[var(--rapotku-canvas)] text-[var(--rapotku-text)] lg:grid lg:grid-cols-[276px_minmax(0,1fr)]">
@@ -539,13 +631,20 @@ export function AdminDashboard({
                   </p>
                 ) : null}
                 <h2 id="setup-warning-title" className="text-xl font-bold">
-                  Pengaturan awal belum lengkap
+                  {dashboardMessage.title}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/85">
-                  {hasActivePeriod
-                    ? "Identitas dan periode aktif sudah tersedia. Lanjutkan data guru, kelas, siswa, dan mata pelajaran."
-                    : "Identitas sekolah sudah dimulai. Lengkapi periode aktif, guru, kelas, siswa, dan mata pelajaran."}
+                  {dashboardMessage.description}
                 </p>
+                {summaryStatus === "error" ? (
+                  <button
+                    className="mt-4 min-h-11 rounded-xl bg-white px-4 text-sm font-bold text-[var(--rapotku-brand-strong)]"
+                    type="button"
+                    onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+                  >
+                    Coba lagi
+                  </button>
+                ) : null}
               </div>
             </div>
           </section>
@@ -563,11 +662,12 @@ export function AdminDashboard({
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-              {summaryCards.map((card) => {
+              {summaryCardValues.map((card) => {
                 const Icon = card.icon
 
                 return (
                   <article
+                    aria-label={card.label}
                     className="app-interactive-card rounded-2xl border border-[var(--rapotku-border)] bg-white p-4 shadow-[0_8px_24px_rgba(24,31,45,0.04)] sm:p-5"
                     key={card.label}
                   >
@@ -578,9 +678,23 @@ export function AdminDashboard({
                         </p>
                         <p
                           className="mt-2 text-3xl font-bold"
-                          aria-label="Belum ada data"
+                          aria-label={
+                            summaryStatus === "loading"
+                              ? "Sedang memuat"
+                              : undefined
+                          }
                         >
-                          —
+                          {summaryStatus === "loading" ? (
+                            <LoaderCircle
+                              aria-hidden="true"
+                              className="animate-spin"
+                              size={27}
+                            />
+                          ) : summaryStatus === "error" ? (
+                            "—"
+                          ) : (
+                            (card.value ?? 0)
+                          )}
                         </p>
                       </div>
                       <span
@@ -589,7 +703,15 @@ export function AdminDashboard({
                         <Icon aria-hidden="true" size={20} />
                       </span>
                     </div>
-                    <p className="mt-3 text-xs text-[#8a93a2]">Menunggu data</p>
+                    <p className="mt-3 text-xs text-[#8a93a2]">
+                      {summaryStatus === "loading"
+                        ? "Memuat data..."
+                        : summaryStatus === "error"
+                          ? "Belum tersedia"
+                          : card.key === "readyReports"
+                            ? `dari ${summary?.enrolledStudents ?? 0} siswa di kelas`
+                            : "Data aktif"}
+                    </p>
                   </article>
                 )
               })}
@@ -630,54 +752,86 @@ export function AdminDashboard({
                         {step.description}
                       </p>
                     </div>
-                    {index <= 1 ? (
+                    {setupChecks[index] ? (
+                      <span className="mt-1 shrink-0 rounded-full bg-[#ecf8f2] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--rapotku-success)]">
+                        Selesai
+                      </span>
+                    ) : (
                       <button
                         className="min-h-11 shrink-0 rounded-xl bg-[var(--rapotku-brand)] px-4 text-sm font-bold text-white transition hover:bg-[var(--rapotku-brand-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rapotku-brand)]"
                         type="button"
                         onClick={
                           index === 0
                             ? onOpenSchoolSettings
-                            : onOpenAcademicPeriods
+                            : index === 1
+                              ? onOpenAcademicPeriods
+                              : index === 2
+                                ? onOpenTeachers
+                                : onOpenStudents
                         }
                       >
-                        {index === 0 && schoolName
-                          ? "Atur"
-                          : index === 1 && hasActivePeriod
-                            ? "Atur"
-                            : "Buka"}
+                        {index === 0 && schoolName ? "Atur" : "Buka"}
                       </button>
-                    ) : (
-                      <span className="mt-1 shrink-0 rounded-full bg-[#f0f1f3] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#7b8494]">
-                        Segera
-                      </span>
                     )}
                   </li>
                 ))}
               </ol>
               <p className="mt-5 rounded-xl bg-[#f7f8fa] px-4 py-3 text-sm leading-6 text-[var(--rapotku-muted)]">
-                Pengaturan identitas dan periode akademik sudah tersedia. Data
-                berikutnya akan dibuka satu per satu sesuai tahapan pembangunan.
+                Selesaikan langkah dari atas ke bawah. Data yang sudah lengkap
+                ditandai otomatis oleh sistem.
               </p>
             </section>
 
             <section
-              aria-labelledby="activity-title"
+              aria-labelledby="grade-completeness-title"
               className="rounded-3xl border border-[var(--rapotku-border)] bg-white p-5 shadow-[0_8px_28px_rgba(24,31,45,0.04)] sm:p-6"
             >
-              <h2 id="activity-title" className="text-xl font-bold">
-                Aktivitas terbaru
+              <span className="grid size-12 place-items-center rounded-2xl bg-[#ecf8f2] text-[var(--rapotku-success)]">
+                <ClipboardCheck aria-hidden="true" size={24} />
+              </span>
+              <h2
+                id="grade-completeness-title"
+                className="mt-4 text-xl font-bold"
+              >
+                Kelengkapan nilai
               </h2>
-              <div className="grid min-h-64 place-items-center py-8 text-center">
-                <div>
-                  <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#f2f3f5] text-[#8a93a2]">
-                    <FileText aria-hidden="true" size={25} />
-                  </span>
-                  <p className="mt-4 font-bold">Belum ada aktivitas</p>
-                  <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-[var(--rapotku-muted)]">
-                    Perubahan data sekolah dan rapor akan muncul di sini.
-                  </p>
-                </div>
+              <p className="mt-2 text-sm leading-6 text-[var(--rapotku-muted)]">
+                {summaryStatus === "ready" && summary?.enrolledStudents
+                  ? `${summary.completeGrades} dari ${summary.enrolledStudents} siswa sudah memiliki nilai lengkap.`
+                  : summaryStatus === "ready"
+                    ? "Belum ada siswa pada kelas semester aktif."
+                    : summaryStatus === "error"
+                      ? "Kelengkapan nilai belum dapat diperiksa."
+                      : "Sedang memeriksa kelengkapan nilai."}
+              </p>
+              <div
+                className="mt-5 h-3 overflow-hidden rounded-full bg-[#eef0f3]"
+                role="progressbar"
+                aria-label="Persentase kelengkapan nilai"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={gradeCompletionPercent}
+              >
+                <div
+                  className="h-full rounded-full bg-[var(--rapotku-success)] transition-[width]"
+                  style={{ width: `${gradeCompletionPercent}%` }}
+                />
               </div>
+              <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                <span className="font-bold">
+                  {gradeCompletionPercent}% lengkap
+                </span>
+                <span className="text-[var(--rapotku-muted)]">
+                  {summary?.incompleteReports ?? 0} rapor belum siap
+                </span>
+              </div>
+              <button
+                className="mt-6 min-h-11 w-full rounded-xl border border-[var(--rapotku-border)] bg-white px-4 text-sm font-bold text-[var(--rapotku-brand)] transition hover:bg-[var(--rapotku-brand-soft)]"
+                type="button"
+                onClick={onOpenReportCompleteness}
+              >
+                Buka Monitoring
+              </button>
             </section>
           </div>
         </main>

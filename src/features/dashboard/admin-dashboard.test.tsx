@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -9,6 +9,20 @@ const academicPeriodMocks = vi.hoisted(() => ({
     schoolId: "school-1",
     academicYears: [],
     semesters: [],
+  }),
+}))
+
+const dashboardMocks = vi.hoisted(() => ({
+  getAdminDashboardSummary: vi.fn().mockResolvedValue({
+    activeStudents: 12,
+    activeClasses: 2,
+    activeTeachers: 4,
+    enrolledStudents: 10,
+    completeGrades: 6,
+    readyReports: 3,
+    incompleteReports: 7,
+    schoolIdentityComplete: false,
+    hasSubjects: true,
   }),
 }))
 
@@ -24,8 +38,10 @@ vi.mock(
   },
 )
 
+vi.mock("@/features/dashboard/admin-dashboard.service", () => dashboardMocks)
+
 describe("AdminDashboard", () => {
-  it("menampilkan ringkasan tanpa mengarang data sekolah", () => {
+  it("menampilkan ringkasan dari data sekolah", async () => {
     render(
       <AdminDashboard
         userName="Admin Sekolah"
@@ -46,7 +62,21 @@ describe("AdminDashboard", () => {
     expect(
       screen.getAllByText("SD Negeri Tumbang Kawei").length,
     ).toBeGreaterThan(0)
-    expect(screen.getAllByText("Menunggu data")).toHaveLength(4)
+    expect(await screen.findByText("12")).toBeInTheDocument()
+    expect(
+      within(screen.getByRole("article", { name: "Kelas" })).getByText("2"),
+    ).toBeInTheDocument()
+    expect(
+      within(screen.getByRole("article", { name: "Guru" })).getByText("4"),
+    ).toBeInTheDocument()
+    expect(
+      within(
+        screen.getByRole("article", { name: "Rapor Siap Cetak" }),
+      ).getByText("3"),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText("6 dari 10 siswa sudah memiliki nilai lengkap."),
+    ).toBeInTheDocument()
     expect(
       screen.getByText("Pengaturan awal belum lengkap"),
     ).toBeInTheDocument()
