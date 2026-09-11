@@ -1966,6 +1966,12 @@ ketika halaman hasil belajar harus berlanjut. Browser print menjadi jalur MVP;
 batch print, validasi Chrome/Android nyata, dan keputusan engine PDF tetap
 dikerjakan terpisah.
 
+Struktur output resmi MVP disetujui pada 11 September 2026 dan didokumentasikan
+di `docs/report-templates.md`. Sampul menempatkan judul lengkap di atas lambang
+Tut Wuri Handayani yang berada di tengah. Halaman identitas menempatkan foto 3×4
+di bagian bawah berdampingan dengan tanda tangan kepala sekolah agar dapat
+terkena satu cap/stempel. Data kesehatan tetap tidak menjadi bagian template.
+
 Batch print satu kelas mengambil data siswa dengan filter kelompok dalam satu
 rangkaian query, lalu membagi hasilnya menjadi view model per siswa di memori.
 Pendekatan ini menghindari N+1 query. Setiap siswa tetap memakai template preview

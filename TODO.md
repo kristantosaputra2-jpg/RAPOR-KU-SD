@@ -45,8 +45,10 @@ Fungsinya:
 - [x] Bedah referensi Excel rapor kelas 1–3
 - [x] Bedah referensi Excel rapor kelas 4–6
 - [ ] Finalisasi perbedaan rule kelas 1–3 dan 4–6
-- [ ] Finalisasi field rapor terbaru yang benar-benar dipakai
-- [ ] Finalisasi struktur output rapor
+- [x] Finalisasi field rapor terbaru yang benar-benar dipakai
+  - Field MVP dikunci sesuai template A4 yang disetujui; data kesehatan tetap tidak disertakan.
+- [x] Finalisasi struktur output rapor
+  - Struktur sampul, identitas, hasil belajar, ringkasan, foto 3×4, dan tanda tangan didokumentasikan pada `docs/report-templates.md`.
 - [ ] Finalisasi struktur leger
 - [x] Finalisasi formula nilai
   - Pengetahuan dan Keterampilan masing-masing memakai rata-rata nilai CP pada skala 0–100, predikat A–D, dan deskripsi terpisah. KKM dapat berupa satu angka seluruh mapel atau angka berbeda per mapel. Predikat memakai panjang interval `ceil((100 - KKM) / 3)`.
@@ -54,7 +56,7 @@ Fungsinya:
   - CP bernilai tertinggi menjadi capaian sangat baik dan CP bernilai terendah menjadi bagian yang perlu ditingkatkan. Draft dapat diedit dan tidak menimpa edit manual tanpa konfirmasi.
 - [ ] Buat `database.md`
 - [ ] Buat `permissions.md`
-- [ ] Buat `report-templates.md`
+- [x] Buat `report-templates.md`
 - [x] Buat ADR untuk keputusan arsitektur utama
 
 ## Project Foundation
@@ -651,7 +653,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
-| Report Engine       | In Progress |      85% | Template resmi A4, biodata/foto 3×4, hasil belajar, ringkasan, dan tanda tangan selesai; menunggu persetujuan final sekolah  |
+| Report Engine       | In Progress |      95% | Struktur dan field template resmi A4 telah disetujui serta didokumentasikan; validasi cetak perangkat nyata masih tersisa |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
 | Testing             | In Progress |      85% | 220 unit/integration test lulus; cetak lima halaman A4 dan build produksi telah diverifikasi                                |
 | Cloudflare          | Done        |     100% | Pages gratis aktif, terhubung ke GitHub `main`, dan memakai konfigurasi Supabase produksi                                  |
@@ -681,11 +683,11 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - Data kesehatan tidak masuk MVP.
 - Mobile-first.
 - Tidak bergantung laptop Dapodik/server lokal.
+- Struktur dan field template rapor A4 resmi telah disetujui serta dicatat pada `docs/report-templates.md`.
 
 ## Keputusan yang Masih TBD
 
 - PDF engine.
-- Layout rapor terbaru final.
 - Schema database final.
 - PWA/offline strategy.
 
@@ -825,6 +827,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi PDF contoh lima halaman berukuran A4, seluruh 220 unit/integration test, lint, typecheck, format, dan production build.
 - [x] Koreksi halaman sampul dan identitas: lambang Tut Wuri berada di tengah, judul lengkap menjadi headline utama, serta foto 3×4 dipindah ke bawah berdampingan dengan tanda tangan kepala sekolah agar dapat terkena satu stempel.
 - [x] Tukar urutan sampul sesuai koreksi pengguna: judul lengkap berada di atas dan lambang Tut Wuri tepat di tengah di bawah judul.
+- [x] Kunci struktur dan field rapor A4 yang telah disetujui ke `docs/report-templates.md` serta sinkronkan catatan arsitektur.
 
 ---
 
