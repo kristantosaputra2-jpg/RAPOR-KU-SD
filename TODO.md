@@ -55,7 +55,7 @@ Fungsinya:
 - [x] Finalisasi aturan CP/deskripsi otomatis
   - CP bernilai tertinggi menjadi capaian sangat baik dan CP bernilai terendah menjadi bagian yang perlu ditingkatkan. Draft dapat diedit dan tidak menimpa edit manual tanpa konfirmasi.
 - [x] Buat `database.md`
-- [ ] Buat `permissions.md`
+- [x] Buat `permissions.md`
 - [x] Buat `report-templates.md`
 - [x] Buat ADR untuk keputusan arsitektur utama
 
@@ -651,7 +651,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
 | Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
 | Database Design     | In Progress |      75% | Struktur 25 tabel, relasi, integritas, RLS, function, dan Storage saat ini sudah terdokumentasi; konsolidasi aturan KKM masih perlu diaudit |
-| Permissions         | In Progress |      75% | RLS nilai dan data siswa membatasi Guru Mapel ke kelas/mapel yang ditugaskan; wali kelas hanya memantau kelasnya            |
+| Permissions         | In Progress |      85% | Matriks izin 25 tabel dan Storage sudah terdokumentasi; audit role ganda, akses mapel Wali Kelas, serta RLS produksi masih tersisa |
 | Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
@@ -833,6 +833,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Kunci struktur dan field rapor A4 yang telah disetujui ke `docs/report-templates.md` serta sinkronkan catatan arsitektur.
 - [x] Verifikasi template pada Google Chrome desktop dan simulasi Chrome Android Pixel 5; tetapkan HTML print/Save as PDF sebagai engine gratis MVP.
 - [x] Dokumentasikan 25 tabel database yang telah diterapkan beserta relasi, constraint, function, RLS, Storage foto siswa, dan alur data rapor pada `docs/database.md`; tidak ada schema atau data produksi yang diubah.
+- [x] Dokumentasikan izin Admin, Wali Kelas, Guru Mata Pelajaran, dan anonymous pada 25 tabel, function khusus, serta Storage foto di `docs/permissions.md`; catat audit role ganda dan akses nama mapel pada preview tanpa mengubah policy produksi.
 
 ---
 
