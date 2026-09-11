@@ -54,7 +54,7 @@ Fungsinya:
   - Pengetahuan dan Keterampilan masing-masing memakai rata-rata nilai CP pada skala 0–100, predikat A–D, dan deskripsi terpisah. KKM dapat berupa satu angka seluruh mapel atau angka berbeda per mapel. Predikat memakai panjang interval `ceil((100 - KKM) / 3)`.
 - [x] Finalisasi aturan CP/deskripsi otomatis
   - CP bernilai tertinggi menjadi capaian sangat baik dan CP bernilai terendah menjadi bagian yang perlu ditingkatkan. Draft dapat diedit dan tidak menimpa edit manual tanpa konfirmasi.
-- [ ] Buat `database.md`
+- [x] Buat `database.md`
 - [ ] Buat `permissions.md`
 - [x] Buat `report-templates.md`
 - [x] Buat ADR untuk keputusan arsitektur utama
@@ -650,7 +650,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | PRD                 | Done        |     100% | PRD gabungan kelas 1–6 tersedia                                                                                             |
 | AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
 | Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
-| Database Design     | In Progress |      55% | Entry nilai dan deskripsi sudah terpisah per komponen Pengetahuan/Keterampilan; output rapor menyusul                       |
+| Database Design     | In Progress |      75% | Struktur 25 tabel, relasi, integritas, RLS, function, dan Storage saat ini sudah terdokumentasi; konsolidasi aturan KKM masih perlu diaudit |
 | Permissions         | In Progress |      75% | RLS nilai dan data siswa membatasi Guru Mapel ke kelas/mapel yang ditugaskan; wali kelas hanya memantau kelasnya            |
 | Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
@@ -832,6 +832,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tukar urutan sampul sesuai koreksi pengguna: judul lengkap berada di atas dan lambang Tut Wuri tepat di tengah di bawah judul.
 - [x] Kunci struktur dan field rapor A4 yang telah disetujui ke `docs/report-templates.md` serta sinkronkan catatan arsitektur.
 - [x] Verifikasi template pada Google Chrome desktop dan simulasi Chrome Android Pixel 5; tetapkan HTML print/Save as PDF sebagai engine gratis MVP.
+- [x] Dokumentasikan 25 tabel database yang telah diterapkan beserta relasi, constraint, function, RLS, Storage foto siswa, dan alur data rapor pada `docs/database.md`; tidak ada schema atau data produksi yang diubah.
 
 ---
 
