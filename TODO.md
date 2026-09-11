@@ -106,7 +106,9 @@ Fungsinya:
 - [/] Buat RLS untuk Admin
   - Policy Admin telah diterapkan pada `schools`, `academic_years`, dan `semesters`; tabel berikutnya tetap harus memiliki policy masing-masing.
 - [/] Buat RLS untuk Wali Kelas
-  - Wali kelas dapat membaca kelas dan siswa aktif pada kelasnya serta mengelola komponen wali kelas yang sudah tersedia. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
+  - Wali kelas dapat membaca kelas dan siswa aktif serta mengelola seluruh nilai mapel, deskripsi, dan komponen wali kelas pada kelasnya. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
+- [x] Izinkan Wali Kelas menginput seluruh nilai mapel kelas sendiri
+  - Tetap berlaku ketika belum ada Guru Mata Pelajaran. Guru Mata Pelajaran hanya dapat menginput nilai pada kelas, mapel, dan semester yang ditugaskan; Admin dapat mengakses seluruh modul.
 - [/] Buat RLS untuk Guru Mapel
   - Akses siswa dan keanggotaan kelas sudah dibatasi ke penugasan aktif; nilai, CP, kelas, serta mapel juga memakai scope penugasan. Audit menyeluruh seluruh tabel tetap dilakukan sebelum production.
 - [/] Pastikan anonymous user tidak dapat mengakses data
@@ -114,7 +116,7 @@ Fungsinya:
 - [x] Nonaktifkan public email signup pada konfigurasi Auth cloud
 - [x] Pastikan service role key tidak digunakan di frontend
 - [/] Tambahkan test permission
-  - Uji database langsung sudah membuktikan Admin aktif dapat mengelola data, guru hanya melihat penugasan aktif miliknya, dan Guru Mapel yang ditugaskan dapat mengelola CP sesuai mapel, jenjang kelas, serta semester. Permission nilai dan rapor masih menyusul.
+  - Policy produksi untuk nilai dan deskripsi sudah diterapkan serta definisinya diverifikasi: Admin mengelola seluruh data, Wali Kelas mengelola seluruh nilai kelas sendiri, dan Guru Mapel hanya mengelola scope penugasan aktif. Uji login langsung sebagai Wali Kelas masih diperlukan setelah akun Wali Kelas terhubung.
 - [ ] Audit seluruh query Supabase sebelum production
 - [ ] Evaluasi konsolidasi policy SELECT per role pada `students` dan `class_members` setelah tersedia data penggunaan nyata
   - Advisor hanya memberi peringatan performa multiple permissive policies; tidak ditemukan akses data terbuka.
@@ -177,7 +179,7 @@ Fungsinya:
 - [x] Assign wali kelas
   - Penetapan wali kelas tersedia melalui form Data Kelas; aktivasi hak akses akun menunggu tahap assignment.
 - [/] Validasi permission guru
-  - Penugasan hanya dikelola Admin; guru terhubung hanya dapat membaca assignment, kelas, dan mapel aktif miliknya. Permission nilai diuji saat grade entry tersedia.
+  - Penugasan hanya dikelola Admin. Wali Kelas dapat mengelola nilai seluruh mapel kelas sendiri, sedangkan Guru Mapel hanya dapat mengelola nilai kelas, mapel, dan semester dalam assignment aktif. Uji login langsung kedua role tetap diperlukan sebelum production final.
 
 ## Kelas
 
@@ -651,14 +653,14 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | AGENTS              | Done        |     100% | Instruksi developer/AI tersedia                                                                                             |
 | Architecture        | Done        |     100% | Arsitektur awal tersedia                                                                                                    |
 | Database Design     | In Progress |      75% | Struktur 25 tabel, relasi, integritas, RLS, function, dan Storage saat ini sudah terdokumentasi; konsolidasi aturan KKM masih perlu diaudit |
-| Permissions         | In Progress |      85% | Matriks izin 25 tabel dan Storage sudah terdokumentasi; audit role ganda, akses mapel Wali Kelas, serta RLS produksi masih tersisa |
+| Permissions         | In Progress |      90% | Role ganda dan akses seluruh mapel Wali Kelas sudah diterapkan; uji login role serta audit menyeluruh RLS produksi masih tersisa |
 | Frontend Foundation | Done        |     100% | Scaffold, quality tools, repository GitHub, dan fondasi Playwright siap                                                     |
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
-| Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
+| Grade Engine        | In Progress |      95% | Input seluruh CP kelas 1–6 tersedia; Admin mengakses semua data, Wali Kelas semua mapel kelas sendiri, dan Guru Mapel hanya penugasannya |
 | Report Engine       | Done        |     100% | Template resmi A4 disetujui; Chrome desktop, simulasi Android, browser print, dan Save as PDF telah diverifikasi           |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
-| Testing             | In Progress |      90% | 220 unit/integration test lulus; Chrome desktop, simulasi Android, cetak A4, dan build produksi telah diverifikasi          |
+| Testing             | In Progress |      92% | 226 unit/integration test lulus; policy produksi, Chrome desktop, simulasi Android, cetak A4, dan build telah diverifikasi; smoke test login Wali Kelas tersisa |
 | Cloudflare          | Done        |     100% | Pages gratis aktif, terhubung ke GitHub `main`, dan memakai konfigurasi Supabase produksi                                  |
 | Production          | In Progress |      20% | Deployment awal aktif; audit RLS, periode akademik, preview rapor, cetak, dan backup masih harus diverifikasi             |
 
@@ -673,6 +675,8 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - Cloudflare sebagai hosting.
 - GitHub sebagai repository.
 - Admin + Wali Kelas + Guru Mapel.
+- Seorang guru dapat merangkap sebagai Wali Kelas sekaligus memiliki penugasan mata pelajaran.
+- Wali Kelas dapat menginput seluruh nilai mapel di kelasnya walaupun belum ada Guru Mapel; Guru Mapel hanya dapat menginput scope penugasannya; Admin dapat mengakses seluruh modul.
 - Kelas 1–3 menggunakan `lower_primary`.
 - Kelas 4–6 menggunakan `upper_primary`.
 - Input nilai menampilkan seluruh siswa.
@@ -784,7 +788,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Terapkan predikat A–D secara dinamis dari KKM dengan panjang interval `ceil((100 - KKM) / 3)` tanpa ambang nilai yang di-hardcode.
 - [x] Buat tabel `grading_rules` untuk KKM per kelas, mapel, dan semester serta tabel `grade_entries` untuk nilai mentah per siswa dan CP.
 - [x] Tambahkan constraint database agar nilai hanya 0–100 dan relasi siswa, kelas, CP, mapel, jenjang, serta semester selalu konsisten.
-- [x] Tambahkan RLS: Admin dan guru yang ditugaskan dapat mengubah nilai; wali kelas hanya membaca nilai kelasnya; anonymous tidak memiliki akses.
+- [x] Tambahkan RLS awal: Admin dan guru yang ditugaskan dapat mengubah nilai; wali kelas membaca nilai kelasnya; anonymous tidak memiliki akses.
 - [x] Verifikasi langsung di database bahwa guru yang ditugaskan dapat membaca KKM dan menyimpan nilai 88; seluruh fixture uji berhasil di-rollback.
 - [x] Verifikasi 126 unit/integration test lulus termasuk nilai kosong, 0, 100, rata-rata, input tidak valid, dan batas predikat contoh.
 - [x] Buat halaman Input Nilai kelas 1–3 yang menampilkan seluruh siswa sekaligus, memilih kelas/mapel/CP, dan menyimpan nilai secara massal.
@@ -834,6 +838,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Verifikasi template pada Google Chrome desktop dan simulasi Chrome Android Pixel 5; tetapkan HTML print/Save as PDF sebagai engine gratis MVP.
 - [x] Dokumentasikan 25 tabel database yang telah diterapkan beserta relasi, constraint, function, RLS, Storage foto siswa, dan alur data rapor pada `docs/database.md`; tidak ada schema atau data produksi yang diubah.
 - [x] Dokumentasikan izin Admin, Wali Kelas, Guru Mata Pelajaran, dan anonymous pada 25 tabel, function khusus, serta Storage foto di `docs/permissions.md`; catat audit role ganda dan akses nama mapel pada preview tanpa mengubah policy produksi.
+- [x] Finalisasi hak akses nilai: guru boleh merangkap Wali Kelas dan Guru Mapel; Wali Kelas dapat menginput seluruh nilai mapel kelasnya walaupun tanpa Guru Mapel, Guru Mapel hanya scope penugasannya, dan Admin seluruh modul.
+- [x] Tambahkan menu Input Nilai pada Dashboard Wali Kelas serta filter kelas dan mata pelajaran sesuai role tanpa mengubah workflow input seluruh siswa sekaligus.
+- [x] Terapkan delapan policy RLS gabungan untuk mata pelajaran, CP, KKM, nilai, dan deskripsi; policy tambahan dikonsolidasikan agar tidak menambah peringatan multiple permissive policy.
+- [x] Verifikasi definisi policy produksi, security/performance advisor, 226 unit/integration test, typecheck, lint, format, dan production build. Uji login nyata sebagai Wali Kelas menunggu akun role tersebut terhubung.
 
 ---
 

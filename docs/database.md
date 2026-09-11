@@ -176,7 +176,8 @@ Function internal serta trigger helper ditempatkan di schema `private` dan akses
 
 ### Wali Kelas
 
-- Membaca siswa dan nilai kelas sendiri.
+- Membaca siswa serta membaca dan menginput seluruh nilai kelas sendiri.
+- Membuat dan mengedit deskripsi nilai kelas sendiri.
 - Mengelola biodata keluarga/foto, absensi, ekstrakurikuler siswa, prestasi, catatan, serta konfirmasi kelengkapan hanya untuk kelas sendiri.
 
 ### Guru Mata Pelajaran

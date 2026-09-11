@@ -51,12 +51,13 @@ Beberapa tabel sengaja tidak menyediakan operasi hapus. Data dinonaktifkan atau 
 Wali Kelas aktif hanya bekerja pada kelas yang menjadi tanggung jawabnya. Wali Kelas dapat:
 
 - membaca siswa dan keanggotaan kelas sendiri;
-- membaca nilai serta deskripsi seluruh mata pelajaran untuk monitoring;
+- membaca dan menginput nilai seluruh mata pelajaran kelas sendiri, termasuk ketika belum ada Guru Mata Pelajaran;
+- membuat dan mengedit deskripsi nilai kelas sendiri;
 - mengelola biodata keluarga dan foto siswa kelas sendiri;
 - mengelola absensi, ekstrakurikuler siswa, prestasi, catatan wali kelas, serta konfirmasi kelengkapan kelas sendiri;
 - membentuk preview, cetak rapor, dan leger dari data yang boleh dibaca.
 
-Wali Kelas tidak memperoleh izin mengubah nilai mata pelajaran hanya karena menjadi wali kelas.
+Seorang guru boleh menjadi Wali Kelas sekaligus menerima assignment mata pelajaran. Hak Wali Kelas berlaku untuk seluruh mapel di kelasnya, sedangkan assignment membatasi pekerjaan Guru Mata Pelajaran di kelas lain.
 
 ### 4.3 Guru Mata Pelajaran
 
@@ -91,14 +92,14 @@ Keterangan: `R` membaca, `C` menambah, `U` mengubah, `D` menghapus, dan `—` ti
 | `students`                              | R/C/U              | R (kelas sendiri)             | R (kelas ditugaskan, siswa aktif)                         | —         |
 | `class_members`                         | R/C/U/D            | R (kelas sendiri)             | R (kelas ditugaskan)                                      | —         |
 | `student_biodata`                       | R/C/U              | R/C/U (kelas sendiri)         | —                                                         | —         |
-| `subjects`                              | R/C/U              | —                             | R (mapel ditugaskan dan aktif)                            | —         |
+| `subjects`                              | R/C/U              | R (mapel aktif)               | R (mapel ditugaskan dan aktif)                            | —         |
 | `teacher_assignments`                   | R/C/U              | R (milik akun yang terhubung) | R (milik akun yang terhubung)                             | —         |
-| `learning_outcomes`                     | R/C/U              | —                             | R/C/U (scope penugasan; hanya CP aktif yang dapat dibaca) | —         |
+| `learning_outcomes`                     | R/C/U              | R (CP aktif sesuai kelas)     | R/C/U (scope penugasan; hanya CP aktif yang dapat dibaca) | —         |
 | `assessment_components`                 | R/C/U              | R (komponen aktif)            | R (komponen aktif)                                        | —         |
 | `grading_settings`, `subject_kkm_rules` | R/C/U              | R                             | R                                                         | —         |
-| `grading_rules`                         | R/C/U              | —                             | R (scope penugasan)                                       | —         |
-| `grade_entries`                         | R/C/U/D            | R (kelas sendiri)             | R/C/U/D (scope penugasan)                                 | —         |
-| `report_descriptions`                   | R/C/U              | R (kelas sendiri)             | R/C/U (scope penugasan)                                   | —         |
+| `grading_rules`                         | R/C/U              | R (kelas sendiri)             | R (scope penugasan)                                       | —         |
+| `grade_entries`                         | R/C/U/D            | R/C/U/D (kelas sendiri)       | R/C/U/D (scope penugasan)                                 | —         |
+| `report_descriptions`                   | R/C/U              | R/C/U (kelas sendiri)         | R/C/U (scope penugasan)                                   | —         |
 | `attendance`                            | R/C/U              | R/C/U (kelas sendiri)         | —                                                         | —         |
 | `extracurriculars`                      | R/C/U              | R                             | R                                                         | —         |
 | `student_extracurriculars`              | R/C/U              | R/C/U (kelas sendiri)         | —                                                         | —         |
@@ -110,8 +111,8 @@ Matriks ini mencatat policy efektif dari migration saat ini. Hak produk yang bel
 
 ### Catatan Implementasi yang Perlu Diaudit
 
-- Sejumlah policy berbasis assignment memberikan akses dari penugasan aktif tanpa selalu mensyaratkan role `subject_teacher`. Matriks di atas menggambarkan pemakaian role utama yang normal. Keputusan apakah satu guru boleh sekaligus menjadi Wali Kelas dan Guru Mapel masih perlu ditegaskan sebelum policy disederhanakan.
-- Wali Kelas dapat membaca `grade_entries` dan `report_descriptions` kelas sendiri, tetapi policy `subjects` hanya membuka mapel kepada Admin atau guru yang memiliki assignment. Hal ini harus diuji pada alur preview rapor Wali Kelas agar nama semua mapel tetap tersedia tanpa memperluas akses yang tidak diperlukan.
+- Guru boleh merangkap sebagai Wali Kelas dan Guru Mata Pelajaran. Role menentukan dashboard utama, sedangkan kepemilikan kelas dan assignment menentukan scope data aktual.
+- Policy tambahan Wali Kelas membuka mapel aktif dan CP aktif yang cocok dengan jenjang serta semester kelasnya, lalu membatasi penulisan nilai dan deskripsi berdasarkan `classes.homeroom_teacher_id`.
 - `grading_rules` adalah struktur KKM lama yang masih hidup berdampingan dengan `grading_settings` dan `subject_kkm_rules`. Policy lama tidak boleh dihapus sebelum migrasi data historis dan pemakaian service selesai diaudit.
 
 ## 6. Pembatas Scope Guru Mata Pelajaran
@@ -202,8 +203,8 @@ Jangan menampilkan error teknis mentah. Tombol simpan harus memiliki status memp
 - Pastikan `anon` hanya dapat memilih `public_school_identity`.
 - Uji akun nonaktif tidak memperoleh data internal.
 - Uji Guru Mata Pelajaran tidak dapat membaca atau mengubah kelas/mapel di luar assignment.
-- Uji Wali Kelas tidak dapat mengubah nilai mapel dan tidak dapat membuka kelas lain.
-- Uji apakah sekolah mengizinkan satu akun memegang tugas Wali Kelas sekaligus Guru Mapel, lalu selaraskan role dan assignment tanpa asumsi.
+- Uji Wali Kelas dapat mengubah seluruh nilai kelas sendiri tetapi tidak dapat membuka atau mengubah kelas lain.
+- Uji guru yang merangkap Wali Kelas dan Guru Mapel memperoleh gabungan scope yang tepat tanpa membuka kelas lain.
 - Uji preview Wali Kelas dapat membaca nama seluruh mapel yang tampil pada rapor.
 - Uji Admin dapat menjalankan alur setup dan import siswa.
 - Uji perubahan foto dengan akun Admin dan Wali Kelas serta penolakan untuk Guru Mapel.

@@ -386,7 +386,8 @@ Review akses Wali Kelas.
 
 Wali kelas boleh:
 - melihat siswa kelas sendiri
-- melihat nilai mapel kelas sendiri untuk monitoring
+- melihat dan mengubah nilai seluruh mapel kelas sendiri
+- membuat dan mengedit deskripsi nilai kelas sendiri
 - mengisi attendance
 - extracurricular
 - achievement
@@ -394,8 +395,9 @@ Wali kelas boleh:
 - report status
 
 Tidak boleh:
-- mengubah nilai mapel guru lain
 - mengubah kelas lain
+
+Guru Mapel tetap hanya boleh mengubah nilai pada assignment aktifnya. Admin boleh mengakses seluruh modul.
 
 Pastikan RLS mencerminkan rule tersebut.
 ```

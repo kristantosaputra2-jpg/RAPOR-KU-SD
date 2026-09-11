@@ -324,6 +324,28 @@ describe("App", () => {
     expect(screen.queryByText("Dashboard Admin")).not.toBeInTheDocument()
   })
 
+  it("membuka Input Nilai dari Dashboard Wali Kelas", async () => {
+    const user = userEvent.setup()
+    authMocks.getCurrentAuthenticatedUser.mockResolvedValue({
+      ...account,
+      profile: {
+        ...account.profile,
+        full_name: "Rina Wulandari",
+        role: "homeroom_teacher",
+      },
+    })
+
+    render(<App />)
+
+    await user.click(
+      (await screen.findAllByRole("button", { name: /Input Nilai/ })).at(-1)!,
+    )
+
+    expect(
+      await screen.findByRole("heading", { name: "Nilai seluruh siswa" }),
+    ).toBeInTheDocument()
+  })
+
   it("membuka Dashboard Guru Mata Pelajaran lalu menuju Input Nilai", async () => {
     const user = userEvent.setup()
     authMocks.getCurrentAuthenticatedUser.mockResolvedValue({

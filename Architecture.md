@@ -648,9 +648,9 @@ Menggunakan Supabase RLS.
 RLS harus memastikan:
 
 - guru mapel tidak dapat update mapel lain;
-- wali kelas tidak dapat update kelas lain;
+- wali kelas dapat menginput seluruh nilai kelas sendiri tetapi tidak dapat update kelas lain;
 - anonymous tidak dapat membaca data;
-- admin memiliki akses sesuai kebutuhan.
+- admin memiliki akses ke seluruh modul MVP.
 
 ---
 
@@ -831,9 +831,9 @@ Keputusan formula yang disetujui pada 3 September 2026:
 - ambang A–D dihitung saat digunakan dan tidak ditanam sebagai angka tetap.
 - Admin mengelola mode KKM, nilai Single KKM, atau KKM per mata pelajaran melalui halaman Pengaturan Rapor untuk semester aktif; halaman ini hanya menjadi antarmuka bagi `grading_settings` dan `subject_kkm_rules`, bukan tempat business logic predikat.
 
-Nilai mentah disimpan pada `grade_entries` dan dibedakan dengan `assessment_component_id`. Constraint gabungan memastikan satu siswa hanya memiliki satu nilai untuk kombinasi kelas, mapel, CP, komponen, dan semester; siswa benar-benar berada di kelas tersebut; serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
+Nilai mentah disimpan pada `grade_entries` dan dibedakan dengan `assessment_component_id`. Constraint gabungan memastikan satu siswa hanya memiliki satu nilai untuk kombinasi kelas, mapel, CP, komponen, dan semester; siswa benar-benar berada di kelas tersebut; serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin dapat mengelola seluruh nilai. Wali Kelas dapat membaca dan mengubah seluruh nilai serta deskripsi untuk kelas dan semester yang menjadi tanggung jawabnya, termasuk ketika belum ada Guru Mata Pelajaran. Guru Mata Pelajaran hanya dapat mengubah nilai dan deskripsi pada kombinasi kelas, mapel, dan semester dalam assignment aktif.
 
-UI kelas 1–6 memakai tab Pengetahuan/Keterampilan dan menampilkan seluruh CP aktif tanpa membatasi jumlahnya. Pada HP, setiap siswa menjadi kartu berisi daftar CP. Pada desktop, seluruh siswa dan CP tampil dalam matriks dengan nama siswa sticky. Rata-rata, predikat, serta deskripsi dihitung dan disimpan terpisah untuk setiap komponen. Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan dan RLS.
+UI kelas 1–6 memakai tab Pengetahuan/Keterampilan dan menampilkan seluruh CP aktif tanpa membatasi jumlahnya. Pada HP, setiap siswa menjadi kartu berisi daftar CP. Pada desktop, seluruh siswa dan CP tampil dalam matriks dengan nama siswa sticky. Rata-rata, predikat, serta deskripsi dihitung dan disimpan terpisah untuk setiap komponen. Wali Kelas menerima seluruh mapel aktif untuk kelasnya, Guru Mata Pelajaran hanya menerima pilihan yang lolos penugasan, dan Admin dapat membuka seluruh kelas serta mapel.
 
 Hindari menyimpan terlalu banyak data derived jika bisa dihitung.
 

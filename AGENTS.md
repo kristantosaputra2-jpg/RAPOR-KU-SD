@@ -226,6 +226,7 @@ Boleh mengelola:
 - import Excel;
 - konfigurasi rapor;
 - monitoring kelengkapan.
+- mengakses seluruh modul MVP tanpa terkecuali.
 
 ## Wali Kelas
 
@@ -233,7 +234,8 @@ Boleh:
 
 - melihat kelas sendiri;
 - melihat siswa kelas sendiri;
-- melihat nilai semua mapel untuk kelas sendiri;
+- melihat dan menginput nilai semua mapel untuk kelas sendiri, termasuk ketika belum ada Guru Mata Pelajaran;
+- membuat dan mengedit deskripsi nilai untuk kelas sendiri;
 - mengisi absensi;
 - ekstrakurikuler;
 - prestasi;
@@ -254,6 +256,8 @@ Boleh:
 - edit deskripsi.
 
 Tidak boleh mengubah nilai mapel guru lain.
+
+Pada SD, seorang guru boleh menjadi Wali Kelas sekaligus menerima penugasan mata pelajaran. Akses Wali Kelas tetap mencakup seluruh nilai pada kelas yang menjadi tanggung jawabnya, sedangkan akses Guru Mata Pelajaran di luar kelas wali hanya mengikuti `teacher_assignments` aktif.
 
 ---
 

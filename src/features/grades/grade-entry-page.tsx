@@ -45,6 +45,8 @@ import {
   getStudents,
 } from "@/features/students/student.service"
 import { getSubjects } from "@/features/subjects/subject.service"
+import { getTeacherByUserId } from "@/features/teachers/teacher.service"
+import { getGradeClassOptions, getGradeSubjectOptions } from "./grade-access"
 
 type Props = Readonly<{
   userId: string
@@ -55,7 +57,7 @@ type Props = Readonly<{
   onLogout: () => Promise<void>
 }>
 
-async function loadReferences() {
+async function loadReferences(userId: string) {
   const [
     assignments,
     classes,
@@ -64,6 +66,7 @@ async function loadReferences() {
     students,
     memberships,
     components,
+    currentTeacher,
   ] = await Promise.all([
     getTeacherAssignments(),
     getClasses(),
@@ -72,6 +75,7 @@ async function loadReferences() {
     getStudents(),
     getClassMemberships(),
     getAssessmentComponents(),
+    getTeacherByUserId(userId),
   ])
   return {
     assignments,
@@ -81,6 +85,7 @@ async function loadReferences() {
     students,
     memberships,
     components,
+    currentTeacher,
   }
 }
 type References = Awaited<ReturnType<typeof loadReferences>>
@@ -126,15 +131,28 @@ export function GradeEntryPage({
 
   useEffect(() => {
     let mounted = true
-    void loadReferences()
+    void loadReferences(userId)
       .then((data) => {
         if (!mounted) return
         setReferences(data)
         setComponentId(data.components[0]?.id ?? "")
-        const first = data.assignments.find((item) => item.is_active)
-        if (first) {
-          setClassId(first.class_id)
-          setSubjectId(first.subject_id)
+        const firstClass = getGradeClassOptions(
+          userRole,
+          data.classes,
+          data.assignments,
+        )[0]
+        if (firstClass) {
+          setClassId(firstClass.id)
+          setSubjectId(
+            getGradeSubjectOptions(
+              userRole,
+              firstClass.id,
+              firstClass.homeroom_teacher_id,
+              data.currentTeacher?.id ?? null,
+              data.subjects,
+              data.assignments,
+            )[0]?.id ?? "",
+          )
         }
       })
       .catch(() => setError("Data input nilai belum dapat dimuat. Coba lagi."))
@@ -142,31 +160,30 @@ export function GradeEntryPage({
     return () => {
       mounted = false
     }
-  }, [])
+  }, [userId, userRole])
 
   const selectedClass = references?.classes.find((item) => item.id === classId)
   const components = references?.components ?? []
   const activeComponent = components.find((item) => item.id === componentId)
   const classOptions = useMemo(() => {
     if (!references) return []
-    const ids = new Set(
-      references.assignments
-        .filter((item) => item.is_active)
-        .map((item) => item.class_id),
+    return getGradeClassOptions(
+      userRole,
+      references.classes,
+      references.assignments,
     )
-    return references.classes.filter((item) => ids.has(item.id))
-  }, [references])
+  }, [references, userRole])
   const subjectOptions = useMemo(() => {
     if (!references || !classId) return []
-    const ids = new Set(
-      references.assignments
-        .filter((item) => item.is_active && item.class_id === classId)
-        .map((item) => item.subject_id),
+    return getGradeSubjectOptions(
+      userRole,
+      classId,
+      selectedClass?.homeroom_teacher_id ?? null,
+      references.currentTeacher?.id ?? null,
+      references.subjects,
+      references.assignments,
     )
-    return references.subjects.filter(
-      (item) => item.is_active && ids.has(item.id),
-    )
-  }, [classId, references])
+  }, [classId, references, selectedClass?.homeroom_teacher_id, userRole])
   const outcomes = useMemo(() => {
     if (!references || !selectedClass || !subjectId) return []
     return references.outcomes.filter(

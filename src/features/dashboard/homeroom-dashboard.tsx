@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import {
   Award,
+  BookOpenCheck,
   BookHeart,
   CalendarCheck,
   ClipboardCheck,
@@ -26,6 +27,7 @@ import {
 
 type HomeroomAction =
   | "students"
+  | "grades"
   | "attendance"
   | "extracurriculars"
   | "achievements"
@@ -40,6 +42,7 @@ type Props = Readonly<{
   schoolName?: string
   onLogout: () => Promise<void>
   onOpenStudents: () => void
+  onOpenGrades: () => void
   onOpenAttendance: () => void
   onOpenExtracurriculars: () => void
   onOpenAchievements: () => void
@@ -62,6 +65,12 @@ const workItems: ReadonlyArray<WorkItem> = [
     description: "Lengkapi foto 3×4 dan data keluarga siswa.",
     icon: Users,
     action: "students",
+  },
+  {
+    label: "Input Nilai",
+    description: "Isi seluruh nilai mapel untuk siswa kelas Anda.",
+    icon: BookOpenCheck,
+    action: "grades",
   },
   {
     label: "Pantau Kelengkapan",
@@ -120,6 +129,7 @@ export function HomeroomDashboard({
   schoolName,
   onLogout,
   onOpenStudents,
+  onOpenGrades,
   onOpenAttendance,
   onOpenExtracurriculars,
   onOpenAchievements,
@@ -137,6 +147,7 @@ export function HomeroomDashboard({
 
   const actions: Record<HomeroomAction, () => void> = {
     students: onOpenStudents,
+    grades: onOpenGrades,
     attendance: onOpenAttendance,
     extracurriculars: onOpenExtracurriculars,
     achievements: onOpenAchievements,

@@ -20,6 +20,7 @@ const props = {
   schoolName: "SD Negeri Tumbang Kawei",
   onLogout: vi.fn(),
   onOpenStudents: vi.fn(),
+  onOpenGrades: vi.fn(),
   onOpenAttendance: vi.fn(),
   onOpenExtracurriculars: vi.fn(),
   onOpenAchievements: vi.fn(),
@@ -66,6 +67,18 @@ describe("HomeroomDashboard", () => {
     )
 
     expect(props.onOpenHomeroomNotes).toHaveBeenCalledOnce()
+  })
+
+  it("membuka input nilai seluruh mapel kelas sendiri", async () => {
+    const user = userEvent.setup()
+    render(<HomeroomDashboard {...props} />)
+
+    await screen.findByText("Kelas 4A")
+    await user.click(
+      screen.getAllByRole("button", { name: /Input Nilai/ }).at(-1)!,
+    )
+
+    expect(props.onOpenGrades).toHaveBeenCalledOnce()
   })
 
   it("menampilkan empty state ketika wali kelas belum ditugaskan", async () => {

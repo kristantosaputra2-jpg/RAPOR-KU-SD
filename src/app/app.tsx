@@ -162,6 +162,7 @@ export function App() {
   const [homeroomView, setHomeroomView] = useState<
     | "dashboard"
     | "students"
+    | "grades"
     | "attendance"
     | "extracurriculars"
     | "achievements"
@@ -598,6 +599,21 @@ export function App() {
   }
 
   if (profile.role === "homeroom_teacher") {
+    if (homeroomView === "grades") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <GradeEntryPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            userRole={profile.role}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setHomeroomView("dashboard")}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )
+    }
+
     if (homeroomView === "students") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -718,6 +734,7 @@ export function App() {
           schoolName={schoolIdentity?.schoolName}
           onLogout={handleLogout}
           onOpenStudents={() => setHomeroomView("students")}
+          onOpenGrades={() => setHomeroomView("grades")}
           onOpenAttendance={() => setHomeroomView("attendance")}
           onOpenExtracurriculars={() => setHomeroomView("extracurriculars")}
           onOpenAchievements={() => setHomeroomView("achievements")}

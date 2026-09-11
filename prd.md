@@ -176,7 +176,8 @@ Hak utama:
 Hak utama:
 
 - melihat siswa kelas sendiri;
-- melihat nilai seluruh mapel di kelas sendiri;
+- melihat dan menginput nilai seluruh mapel di kelas sendiri, termasuk ketika belum ada Guru Mata Pelajaran;
+- menghasilkan dan mengedit deskripsi nilai kelas sendiri;
 - mengisi absensi;
 - mengisi ekstrakurikuler;
 - mengisi prestasi;
@@ -199,6 +200,8 @@ Hak utama:
 - menyimpan nilai.
 
 Tidak boleh mengubah nilai mapel lain.
+
+Seorang guru SD boleh menjadi Wali Kelas sekaligus menerima penugasan mata pelajaran. Sebagai Wali Kelas, guru dapat menginput seluruh nilai pada kelas yang menjadi tanggung jawabnya. Sebagai Guru Mata Pelajaran, akses di kelas lain tetap hanya untuk mapel yang ditugaskan.
 
 ---
 
@@ -761,7 +764,8 @@ Boleh:
 - kelas sendiri;
 - siswa kelas sendiri;
 - komponen wali kelas;
-- nilai seluruh mapel untuk monitoring;
+- melihat dan menginput nilai seluruh mapel kelas sendiri;
+- menghasilkan dan mengedit deskripsi nilai kelas sendiri;
 - preview;
 - rapor;
 - leger.
@@ -980,7 +984,7 @@ Future:
 
 ## Wali Kelas
 
-`Login → Kelas Saya → Pantau Kelengkapan → Absensi/Ekskul/Prestasi/Catatan → Preview → Cetak`
+`Login → Kelas Saya → Input Nilai → Pantau Kelengkapan → Absensi/Ekskul/Prestasi/Catatan → Preview → Cetak`
 
 ---
 

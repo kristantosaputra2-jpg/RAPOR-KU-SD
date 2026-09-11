@@ -135,6 +135,25 @@ export async function getTeachers(
   return data
 }
 
+export async function getTeacherByUserId(
+  userId: string,
+  client: RapotKuSupabaseClient = getSupabaseClient(),
+): Promise<Teacher | null> {
+  const { data, error } = await client
+    .from("teacher_profiles")
+    .select(teacherColumns)
+    .eq("user_id", userId)
+    .maybeSingle()
+
+  if (error) {
+    throw new TeacherError(
+      "Data akun guru belum dapat dimuat. Periksa koneksi internet lalu coba lagi.",
+    )
+  }
+
+  return data
+}
+
 export async function createTeacher(
   userId: string,
   input: TeacherInput,
