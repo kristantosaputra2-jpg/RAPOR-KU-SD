@@ -827,6 +827,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 
 ## 2026-09-11
 
+- [x] Rapikan sampul: logo diperkecil menjadi 36 mm dan tepat di tengah horizontal, jarak atas/bawah sama-sama 10 mm, serta jarak identitas sekolah ke kementerian 8 mm; cetak tetap muat A4 tanpa overflow.
 - [x] Susun ulang sampul sesuai denah pengguna menjadi judul, logo, identitas siswa, identitas sekolah, lalu kementerian; perbesar logo Tut Wuri dua kali menjadi 72 mm dan verifikasi seluruh isi tetap muat pada A4 tanpa overflow.
 - [x] Ganti aset Tut Wuri Handayani dengan logo resmi yang diunggah pengguna, bersihkan latar kotak, dan tampilkan tanpa pemotongan atau filter warna; 226 test, lint, typecheck, format, dan build lulus.
 - [x] Ubah preview dan cetak rapor menjadi format resmi A4 berdasarkan contoh sekolah tanpa menyalin data siswa dari gambar referensi.
