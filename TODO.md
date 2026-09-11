@@ -827,6 +827,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 
 ## 2026-09-11
 
+- [x] Atur jarak sampul final: judul–logo 6 baris (28,8 mm), logo–identitas siswa 4 baris (19,2 mm), identitas sekolah–kementerian 2 baris (9,6 mm), kementerian–batas bawah 2 baris (9,6 mm), dan ruang fleksibel hanya setelah identitas siswa; cetak A4, test, lint, typecheck, format, dan build lulus.
 - [x] Rapikan sampul: logo diperkecil menjadi 36 mm dan tepat di tengah horizontal, jarak atas/bawah sama-sama 10 mm, serta jarak identitas sekolah ke kementerian 8 mm; cetak tetap muat A4 tanpa overflow.
 - [x] Susun ulang sampul sesuai denah pengguna menjadi judul, logo, identitas siswa, identitas sekolah, lalu kementerian; perbesar logo Tut Wuri dua kali menjadi 72 mm dan verifikasi seluruh isi tetap muat pada A4 tanpa overflow.
 - [x] Ganti aset Tut Wuri Handayani dengan logo resmi yang diunggah pengguna, bersihkan latar kotak, dan tampilkan tanpa pemotongan atau filter warna; 226 test, lint, typecheck, format, dan build lulus.

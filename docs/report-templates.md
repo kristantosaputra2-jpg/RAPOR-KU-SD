@@ -28,6 +28,8 @@ Urutan vertikal yang disetujui:
 
 Judul merupakan satu headline utama walaupun dapat dibagi menjadi beberapa baris agar tetap terbaca.
 
+Jarak vertikal sampul mengikuti susunan final: enam baris dari judul ke lambang, empat baris dari lambang ke identitas siswa, ruang fleksibel hanya antara identitas siswa dan identitas sekolah, dua baris dari identitas sekolah ke kementerian, serta dua baris dari kementerian ke batas bawah area isi.
+
 ### 2.2 Identitas Peserta Didik
 
 Memuat:

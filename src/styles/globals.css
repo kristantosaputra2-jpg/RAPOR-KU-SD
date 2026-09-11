@@ -400,6 +400,8 @@ textarea:hover:not(:disabled) {
 }
 
 .report-cover-content {
+  --report-cover-line: 4.8mm;
+
   display: flex;
   min-height: 270mm;
   flex-direction: column;
@@ -409,7 +411,7 @@ textarea:hover:not(:disabled) {
 .report-tut-wuri-logo {
   width: 36mm;
   height: 36mm;
-  margin: 10mm auto 0;
+  margin: calc(var(--report-cover-line) * 6) auto 0;
   object-fit: contain;
 }
 
@@ -434,7 +436,7 @@ textarea:hover:not(:disabled) {
 }
 
 .report-cover-school {
-  margin-top: 14mm;
+  margin-top: auto;
 }
 
 .report-cover-school p {
@@ -448,7 +450,7 @@ textarea:hover:not(:disabled) {
 
 .report-cover-student {
   width: 100mm;
-  margin-top: 10mm;
+  margin-top: calc(var(--report-cover-line) * 4);
 }
 
 .report-cover-student dt {
@@ -465,7 +467,8 @@ textarea:hover:not(:disabled) {
 }
 
 .report-cover-ministry {
-  margin-top: 8mm;
+  margin-top: calc(var(--report-cover-line) * 2);
+  margin-bottom: calc(var(--report-cover-line) * 2);
   font-size: 13pt;
 }
 
