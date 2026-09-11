@@ -92,11 +92,6 @@ export function ReportPreviewTemplate({ report }: Props) {
     <div className="report-document" data-template-group={report.templateGroup}>
       <article className="report-sheet report-cover-sheet">
         <div className="report-cover-content">
-          <img
-            className="report-tut-wuri-logo"
-            src="/images/tut-wuri-handayani.png"
-            alt="Logo Tut Wuri Handayani"
-          />
           <h1
             className="report-cover-headline"
             aria-label="Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar"
@@ -105,6 +100,11 @@ export function ReportPreviewTemplate({ report }: Props) {
             <span>HASIL CAPAIAN KOMPETENSI PESERTA DIDIK</span>
             <span>SEKOLAH DASAR</span>
           </h1>
+          <img
+            className="report-tut-wuri-logo"
+            src="/images/tut-wuri-handayani.png"
+            alt="Logo Tut Wuri Handayani"
+          />
           <div className="report-cover-school">
             <p>{report.school.name}</p>
             <span>

@@ -91,11 +91,13 @@ describe("ReportPreviewTemplate", () => {
   it("menampilkan struktur resmi A4 tanpa bagian kesehatan", () => {
     render(<ReportPreviewTemplate report={report} />)
 
-    expect(
-      screen.getByRole("heading", {
-        name: "Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar",
-      }),
-    ).toBeInTheDocument()
+    const headline = screen.getByRole("heading", {
+      name: "Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar",
+    })
+    const coverLogo = screen.getAllByAltText("Logo Tut Wuri Handayani")[0]
+    expect(headline.compareDocumentPosition(coverLogo!)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
     expect(screen.getByText("IDENTITAS PESERTA DIDIK")).toBeInTheDocument()
     expect(screen.getByText("Pengetahuan")).toBeInTheDocument()
     expect(screen.getByText("Keterampilan")).toBeInTheDocument()
