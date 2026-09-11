@@ -95,6 +95,10 @@ describe("ReportPreviewTemplate", () => {
       name: "Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar",
     })
     const coverLogo = screen.getAllByAltText("Logo Tut Wuri Handayani")[0]
+    expect(coverLogo).toHaveAttribute(
+      "src",
+      "/images/tut-wuri-handayani-official.png",
+    )
     expect(headline.compareDocumentPosition(coverLogo!)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     )

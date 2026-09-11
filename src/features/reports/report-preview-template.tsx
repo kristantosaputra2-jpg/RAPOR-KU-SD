@@ -15,7 +15,10 @@ function FormalTitle({ children }: Readonly<{ children: ReactNode }>) {
 function SchoolHeader({ report }: Props) {
   return (
     <header className="report-school-header">
-      <img src="/images/tut-wuri-handayani.png" alt="Logo Tut Wuri Handayani" />
+      <img
+        src="/images/tut-wuri-handayani-official.png"
+        alt="Logo Tut Wuri Handayani"
+      />
       <div>
         <p className="report-school-name">{report.school.name}</p>
         <p>
@@ -102,7 +105,7 @@ export function ReportPreviewTemplate({ report }: Props) {
           </h1>
           <img
             className="report-tut-wuri-logo"
-            src="/images/tut-wuri-handayani.png"
+            src="/images/tut-wuri-handayani-official.png"
             alt="Logo Tut Wuri Handayani"
           />
           <div className="report-cover-school">

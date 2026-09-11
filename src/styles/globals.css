@@ -411,17 +411,6 @@ textarea:hover:not(:disabled) {
   height: 36mm;
   margin-top: 8mm;
   object-fit: contain;
-  clip-path: polygon(
-    50% 0%,
-    88% 12%,
-    96% 46%,
-    88% 84%,
-    50% 100%,
-    12% 84%,
-    4% 46%,
-    12% 12%
-  );
-  filter: contrast(1.18) brightness(1.1);
 }
 
 .report-cover-headline {
@@ -563,17 +552,6 @@ textarea:hover:not(:disabled) {
   width: 20mm;
   height: 20mm;
   object-fit: contain;
-  clip-path: polygon(
-    50% 0%,
-    88% 12%,
-    96% 46%,
-    88% 84%,
-    50% 100%,
-    12% 84%,
-    4% 46%,
-    12% 12%
-  );
-  filter: contrast(1.18) brightness(1.1);
 }
 
 .report-school-header p {
