@@ -97,11 +97,14 @@ export function ReportPreviewTemplate({ report }: Props) {
             src="/images/tut-wuri-handayani.png"
             alt="Logo Tut Wuri Handayani"
           />
-          <p className="report-cover-title">LAPORAN</p>
-          <p className="report-cover-subtitle">
-            HASIL CAPAIAN KOMPETENSI PESERTA DIDIK
-          </p>
-          <p className="report-cover-subtitle">SEKOLAH DASAR</p>
+          <h1
+            className="report-cover-headline"
+            aria-label="Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar"
+          >
+            <span>LAPORAN</span>
+            <span>HASIL CAPAIAN KOMPETENSI PESERTA DIDIK</span>
+            <span>SEKOLAH DASAR</span>
+          </h1>
           <div className="report-cover-school">
             <p>{report.school.name}</p>
             <span>
@@ -125,49 +128,42 @@ export function ReportPreviewTemplate({ report }: Props) {
 
       <article className="report-sheet report-identity-sheet">
         <FormalTitle>IDENTITAS PESERTA DIDIK</FormalTitle>
-        <div className="report-identity-layout">
-          <dl className="report-identity-list">
-            <IdentityRow
-              label="Nama Peserta Didik"
-              value={report.student.name}
-            />
-            <IdentityRow
-              label="NIS / NISN"
-              value={`${report.student.nis} / ${report.student.nisn ?? "-"}`}
-            />
-            <IdentityRow
-              label="Tempat, Tanggal Lahir"
-              value={report.student.birth}
-            />
-            <IdentityRow label="Jenis Kelamin" value={report.student.gender} />
-            <IdentityRow label="Agama" value={report.student.religion} />
-            <IdentityRow
-              label="Alamat Peserta Didik"
-              value={report.student.address}
-            />
-            <IdentityRow label="Nomor Telepon" value={report.student.phone} />
-            <FamilyRows report={report} />
-          </dl>
-          <div className="report-photo-column">
-            <div
-              className="report-photo-frame"
-              aria-label="Foto siswa ukuran 3 kali 4"
-            >
-              {report.student.photoUrl ? (
-                <img
-                  src={report.student.photoUrl}
-                  alt={`Foto ${report.student.name}`}
-                />
-              ) : (
-                <span>
-                  Foto
-                  <br />3 × 4
-                </span>
-              )}
-            </div>
+        <dl className="report-identity-list">
+          <IdentityRow label="Nama Peserta Didik" value={report.student.name} />
+          <IdentityRow
+            label="NIS / NISN"
+            value={`${report.student.nis} / ${report.student.nisn ?? "-"}`}
+          />
+          <IdentityRow
+            label="Tempat, Tanggal Lahir"
+            value={report.student.birth}
+          />
+          <IdentityRow label="Jenis Kelamin" value={report.student.gender} />
+          <IdentityRow label="Agama" value={report.student.religion} />
+          <IdentityRow
+            label="Alamat Peserta Didik"
+            value={report.student.address}
+          />
+          <IdentityRow label="Nomor Telepon" value={report.student.phone} />
+          <FamilyRows report={report} />
+        </dl>
+        <div className="report-identity-approval">
+          <div
+            className="report-photo-frame"
+            aria-label="Foto siswa ukuran 3 kali 4"
+          >
+            {report.student.photoUrl ? (
+              <img
+                src={report.student.photoUrl}
+                alt={`Foto ${report.student.name}`}
+              />
+            ) : (
+              <span>
+                Foto
+                <br />3 × 4
+              </span>
+            )}
           </div>
-        </div>
-        <div className="report-identity-signature">
           <Signature
             role="Kepala Sekolah"
             name={report.school.principalName}

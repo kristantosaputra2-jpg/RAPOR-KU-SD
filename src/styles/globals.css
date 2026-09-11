@@ -424,21 +424,24 @@ textarea:hover:not(:disabled) {
   filter: contrast(1.18) brightness(1.1);
 }
 
-.report-cover-title {
-  margin: 8mm 0 1mm;
-  font-size: 26pt;
+.report-cover-headline {
+  display: grid;
+  gap: 1.5mm;
+  margin: 8mm 0 0;
+  font-size: 17pt;
   font-weight: 700;
+  line-height: 1.22;
 }
 
-.report-cover-subtitle,
+.report-cover-headline span:first-child {
+  margin-bottom: 1mm;
+  font-size: 27pt;
+}
+
 .report-cover-school p,
 .report-cover-ministry p {
   margin: 1mm 0;
   font-weight: 700;
-}
-
-.report-cover-subtitle {
-  font-size: 15pt;
 }
 
 .report-cover-school {
@@ -485,13 +488,8 @@ textarea:hover:not(:disabled) {
   text-decoration: underline;
 }
 
-.report-identity-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 32mm;
-  gap: 8mm;
-}
-
 .report-identity-list {
+  max-width: 150mm;
   margin: 0;
 }
 
@@ -520,13 +518,6 @@ textarea:hover:not(:disabled) {
   text-decoration: underline;
 }
 
-.report-photo-column {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 2mm;
-}
-
 .report-photo-frame {
   display: grid;
   width: 30mm;
@@ -544,10 +535,17 @@ textarea:hover:not(:disabled) {
   object-fit: cover;
 }
 
-.report-identity-signature {
+.report-identity-approval {
   display: flex;
+  align-items: flex-end;
   justify-content: flex-end;
-  margin-top: 10mm;
+  gap: 4mm;
+  margin-top: 8mm;
+  break-inside: avoid;
+}
+
+.report-identity-approval .report-signature {
+  width: 58mm;
 }
 
 .report-school-header {
@@ -893,14 +891,8 @@ textarea:hover:not(:disabled) {
     min-height: 230mm;
   }
 
-  .report-identity-layout,
   .report-profile-grid {
     grid-template-columns: 1fr;
-  }
-
-  .report-photo-column {
-    grid-row: 1;
-    justify-content: flex-start;
   }
 
   .report-results-table {

@@ -91,13 +91,16 @@ describe("ReportPreviewTemplate", () => {
   it("menampilkan struktur resmi A4 tanpa bagian kesehatan", () => {
     render(<ReportPreviewTemplate report={report} />)
 
-    expect(screen.getByText("LAPORAN")).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", {
+        name: "Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar",
+      }),
+    ).toBeInTheDocument()
     expect(screen.getByText("IDENTITAS PESERTA DIDIK")).toBeInTheDocument()
     expect(screen.getByText("Pengetahuan")).toBeInTheDocument()
     expect(screen.getByText("Keterampilan")).toBeInTheDocument()
-    expect(
-      screen.getByLabelText("Foto siswa ukuran 3 kali 4"),
-    ).toBeInTheDocument()
+    const photoFrame = screen.getByLabelText("Foto siswa ukuran 3 kali 4")
+    expect(photoFrame.parentElement).toHaveClass("report-identity-approval")
     expect(screen.queryByText("Tinggi Badan")).not.toBeInTheDocument()
     expect(screen.queryByText("Kondisi Kesehatan")).not.toBeInTheDocument()
   })

@@ -823,6 +823,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Hubungkan biodata keluarga, foto siswa 3×4, wali kelas, nilai Pengetahuan/Keterampilan, ekstrakurikuler, prestasi, ketidakhadiran, dan catatan ke template cetak.
 - [x] Pertahankan keputusan MVP untuk tidak menampilkan tinggi/berat badan maupun kondisi kesehatan.
 - [x] Verifikasi PDF contoh lima halaman berukuran A4, seluruh 220 unit/integration test, lint, typecheck, format, dan production build.
+- [x] Koreksi halaman sampul dan identitas: lambang Tut Wuri berada di tengah, judul lengkap menjadi headline utama, serta foto 3×4 dipindah ke bawah berdampingan dengan tanda tangan kepala sekolah agar dapat terkena satu stempel.
 
 ---
 
