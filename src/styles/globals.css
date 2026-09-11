@@ -407,8 +407,8 @@ textarea:hover:not(:disabled) {
 }
 
 .report-tut-wuri-logo {
-  width: 36mm;
-  height: 36mm;
+  width: 72mm;
+  height: 72mm;
   margin-top: 8mm;
   object-fit: contain;
 }
@@ -434,7 +434,7 @@ textarea:hover:not(:disabled) {
 }
 
 .report-cover-school {
-  margin-top: 18mm;
+  margin-top: 14mm;
 }
 
 .report-cover-school p {
@@ -448,7 +448,7 @@ textarea:hover:not(:disabled) {
 
 .report-cover-student {
   width: 100mm;
-  margin-top: 35mm;
+  margin-top: 12mm;
 }
 
 .report-cover-student dt {

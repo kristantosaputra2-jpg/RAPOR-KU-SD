@@ -827,6 +827,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 
 ## 2026-09-11
 
+- [x] Susun ulang sampul sesuai denah pengguna menjadi judul, logo, identitas siswa, identitas sekolah, lalu kementerian; perbesar logo Tut Wuri dua kali menjadi 72 mm dan verifikasi seluruh isi tetap muat pada A4 tanpa overflow.
 - [x] Ganti aset Tut Wuri Handayani dengan logo resmi yang diunggah pengguna, bersihkan latar kotak, dan tampilkan tanpa pemotongan atau filter warna; 226 test, lint, typecheck, format, dan build lulus.
 - [x] Ubah preview dan cetak rapor menjadi format resmi A4 berdasarkan contoh sekolah tanpa menyalin data siswa dari gambar referensi.
 - [x] Gunakan logo Tut Wuri Handayani yang disediakan pengguna pada sampul dan kepala halaman rapor.

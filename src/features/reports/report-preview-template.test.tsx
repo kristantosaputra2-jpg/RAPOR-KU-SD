@@ -89,7 +89,7 @@ const report: ReportViewModel = {
 
 describe("ReportPreviewTemplate", () => {
   it("menampilkan struktur resmi A4 tanpa bagian kesehatan", () => {
-    render(<ReportPreviewTemplate report={report} />)
+    const { container } = render(<ReportPreviewTemplate report={report} />)
 
     const headline = screen.getByRole("heading", {
       name: "Laporan Hasil Capaian Kompetensi Peserta Didik Sekolah Dasar",
@@ -100,6 +100,11 @@ describe("ReportPreviewTemplate", () => {
       "/images/tut-wuri-handayani-official.png",
     )
     expect(headline.compareDocumentPosition(coverLogo!)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
+    const coverStudent = container.querySelector(".report-cover-student")
+    const coverSchool = container.querySelector(".report-cover-school")
+    expect(coverStudent?.compareDocumentPosition(coverSchool!)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     )
     expect(screen.getByText("IDENTITAS PESERTA DIDIK")).toBeInTheDocument()

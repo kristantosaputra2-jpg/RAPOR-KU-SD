@@ -20,10 +20,10 @@
 Urutan vertikal yang disetujui:
 
 1. Judul utama `LAPORAN HASIL CAPAIAN KOMPETENSI PESERTA DIDIK SEKOLAH DASAR`.
-2. Lambang Tut Wuri Handayani tepat di tengah, di bawah judul.
-3. Nama dan alamat sekolah.
-4. Nama peserta didik.
-5. NIS dan NISN.
+2. Lambang Tut Wuri Handayani berukuran besar tepat di tengah, di bawah judul.
+3. Nama peserta didik.
+4. NIS dan NISN.
+5. Nama dan alamat sekolah.
 6. Nama kementerian dan Republik Indonesia di bagian bawah halaman.
 
 Judul merupakan satu headline utama walaupun dapat dibagi menjadi beberapa baris agar tetap terbaca.

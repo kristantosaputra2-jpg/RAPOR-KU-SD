@@ -108,12 +108,6 @@ export function ReportPreviewTemplate({ report }: Props) {
             src="/images/tut-wuri-handayani-official.png"
             alt="Logo Tut Wuri Handayani"
           />
-          <div className="report-cover-school">
-            <p>{report.school.name}</p>
-            <span>
-              <Value>{report.school.address}</Value>
-            </span>
-          </div>
           <dl className="report-cover-student">
             <dt>Nama Peserta Didik</dt>
             <dd>{report.student.name}</dd>
@@ -122,6 +116,12 @@ export function ReportPreviewTemplate({ report }: Props) {
               {report.student.nis} / <Value>{report.student.nisn}</Value>
             </dd>
           </dl>
+          <div className="report-cover-school">
+            <p>{report.school.name}</p>
+            <span>
+              <Value>{report.school.address}</Value>
+            </span>
+          </div>
           <div className="report-cover-ministry">
             <p>KEMENTERIAN PENDIDIKAN DASAR DAN MENENGAH</p>
             <p>REPUBLIK INDONESIA</p>
