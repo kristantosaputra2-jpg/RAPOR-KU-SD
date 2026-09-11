@@ -150,6 +150,9 @@ function createSource(): ReportSourceData {
     extracurricularEntries: [],
     achievements: [],
     homeroomNote: null,
+    studentBiodata: null,
+    studentPhotoUrl: null,
+    homeroomTeacher: null,
   }
 }
 
@@ -228,5 +231,55 @@ describe("buildReportViewModel", () => {
     expect(report.homeroomNote).toBeNull()
     expect(report.extracurriculars).toEqual([])
     expect(report.achievements).toEqual([])
+  })
+
+  it("memakai biodata keluarga, foto, dan wali kelas pada dokumen resmi", () => {
+    const source = createSource()
+    const report = buildReportViewModel({
+      schoolClass,
+      student,
+      academicYear,
+      semester,
+      source: {
+        ...source,
+        studentPhotoUrl: "https://example.test/photo.jpg",
+        homeroomTeacher: { full_name: "Ibu Wali Kelas", nip: "19800101" },
+        studentBiodata: {
+          student_id: student.id,
+          photo_path: "student-1/photo",
+          student_phone: "08123456789",
+          father_name: "Bapak Siswa",
+          father_education: "SMA",
+          father_occupation: "Petani",
+          father_address: "Tumbang Kawei",
+          father_phone: "081200000001",
+          mother_name: "Ibu Siswa",
+          mother_education: "SMP",
+          mother_occupation: "Wiraswasta",
+          mother_address: "Tumbang Kawei",
+          mother_phone: "081200000002",
+          guardian_name: null,
+          guardian_education: null,
+          guardian_occupation: null,
+          guardian_address: null,
+          guardian_phone: null,
+          created_by: "user-1",
+          updated_by: "user-1",
+          created_at: "2026-01-01",
+          updated_at: "2026-01-01",
+        },
+      },
+    })
+
+    expect(report.student.father).toMatchObject({
+      name: "Bapak Siswa",
+      education: "SMA",
+      occupation: "Petani",
+    })
+    expect(report.student.photoUrl).toBe("https://example.test/photo.jpg")
+    expect(report.homeroomTeacher).toEqual({
+      name: "Ibu Wali Kelas",
+      nip: "19800101",
+    })
   })
 })

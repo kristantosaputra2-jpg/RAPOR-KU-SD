@@ -1,331 +1,373 @@
-import { BookOpenCheck } from "lucide-react"
+import type { ReactNode } from "react"
 
 import type { ReportViewModel } from "./report-view-model"
 
 type Props = Readonly<{ report: ReportViewModel }>
 
 function Value({ children }: Readonly<{ children: string | number | null }>) {
-  return children === null || children === "" ? (
-    <span className="text-slate-400">Belum diisi</span>
-  ) : (
-    <>{children}</>
-  )
+  return children === null || children === "" ? <>-</> : <>{children}</>
 }
 
-function ReportPageHeader({ report }: Props) {
+function FormalTitle({ children }: Readonly<{ children: ReactNode }>) {
+  return <h2 className="report-formal-title">{children}</h2>
+}
+
+function SchoolHeader({ report }: Props) {
   return (
-    <header className="report-page-header flex items-center gap-3 border-b-2 border-[var(--rapotku-brand)] pb-4">
-      {report.school.logoUrl ? (
-        <img
-          className="size-14 object-contain"
-          src={report.school.logoUrl}
-          alt={`Logo ${report.school.name}`}
-        />
-      ) : (
-        <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[var(--rapotku-brand-soft)] text-[var(--rapotku-brand)]">
-          <BookOpenCheck aria-hidden="true" size={28} />
-        </span>
-      )}
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
-          RaporKu
+    <header className="report-school-header">
+      <img src="/images/tut-wuri-handayani.png" alt="Logo Tut Wuri Handayani" />
+      <div>
+        <p className="report-school-name">{report.school.name}</p>
+        <p>
+          <Value>{report.school.address}</Value>
         </p>
-        <h2 className="truncate text-lg font-bold sm:text-xl">
-          {report.school.name}
-        </h2>
-        <p className="text-xs text-slate-500">
-          {report.school.npsn
-            ? `NPSN ${report.school.npsn}`
-            : "NPSN belum diisi"}
+        <p>
+          NPSN: <Value>{report.school.npsn}</Value>
         </p>
       </div>
     </header>
   )
 }
 
-const identityRows = (report: ReportViewModel) =>
-  [
-    ["Nama lengkap", report.student.name],
-    [
-      "NIS / NISN",
-      `${report.student.nis} / ${report.student.nisn ?? "Belum diisi"}`,
-    ],
-    ["Jenis kelamin", report.student.gender],
-    ["Tempat, tanggal lahir", report.student.birth],
-    ["Agama", report.student.religion],
-    ["Alamat", report.student.address],
-    ["Nama ayah", report.student.fatherName],
-    ["Nama ibu", report.student.motherName],
-    ["Nama wali", report.student.guardianName],
+function IdentityRow({
+  label,
+  value,
+}: Readonly<{ label: string; value: string | null }>) {
+  return (
+    <div className="report-identity-row">
+      <dt>{label}</dt>
+      <span>:</span>
+      <dd>
+        <Value>{value}</Value>
+      </dd>
+    </div>
+  )
+}
+
+function FamilyRows({ report }: Props) {
+  const members = [
+    ["Ayah", report.student.father],
+    ["Ibu", report.student.mother],
+    ["Wali", report.student.guardian],
   ] as const
+  return (
+    <>
+      {members.map(([label, member]) => (
+        <section className="report-family-section" key={label}>
+          <h3>{label}</h3>
+          <IdentityRow label="Nama" value={member.name} />
+          <IdentityRow label="Pendidikan" value={member.education} />
+          <IdentityRow label="Pekerjaan" value={member.occupation} />
+          <IdentityRow label="Alamat" value={member.address} />
+          <IdentityRow label="Nomor telepon" value={member.phone} />
+        </section>
+      ))}
+    </>
+  )
+}
+
+function Signature({
+  role,
+  name,
+  nip,
+}: Readonly<{ role: string; name: string | null; nip?: string | null }>) {
+  return (
+    <div className="report-signature">
+      <p>{role}</p>
+      <div className="report-signature-space" />
+      <p className="report-signature-name">
+        {name ?? "...................................."}
+      </p>
+      {nip !== undefined ? (
+        <p>
+          NIP. <Value>{nip}</Value>
+        </p>
+      ) : null}
+    </div>
+  )
+}
 
 export function ReportPreviewTemplate({ report }: Props) {
   return (
-    <div className="space-y-6" data-template-group={report.templateGroup}>
-      <article className="report-sheet report-cover grid min-h-[580px] place-items-center overflow-hidden rounded-2xl border bg-white p-7 text-center sm:min-h-[720px] sm:p-12">
-        <div className="max-w-xl">
-          <span className="mx-auto grid size-20 place-items-center rounded-3xl bg-[var(--rapotku-brand)] text-white shadow-[0_16px_36px_rgba(198,31,39,0.22)]">
-            <BookOpenCheck aria-hidden="true" size={40} />
-          </span>
-          <p className="mt-8 text-sm font-bold uppercase tracking-[0.16em] text-[var(--rapotku-brand)]">
-            Laporan Hasil Belajar
+    <div className="report-document" data-template-group={report.templateGroup}>
+      <article className="report-sheet report-cover-sheet">
+        <div className="report-cover-content">
+          <img
+            className="report-tut-wuri-logo"
+            src="/images/tut-wuri-handayani.png"
+            alt="Logo Tut Wuri Handayani"
+          />
+          <p className="report-cover-title">LAPORAN</p>
+          <p className="report-cover-subtitle">
+            HASIL CAPAIAN KOMPETENSI PESERTA DIDIK
           </p>
-          <h2 className="mt-3 text-3xl font-bold sm:text-5xl">Rapor Siswa</h2>
-          <p className="mt-3 text-sm font-semibold text-slate-500">
-            {report.templateLabel}
-          </p>
-          <div className="mx-auto mt-12 max-w-md rounded-2xl border border-red-100 bg-red-50/70 px-5 py-6">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-              Nama Siswa
-            </p>
-            <p className="mt-2 break-words text-2xl font-bold text-[var(--rapotku-brand-strong)]">
-              {report.student.name}
-            </p>
-            <p className="mt-3 text-sm text-slate-600">
-              {report.academicPeriod.className} ·{" "}
-              {report.academicPeriod.academicYear} ·{" "}
-              {report.academicPeriod.semester}
-            </p>
+          <p className="report-cover-subtitle">SEKOLAH DASAR</p>
+          <div className="report-cover-school">
+            <p>{report.school.name}</p>
+            <span>
+              <Value>{report.school.address}</Value>
+            </span>
           </div>
-          <p className="mt-12 text-xl font-bold">{report.school.name}</p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-            <Value>{report.school.address}</Value>
-          </p>
-        </div>
-      </article>
-
-      <article className="report-sheet min-h-[580px] rounded-2xl border bg-white p-5 sm:min-h-[720px] sm:p-10">
-        <ReportPageHeader report={report} />
-        <div className="mt-8">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
-            Halaman Identitas
-          </p>
-          <h2 className="mt-1 text-2xl font-bold">Identitas peserta didik</h2>
-          <dl className="mt-6 divide-y divide-slate-200 rounded-2xl border border-slate-200 px-4 sm:px-6">
-            {identityRows(report).map(([label, value]) => (
-              <div
-                className="grid gap-1 py-3 sm:grid-cols-[190px_1fr] sm:gap-5"
-                key={label}
-              >
-                <dt className="text-sm font-semibold text-slate-500">
-                  {label}
-                </dt>
-                <dd className="break-words text-sm font-medium">
-                  <Value>{value}</Value>
-                </dd>
-              </div>
-            ))}
+          <dl className="report-cover-student">
+            <dt>Nama Peserta Didik</dt>
+            <dd>{report.student.name}</dd>
+            <dt>NIS / NISN</dt>
+            <dd>
+              {report.student.nis} / <Value>{report.student.nisn}</Value>
+            </dd>
           </dl>
+          <div className="report-cover-ministry">
+            <p>KEMENTERIAN PENDIDIKAN DASAR DAN MENENGAH</p>
+            <p>REPUBLIK INDONESIA</p>
+          </div>
         </div>
       </article>
 
-      <article className="report-sheet min-h-[580px] rounded-2xl border bg-white p-5 sm:min-h-[720px] sm:p-10">
-        <ReportPageHeader report={report} />
-        <div className="mt-7 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
-              Hasil Belajar
-            </p>
-            <h2 className="mt-1 text-2xl font-bold">Nilai dan deskripsi</h2>
+      <article className="report-sheet report-identity-sheet">
+        <FormalTitle>IDENTITAS PESERTA DIDIK</FormalTitle>
+        <div className="report-identity-layout">
+          <dl className="report-identity-list">
+            <IdentityRow
+              label="Nama Peserta Didik"
+              value={report.student.name}
+            />
+            <IdentityRow
+              label="NIS / NISN"
+              value={`${report.student.nis} / ${report.student.nisn ?? "-"}`}
+            />
+            <IdentityRow
+              label="Tempat, Tanggal Lahir"
+              value={report.student.birth}
+            />
+            <IdentityRow label="Jenis Kelamin" value={report.student.gender} />
+            <IdentityRow label="Agama" value={report.student.religion} />
+            <IdentityRow
+              label="Alamat Peserta Didik"
+              value={report.student.address}
+            />
+            <IdentityRow label="Nomor Telepon" value={report.student.phone} />
+            <FamilyRows report={report} />
+          </dl>
+          <div className="report-photo-column">
+            <div
+              className="report-photo-frame"
+              aria-label="Foto siswa ukuran 3 kali 4"
+            >
+              {report.student.photoUrl ? (
+                <img
+                  src={report.student.photoUrl}
+                  alt={`Foto ${report.student.name}`}
+                />
+              ) : (
+                <span>
+                  Foto
+                  <br />3 × 4
+                </span>
+              )}
+            </div>
           </div>
-          <p className="text-sm text-slate-500">
-            Kelas {report.academicPeriod.gradeLevel} ·{" "}
-            {report.academicPeriod.semester}
-          </p>
         </div>
+        <div className="report-identity-signature">
+          <Signature
+            role="Kepala Sekolah"
+            name={report.school.principalName}
+            nip={report.school.principalNip}
+          />
+        </div>
+      </article>
 
+      <article className="report-sheet report-results-sheet">
+        <SchoolHeader report={report} />
+        <FormalTitle>RAPOR DAN PROFIL PESERTA DIDIK</FormalTitle>
+        <dl className="report-profile-grid">
+          <IdentityRow label="Nama Peserta Didik" value={report.student.name} />
+          <IdentityRow label="Kelas" value={report.academicPeriod.className} />
+          <IdentityRow
+            label="NIS / NISN"
+            value={`${report.student.nis} / ${report.student.nisn ?? "-"}`}
+          />
+          <IdentityRow
+            label="Semester"
+            value={report.academicPeriod.semester}
+          />
+          <IdentityRow
+            label="Tahun Pelajaran"
+            value={report.academicPeriod.academicYear}
+          />
+          <IdentityRow label="Kelompok Rapor" value={report.templateLabel} />
+        </dl>
+        <h3 className="report-section-heading">
+          A. Kompetensi Pengetahuan dan Keterampilan
+        </h3>
         {report.subjects.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+          <p className="report-empty">
             Mata pelajaran yang ditugaskan belum tersedia.
-          </div>
+          </p>
         ) : (
-          <>
-            <div className="report-mobile-results mt-6 space-y-4 md:hidden">
-              {report.subjects.map((subject) => (
-                <section
-                  className="rounded-2xl border border-slate-200 p-4"
-                  key={subject.subjectId}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-bold">{subject.subjectName}</h3>
-                    <span className="rounded-lg bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">
-                      KKM <Value>{subject.kkm}</Value>
-                    </span>
-                  </div>
-                  <div className="mt-4 space-y-4">
-                    {subject.components.map((component) => (
-                      <div
-                        className="border-t border-slate-200 pt-3"
-                        key={component.componentId}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="text-sm font-semibold">
-                            {component.componentName}
-                          </p>
-                          <p className="text-sm">
-                            <span className="font-bold text-[var(--rapotku-brand)]">
-                              <Value>{component.predicate}</Value>
-                            </span>
-                            <span className="ml-2 text-slate-400">
-                              (<Value>{component.average}</Value>)
-                            </span>
-                          </p>
-                        </div>
-                        <p className="mt-2 break-words text-sm leading-6 text-slate-600">
-                          <Value>{component.description}</Value>
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-            <div className="report-table-results mt-6 hidden overflow-x-auto rounded-2xl border border-slate-200 md:block">
-              <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                <thead className="bg-red-50 text-slate-700">
-                  <tr>
-                    <th className="p-3">Mata pelajaran</th>
-                    <th className="p-3">KKM</th>
-                    <th className="p-3">Komponen</th>
-                    <th className="p-3">Rata-rata</th>
-                    <th className="p-3">Predikat</th>
-                    <th className="p-3">Deskripsi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {report.subjects.flatMap((subject) =>
-                    subject.components.map((component, index) => (
-                      <tr key={`${subject.subjectId}:${component.componentId}`}>
-                        <td className="p-3 font-semibold">
-                          {index === 0 ? subject.subjectName : ""}
-                        </td>
-                        <td className="p-3">
-                          {index === 0 ? <Value>{subject.kkm}</Value> : null}
-                        </td>
-                        <td className="p-3">{component.componentName}</td>
-                        <td className="p-3">
-                          <Value>{component.average}</Value>
-                        </td>
-                        <td className="p-3 font-bold text-[var(--rapotku-brand)]">
-                          <Value>{component.predicate}</Value>
-                        </td>
-                        <td className="max-w-sm break-words p-3 leading-6">
-                          <Value>{component.description}</Value>
-                        </td>
-                      </tr>
-                    )),
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </>
+          <div className="report-results-scroll">
+            <table className="report-results-table">
+              <thead>
+                <tr>
+                  <th rowSpan={2}>No.</th>
+                  <th rowSpan={2}>Mata Pelajaran</th>
+                  <th rowSpan={2}>KKM</th>
+                  <th colSpan={3}>Pengetahuan</th>
+                  <th colSpan={3}>Keterampilan</th>
+                </tr>
+                <tr>
+                  <th>Nilai</th>
+                  <th>Predikat</th>
+                  <th>Deskripsi</th>
+                  <th>Nilai</th>
+                  <th>Predikat</th>
+                  <th>Deskripsi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.subjects.map((subject, index) => {
+                  const knowledge = subject.components.find(
+                    (item) =>
+                      item.componentName.toLowerCase() === "pengetahuan",
+                  )
+                  const skills = subject.components.find(
+                    (item) =>
+                      item.componentName.toLowerCase() === "keterampilan",
+                  )
+                  return (
+                    <tr key={subject.subjectId}>
+                      <td>{index + 1}</td>
+                      <td className="report-subject-name">
+                        {subject.subjectName}
+                      </td>
+                      <td>
+                        <Value>{subject.kkm}</Value>
+                      </td>
+                      <td>
+                        <Value>{knowledge?.average ?? null}</Value>
+                      </td>
+                      <td>
+                        <Value>{knowledge?.predicate ?? null}</Value>
+                      </td>
+                      <td className="report-description">
+                        <Value>{knowledge?.description ?? null}</Value>
+                      </td>
+                      <td>
+                        <Value>{skills?.average ?? null}</Value>
+                      </td>
+                      <td>
+                        <Value>{skills?.predicate ?? null}</Value>
+                      </td>
+                      <td className="report-description">
+                        <Value>{skills?.description ?? null}</Value>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </article>
 
-      <article className="report-sheet min-h-[580px] rounded-2xl border bg-white p-5 sm:min-h-[720px] sm:p-10">
-        <ReportPageHeader report={report} />
-        <div className="mt-7 grid gap-6 lg:grid-cols-2">
-          <section>
-            <h2 className="text-xl font-bold">Ekstrakurikuler</h2>
+      <article className="report-sheet report-summary-sheet">
+        <SchoolHeader report={report} />
+        <h3 className="report-section-heading">B. Ekstrakurikuler</h3>
+        <table className="report-simple-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Kegiatan</th>
+              <th>Predikat</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
             {report.extracurriculars.length ? (
-              <div className="mt-3 space-y-3">
-                {report.extracurriculars.map((item, index) => (
-                  <div
-                    className="rounded-xl border border-slate-200 p-4"
-                    key={`${item.name}:${index}`}
-                  >
-                    <div className="flex justify-between gap-3">
-                      <p className="font-semibold">{item.name}</p>
-                      <span className="text-sm font-bold text-[var(--rapotku-brand)]">
-                        {item.achievement}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              report.extracurriculars.map((item, index) => (
+                <tr key={`${item.name}:${index}`}>
+                  <td>{index + 1}</td>
+                  <td>{item.name}</td>
+                  <td>{item.achievement}</td>
+                  <td>{item.description}</td>
+                </tr>
+              ))
             ) : (
-              <p className="mt-3 text-sm text-slate-400">
-                Belum ada data ekstrakurikuler.
-              </p>
+              <tr>
+                <td>1</td>
+                <td colSpan={3}>-</td>
+              </tr>
             )}
-          </section>
-          <section>
-            <h2 className="text-xl font-bold">Prestasi</h2>
-            {report.achievements.length ? (
-              <div className="mt-3 space-y-3">
-                {report.achievements.map((item, index) => (
-                  <div
-                    className="rounded-xl border border-slate-200 p-4"
-                    key={`${item.type}:${index}`}
-                  >
-                    <p className="font-semibold">
-                      {item.type} · {item.level}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Tahun {item.year}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-3 text-sm text-slate-400">
-                Belum ada data prestasi.
-              </p>
-            )}
-          </section>
-          <section>
-            <h2 className="text-xl font-bold">Ketidakhadiran</h2>
-            <dl className="mt-3 grid grid-cols-3 gap-2">
-              {(
-                [
-                  ["Sakit", report.attendance.sickDays],
-                  ["Izin", report.attendance.permittedDays],
-                  ["Tanpa keterangan", report.attendance.absentDays],
-                ] as const
-              ).map(([label, value]) => (
-                <div
-                  className="rounded-xl bg-slate-50 p-3 text-center"
-                  key={label}
-                >
-                  <dt className="text-xs text-slate-500">{label}</dt>
-                  <dd className="mt-1 font-bold">
-                    <Value>{value}</Value>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-          <section>
-            <h2 className="text-xl font-bold">Catatan wali kelas</h2>
-            <p className="mt-3 min-h-28 break-words rounded-xl bg-red-50/70 p-4 text-sm leading-6 text-slate-700">
-              <Value>{report.homeroomNote}</Value>
-            </p>
-          </section>
+          </tbody>
+        </table>
+        <h3 className="report-section-heading">C. Saran-saran</h3>
+        <div className="report-note">
+          <Value>{report.homeroomNote}</Value>
         </div>
-        <div className="mt-10 grid gap-8 text-center text-sm sm:grid-cols-2">
-          <div>
-            <p>Orang tua / Wali</p>
-            <div className="h-20" />
-            <p className="font-semibold">
-              ....................................
-            </p>
-          </div>
-          <div>
-            <p>Kepala Sekolah</p>
-            <div className="h-20" />
-            <p className="font-semibold">
-              <Value>{report.school.principalName}</Value>
-            </p>
-            <p className="text-xs text-slate-500">
-              NIP <Value>{report.school.principalNip}</Value>
-            </p>
-          </div>
+        <h3 className="report-section-heading">D. Prestasi</h3>
+        <table className="report-simple-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Jenis Prestasi</th>
+              <th>Tingkat</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.achievements.length ? (
+              report.achievements.map((item, index) => (
+                <tr key={`${item.type}:${index}`}>
+                  <td>{index + 1}</td>
+                  <td>{item.type}</td>
+                  <td>{item.level}</td>
+                  <td>
+                    {item.description} ({item.year})
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>1</td>
+                <td colSpan={3}>-</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <h3 className="report-section-heading">E. Ketidakhadiran</h3>
+        <table className="report-attendance-table">
+          <tbody>
+            <tr>
+              <th>Sakit</th>
+              <td>
+                <Value>{report.attendance.sickDays}</Value> hari
+              </td>
+            </tr>
+            <tr>
+              <th>Izin</th>
+              <td>
+                <Value>{report.attendance.permittedDays}</Value> hari
+              </td>
+            </tr>
+            <tr>
+              <th>Tanpa Keterangan</th>
+              <td>
+                <Value>{report.attendance.absentDays}</Value> hari
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="report-signatures-grid">
+          <Signature role="Orang Tua / Wali" name={null} />
+          <Signature
+            role="Wali Kelas"
+            name={report.homeroomTeacher.name}
+            nip={report.homeroomTeacher.nip}
+          />
+          <Signature
+            role="Mengetahui, Kepala Sekolah"
+            name={report.school.principalName}
+            nip={report.school.principalNip}
+          />
         </div>
       </article>
     </div>

@@ -384,6 +384,11 @@ Fungsinya:
 - [x] Test nama siswa panjang
 - [x] Test deskripsi panjang
 - [x] Test field kosong
+- [x] Terapkan tampilan rapor resmi berdasarkan referensi yang disetujui
+  - Sampul memakai logo Tut Wuri Handayani, identitas sekolah, nama siswa, dan NIS/NISN.
+  - Halaman identitas memuat biodata keluarga, foto atau bingkai 3×4, serta kepala sekolah.
+  - Nilai Pengetahuan dan Keterampilan tampil berdampingan dengan KKM, angka, predikat, dan deskripsi terpisah.
+  - Halaman akhir memuat ekstrakurikuler, saran wali kelas, prestasi, ketidakhadiran, serta tanda tangan tanpa data kesehatan.
 
 ## Print / PDF
 
@@ -397,6 +402,8 @@ Fungsinya:
 - [x] Print satu siswa
 - [x] Batch print satu kelas
 - [x] Pastikan hasil preview = hasil cetak
+- [x] Render dan periksa contoh cetak lima halaman A4
+  - Ukuran terverifikasi A4 portrait; nama siswa panjang, deskripsi panjang, tabel lintas halaman, kepala tabel berulang, field kosong, dan batas halaman diperiksa secara visual.
 
 ## Leger Kelas 1–3
 
@@ -644,9 +651,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
-| Report Engine       | Todo        |       0% | Menunggu template final                                                                                                     |
+| Report Engine       | In Progress |      85% | Template resmi A4, biodata/foto 3×4, hasil belajar, ringkasan, dan tanda tangan selesai; menunggu persetujuan final sekolah  |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
-| Testing             | In Progress |      80% | 205 unit/integration test dan CI lulus; smoke test login produksi lulus pada desktop serta HP 360/390px                   |
+| Testing             | In Progress |      85% | 220 unit/integration test lulus; cetak lima halaman A4 dan build produksi telah diverifikasi                                |
 | Cloudflare          | Done        |     100% | Pages gratis aktif, terhubung ke GitHub `main`, dan memakai konfigurasi Supabase produksi                                  |
 | Production          | In Progress |      20% | Deployment awal aktif; audit RLS, periode akademik, preview rapor, cetak, dan backup masih harus diverifikasi             |
 
@@ -808,6 +815,14 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Tambahkan foto siswa berbingkai 3×4 dan biodata ayah, ibu, serta wali pada Data Siswa tanpa menambahkan tinggi/berat atau kondisi kesehatan.
 - [x] Pisahkan biodata keluarga dari identitas inti agar Wali Kelas hanya dapat mengisi biodata siswa di kelasnya, sementara Admin tetap mengelola data inti siswa.
 - [x] Simpan foto pada bucket Supabase privat `student-photos` dengan batas JPG/PNG 2 MB, RLS, dan URL sementara; anonymous tidak memiliki akses tabel.
+
+## 2026-09-11
+
+- [x] Ubah preview dan cetak rapor menjadi format resmi A4 berdasarkan contoh sekolah tanpa menyalin data siswa dari gambar referensi.
+- [x] Gunakan logo Tut Wuri Handayani yang disediakan pengguna pada sampul dan kepala halaman rapor.
+- [x] Hubungkan biodata keluarga, foto siswa 3×4, wali kelas, nilai Pengetahuan/Keterampilan, ekstrakurikuler, prestasi, ketidakhadiran, dan catatan ke template cetak.
+- [x] Pertahankan keputusan MVP untuk tidak menampilkan tinggi/berat badan maupun kondisi kesehatan.
+- [x] Verifikasi PDF contoh lima halaman berukuran A4, seluruh 220 unit/integration test, lint, typecheck, format, dan production build.
 
 ---
 

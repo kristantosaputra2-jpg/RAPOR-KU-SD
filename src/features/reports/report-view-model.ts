@@ -32,6 +32,8 @@ type StudentExtracurricular = Pick<
   "student_id" | "extracurricular_id" | "achievement" | "description"
 >
 type Extracurricular = Pick<Tables<"extracurriculars">, "id" | "name">
+type StudentBiodata = Tables<"student_biodata">
+type HomeroomTeacher = Pick<Tables<"teacher_profiles">, "full_name" | "nip">
 
 export type ReportSourceData = Readonly<{
   school: SchoolSettings | null
@@ -47,6 +49,9 @@ export type ReportSourceData = Readonly<{
   extracurricularEntries: ReadonlyArray<StudentExtracurricular>
   achievements: ReadonlyArray<Achievement>
   homeroomNote: HomeroomNote | null
+  studentBiodata: StudentBiodata | null
+  studentPhotoUrl: string | null
+  homeroomTeacher: HomeroomTeacher | null
 }>
 
 export type ReportComponentResult = Readonly<{
@@ -87,6 +92,11 @@ export type ReportViewModel = Readonly<{
     fatherName: string | null
     motherName: string | null
     guardianName: string | null
+    phone: string | null
+    photoUrl: string | null
+    father: FamilyMember
+    mother: FamilyMember
+    guardian: FamilyMember
   }>
   academicPeriod: Readonly<{
     className: string
@@ -112,6 +122,18 @@ export type ReportViewModel = Readonly<{
     year: number
   }>
   homeroomNote: string | null
+  homeroomTeacher: Readonly<{
+    name: string | null
+    nip: string | null
+  }>
+}>
+
+type FamilyMember = Readonly<{
+  name: string | null
+  education: string | null
+  occupation: string | null
+  address: string | null
+  phone: string | null
 }>
 
 function optionalText(value: string | null | undefined) {
@@ -216,6 +238,20 @@ export function buildReportViewModel(
   const extracurricularName = new Map(
     source.extracurricularCatalog.map((item) => [item.id, item.name]),
   )
+  const biodata = source.studentBiodata
+  const familyMember = (
+    prefix: "father" | "mother" | "guardian",
+    legacyName: string | null,
+  ): FamilyMember => ({
+    name: optionalText(biodata?.[`${prefix}_name`] ?? legacyName),
+    education: optionalText(biodata?.[`${prefix}_education`]),
+    occupation: optionalText(biodata?.[`${prefix}_occupation`]),
+    address: optionalText(biodata?.[`${prefix}_address`]),
+    phone: optionalText(biodata?.[`${prefix}_phone`]),
+  })
+  const father = familyMember("father", student.father_name)
+  const mother = familyMember("mother", student.mother_name)
+  const guardian = familyMember("guardian", student.guardian_name)
   return {
     templateGroup: schoolClass.template_group as
       "lower_primary" | "upper_primary",
@@ -240,9 +276,14 @@ export function buildReportViewModel(
       birth: formatBirth(student),
       religion: optionalText(student.religion),
       address: optionalText(student.address),
-      fatherName: optionalText(student.father_name),
-      motherName: optionalText(student.mother_name),
-      guardianName: optionalText(student.guardian_name),
+      fatherName: father.name,
+      motherName: mother.name,
+      guardianName: guardian.name,
+      phone: optionalText(biodata?.student_phone),
+      photoUrl: optionalText(source.studentPhotoUrl),
+      father,
+      mother,
+      guardian,
     },
     academicPeriod: {
       className: schoolClass.name,
@@ -269,5 +310,9 @@ export function buildReportViewModel(
       year: achievement.event_year,
     })),
     homeroomNote: optionalText(source.homeroomNote?.note),
+    homeroomTeacher: {
+      name: optionalText(source.homeroomTeacher?.full_name),
+      nip: optionalText(source.homeroomTeacher?.nip),
+    },
   }
 }

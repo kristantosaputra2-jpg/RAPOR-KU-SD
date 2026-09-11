@@ -5,6 +5,8 @@ import {
 
 import type { ReportSourceData } from "./report-view-model"
 
+const STUDENT_PHOTO_BUCKET = "student-photos"
+
 export class ReportPreviewError extends Error {
   constructor(message: string) {
     super(message)
@@ -34,6 +36,8 @@ async function getReportSources(
     extracurricularResult,
     achievementResult,
     noteResult,
+    biodataResult,
+    classResult,
   ] = await Promise.all([
     client
       .from("schools")
@@ -120,6 +124,17 @@ async function getReportSources(
       .in("student_id", studentIds)
       .eq("class_id", classId)
       .eq("semester_id", semesterId),
+    client
+      .from("student_biodata")
+      .select(
+        "student_id,photo_path,student_phone,father_name,father_education,father_occupation,father_address,father_phone,mother_name,mother_education,mother_occupation,mother_address,mother_phone,guardian_name,guardian_education,guardian_occupation,guardian_address,guardian_phone,created_by,updated_by,created_at,updated_at",
+      )
+      .in("student_id", studentIds),
+    client
+      .from("classes")
+      .select("homeroom_teacher_id")
+      .eq("id", classId)
+      .maybeSingle(),
   ])
 
   const results = [
@@ -136,6 +151,8 @@ async function getReportSources(
     extracurricularResult,
     achievementResult,
     noteResult,
+    biodataResult,
+    classResult,
   ]
   if (results.some((result) => result.error)) {
     throw new ReportPreviewError(
@@ -146,39 +163,72 @@ async function getReportSources(
   const assignedSubjectIds = [
     ...new Set((assignmentResult.data ?? []).map((item) => item.subject_id)),
   ]
+  const homeroomTeacherId = classResult.data?.homeroom_teacher_id
+  const homeroomTeacherResult = homeroomTeacherId
+    ? await client
+        .from("teacher_profiles")
+        .select("full_name,nip")
+        .eq("id", homeroomTeacherId)
+        .maybeSingle()
+    : { data: null, error: null }
+  if (homeroomTeacherResult.error) {
+    throw new ReportPreviewError(
+      "Data wali kelas belum dapat dimuat. Periksa koneksi lalu coba lagi.",
+    )
+  }
+
+  const photoUrls = new Map<string, string | null>()
+  await Promise.all(
+    (biodataResult.data ?? []).map(async (biodata) => {
+      if (!biodata.photo_path) return
+      const { data, error } = await client.storage
+        .from(STUDENT_PHOTO_BUCKET)
+        .createSignedUrl(biodata.photo_path, 3600)
+      photoUrls.set(biodata.student_id, error ? null : data.signedUrl)
+    }),
+  )
   return new Map(
-    studentIds.map((studentId) => [
-      studentId,
-      {
-        school: schoolResult.data,
-        assignedSubjectIds,
-        subjects: subjectResult.data ?? [],
-        assessmentComponents: componentResult.data ?? [],
-        gradeEntries: (gradeResult.data ?? []).filter(
+    studentIds.map((studentId) => {
+      const studentBiodata =
+        (biodataResult.data ?? []).find(
           (item) => item.student_id === studentId,
-        ),
-        descriptions: (descriptionResult.data ?? []).filter(
-          (item) => item.student_id === studentId,
-        ),
-        gradingSetting: gradingSettingResult.data,
-        subjectKkmRules: subjectKkmResult.data ?? [],
-        attendance:
-          (attendanceResult.data ?? []).find(
+        ) ?? null
+      return [
+        studentId,
+        {
+          school: schoolResult.data,
+          assignedSubjectIds,
+          subjects: subjectResult.data ?? [],
+          assessmentComponents: componentResult.data ?? [],
+          gradeEntries: (gradeResult.data ?? []).filter(
             (item) => item.student_id === studentId,
-          ) ?? null,
-        extracurricularCatalog: extracurricularCatalogResult.data ?? [],
-        extracurricularEntries: (extracurricularResult.data ?? []).filter(
-          (item) => item.student_id === studentId,
-        ),
-        achievements: (achievementResult.data ?? []).filter(
-          (item) => item.student_id === studentId,
-        ),
-        homeroomNote:
-          (noteResult.data ?? []).find(
+          ),
+          descriptions: (descriptionResult.data ?? []).filter(
             (item) => item.student_id === studentId,
-          ) ?? null,
-      },
-    ]),
+          ),
+          gradingSetting: gradingSettingResult.data,
+          subjectKkmRules: subjectKkmResult.data ?? [],
+          attendance:
+            (attendanceResult.data ?? []).find(
+              (item) => item.student_id === studentId,
+            ) ?? null,
+          extracurricularCatalog: extracurricularCatalogResult.data ?? [],
+          extracurricularEntries: (extracurricularResult.data ?? []).filter(
+            (item) => item.student_id === studentId,
+          ),
+          achievements: (achievementResult.data ?? []).filter(
+            (item) => item.student_id === studentId,
+          ),
+          homeroomNote:
+            (noteResult.data ?? []).find(
+              (item) => item.student_id === studentId,
+            ) ?? null,
+          studentBiodata,
+          studentPhotoUrl: photoUrls.get(studentId) ?? null,
+          homeroomTeacher: homeroomTeacherResult.data,
+        },
+      ]
+    }),
   )
 }
 

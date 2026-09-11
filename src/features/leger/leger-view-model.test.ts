@@ -37,6 +37,29 @@ function report(
       fatherName: null,
       motherName: null,
       guardianName: null,
+      phone: null,
+      photoUrl: null,
+      father: {
+        name: null,
+        education: null,
+        occupation: null,
+        address: null,
+        phone: null,
+      },
+      mother: {
+        name: null,
+        education: null,
+        occupation: null,
+        address: null,
+        phone: null,
+      },
+      guardian: {
+        name: null,
+        education: null,
+        occupation: null,
+        address: null,
+        phone: null,
+      },
     },
     academicPeriod: {
       className: "Kelas 2A",
@@ -92,6 +115,7 @@ function report(
     extracurriculars: [],
     achievements: [],
     homeroomNote: null,
+    homeroomTeacher: { name: null, nip: null },
   }
 }
 

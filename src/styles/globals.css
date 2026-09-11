@@ -375,18 +375,336 @@ textarea:hover:not(:disabled) {
 }
 
 .report-sheet {
-  border-color: #e6d9da;
+  width: min(100%, 210mm);
+  min-height: 297mm;
+  margin-inline: auto;
+  padding: 12mm;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 11pt;
+  line-height: 1.25;
   box-shadow: 0 18px 48px rgba(79, 31, 35, 0.09);
 }
 
-.report-cover {
-  background-image:
-    radial-gradient(circle at 8% 8%, rgba(198, 31, 39, 0.1), transparent 13rem),
-    radial-gradient(
-      circle at 92% 92%,
-      rgba(226, 154, 40, 0.11),
-      transparent 14rem
-    );
+.report-document {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.report-cover-sheet {
+  text-align: center;
+}
+
+.report-cover-content {
+  display: flex;
+  min-height: 270mm;
+  flex-direction: column;
+  align-items: center;
+}
+
+.report-tut-wuri-logo {
+  width: 36mm;
+  height: 36mm;
+  margin-top: 8mm;
+  object-fit: contain;
+  clip-path: polygon(
+    50% 0%,
+    88% 12%,
+    96% 46%,
+    88% 84%,
+    50% 100%,
+    12% 84%,
+    4% 46%,
+    12% 12%
+  );
+  filter: contrast(1.18) brightness(1.1);
+}
+
+.report-cover-title {
+  margin: 8mm 0 1mm;
+  font-size: 26pt;
+  font-weight: 700;
+}
+
+.report-cover-subtitle,
+.report-cover-school p,
+.report-cover-ministry p {
+  margin: 1mm 0;
+  font-weight: 700;
+}
+
+.report-cover-subtitle {
+  font-size: 15pt;
+}
+
+.report-cover-school {
+  margin-top: 18mm;
+}
+
+.report-cover-school p {
+  font-size: 16pt;
+  text-transform: uppercase;
+}
+
+.report-cover-school span {
+  font-size: 11pt;
+}
+
+.report-cover-student {
+  width: 100mm;
+  margin-top: 35mm;
+}
+
+.report-cover-student dt {
+  margin-top: 3mm;
+  font-size: 10pt;
+}
+
+.report-cover-student dd {
+  margin: 0;
+  padding: 1.5mm 3mm;
+  border: 1.2pt solid #111;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.report-cover-ministry {
+  margin-top: auto;
+  font-size: 13pt;
+}
+
+.report-formal-title {
+  margin: 0 0 8mm;
+  text-align: center;
+  font-size: 14pt;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.report-identity-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32mm;
+  gap: 8mm;
+}
+
+.report-identity-list {
+  margin: 0;
+}
+
+.report-identity-row {
+  display: grid;
+  grid-template-columns: minmax(37mm, 1fr) 4mm minmax(0, 2fr);
+  gap: 1mm;
+  margin-bottom: 2mm;
+  break-inside: avoid;
+}
+
+.report-identity-row dt,
+.report-identity-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.report-family-section {
+  margin-top: 4mm;
+  break-inside: avoid;
+}
+
+.report-family-section h3 {
+  margin: 0 0 2mm;
+  font-size: 11pt;
+  text-decoration: underline;
+}
+
+.report-photo-column {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2mm;
+}
+
+.report-photo-frame {
+  display: grid;
+  width: 30mm;
+  height: 40mm;
+  place-items: center;
+  overflow: hidden;
+  border: 1.2pt solid #111;
+  text-align: center;
+  font-size: 9pt;
+}
+
+.report-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.report-identity-signature {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10mm;
+}
+
+.report-school-header {
+  display: grid;
+  grid-template-columns: 22mm 1fr 22mm;
+  align-items: center;
+  min-height: 25mm;
+  margin-bottom: 5mm;
+  padding-bottom: 3mm;
+  border-bottom: 3pt double #111;
+  text-align: center;
+}
+
+.report-school-header img {
+  width: 20mm;
+  height: 20mm;
+  object-fit: contain;
+  clip-path: polygon(
+    50% 0%,
+    88% 12%,
+    96% 46%,
+    88% 84%,
+    50% 100%,
+    12% 84%,
+    4% 46%,
+    12% 12%
+  );
+  filter: contrast(1.18) brightness(1.1);
+}
+
+.report-school-header p {
+  margin: 0;
+}
+
+.report-school-name {
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.report-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8mm;
+  margin-bottom: 6mm;
+}
+
+.report-profile-grid .report-identity-row {
+  grid-template-columns: minmax(30mm, 0.9fr) 3mm minmax(0, 1.4fr);
+  margin-bottom: 1.5mm;
+  font-size: 9.5pt;
+}
+
+.report-section-heading {
+  margin: 6mm 0 2mm;
+  font-size: 11pt;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.report-results-scroll {
+  overflow-x: auto;
+}
+
+.report-results-table,
+.report-simple-table,
+.report-attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+
+.report-results-table th,
+.report-results-table td,
+.report-simple-table th,
+.report-simple-table td,
+.report-attendance-table th,
+.report-attendance-table td {
+  padding: 1.5mm;
+  border: 0.8pt solid #111;
+  vertical-align: top;
+}
+
+.report-results-table th,
+.report-simple-table th {
+  background: #e5e7eb;
+  text-align: center;
+  font-weight: 700;
+}
+
+.report-results-table td:not(.report-description):not(.report-subject-name),
+.report-simple-table td:first-child {
+  text-align: center;
+}
+
+.report-results-table tr {
+  break-inside: avoid;
+}
+
+.report-subject-name {
+  width: 24mm;
+}
+
+.report-description {
+  width: 46mm;
+  min-width: 42mm;
+  text-align: justify;
+  overflow-wrap: anywhere;
+}
+
+.report-empty,
+.report-note {
+  min-height: 16mm;
+  margin: 0;
+  padding: 2.5mm;
+  border: 0.8pt solid #111;
+}
+
+.report-attendance-table {
+  width: 80mm;
+}
+
+.report-attendance-table th {
+  width: 52mm;
+  text-align: left;
+}
+
+.report-signatures-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8mm;
+  margin-top: 14mm;
+}
+
+.report-signatures-grid .report-signature:last-child {
+  grid-column: 1 / -1;
+  width: 70mm;
+  margin-inline: auto;
+}
+
+.report-signature {
+  width: 70mm;
+  text-align: center;
+  font-size: 10pt;
+}
+
+.report-signature p {
+  margin: 0;
+}
+
+.report-signature-space {
+  height: 20mm;
+}
+
+.report-signature-name {
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 .report-batch-print-root {
@@ -395,7 +713,7 @@ textarea:hover:not(:disabled) {
 
 @page {
   size: A4 portrait;
-  margin: 10mm;
+  margin: 0;
 }
 
 @page leger {
@@ -525,10 +843,10 @@ textarea:hover:not(:disabled) {
 
   .report-sheet {
     box-sizing: border-box;
-    width: 100%;
-    min-height: 277mm;
+    width: 210mm;
+    min-height: 297mm;
     margin: 0;
-    padding: 8mm;
+    padding: 12mm;
     overflow: visible;
     border: 0;
     border-radius: 0;
@@ -542,34 +860,51 @@ textarea:hover:not(:disabled) {
     page-break-after: auto;
   }
 
-  .report-cover,
+  .report-cover-sheet,
   .report-sheet:nth-child(2),
   .report-sheet:last-child {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  .report-mobile-results {
-    display: none !important;
-  }
-
-  .report-table-results {
-    display: block !important;
+  .report-results-scroll {
     overflow: visible;
   }
 
-  .report-table-results table {
-    min-width: 0;
-    font-size: 10px;
-  }
-
-  .report-table-results thead {
+  .report-results-table thead {
     display: table-header-group;
   }
 
-  .report-table-results tr {
+  .report-results-table tr,
+  .report-simple-table tr {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+}
+
+@media (max-width: 767px) {
+  .report-sheet {
+    min-height: auto;
+    padding: 6mm;
+    font-size: 10pt;
+  }
+
+  .report-cover-content {
+    min-height: 230mm;
+  }
+
+  .report-identity-layout,
+  .report-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-photo-column {
+    grid-row: 1;
+    justify-content: flex-start;
+  }
+
+  .report-results-table {
+    min-width: 900px;
   }
 }
 
