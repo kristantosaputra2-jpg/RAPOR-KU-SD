@@ -345,6 +345,14 @@ Fungsinya:
 
 # 🟦 Report & Output
 
+## Pengaturan Rapor
+
+- [x] Buat halaman Pengaturan Rapor untuk Admin
+  - Pusatkan Single/Multi KKM per semester, KKM setiap mata pelajaran, pratinjau predikat A–D, dan informasi format cetak A4 yang sudah disetujui.
+  - Jangan menambahkan pengaturan format atau aturan akademik yang belum disepakati.
+  - Menu `Pengaturan Rapor` kini aktif untuk Admin dan tidak lagi berstatus `Segera`.
+  - Lulus 218 unit/integration test, typecheck, lint, format, serta production build.
+
 ## Report Completeness
 
 - [x] Buat completeness engine
@@ -441,6 +449,9 @@ Fungsinya:
   - `SD Negeri Tumbang Kawei` tersimpan sebagai konfigurasi Supabase dan tampil pada login, dashboard, pengaturan, serta judul browser tanpa hardcode pada source code.
 - [x] Gunakan ilustrasi sekolah pada login dan hero Dashboard Admin
 - [x] Pastikan ilustrasi login tampil utuh pada HP
+- [x] Terapkan identitas produk RaporKu dan logo aplikasi
+  - Perbaiki seluruh tulisan antarmuka dari `RapotKu` menjadi `RaporKu`.
+  - Gunakan logo master pada login, Dashboard Admin, favicon, Apple touch icon, dan manifest ikon aplikasi 192/512 piksel.
 - [x] Tambahkan motion mikro pada hero Login/Dashboard dan interaksi menu
   - Karakter, daun, dan burung bergerak halus; section ringkasan overlap dengan hero; gerak scroll hanya dekoratif; menu memakai kotak interaktif dan bounce teks singkat.
   - Gambar sumber tetap sama dan hanya dimuat dari satu URL; lapisan motion bersifat dekoratif, tidak menambah informasi ganda bagi pembaca layar, serta otomatis tenang pada reduced-motion.
@@ -793,7 +804,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Terapkan batch import atomik melalui fungsi database `SECURITY INVOKER`; anonymous tidak dapat mengeksekusi dan seluruh fixture transaksi berhasil di-rollback tanpa residu.
 - [x] Verifikasi 203 unit/integration test, production build, serta tampilan Data Siswa dan Import tanpa horizontal overflow pada 360px, 390px, 768px, dan 1280px.
 - [x] Tambahkan CI GitHub gratis untuk instalasi terkunci, typecheck, lint, format, 205 unit/integration test, dan production build pada setiap push ke `main` serta pull request.
-- [x] Deploy Cloudflare Pages gratis di `rapotku-sdtbgkawei.pages.dev`, hubungkan repository RapotKu branch `main`, pasang konfigurasi Supabase build-time, dan verifikasi login responsif pada 360px serta 390px.
+- [x] Deploy Cloudflare Pages gratis di `rapotku-sdtbgkawei.pages.dev`, hubungkan repository RaporKu branch `main`, pasang konfigurasi Supabase build-time, dan verifikasi login responsif pada 360px serta 390px.
 - [x] Tambahkan foto siswa berbingkai 3×4 dan biodata ayah, ibu, serta wali pada Data Siswa tanpa menambahkan tinggi/berat atau kondisi kesehatan.
 - [x] Pisahkan biodata keluarga dari identitas inti agar Wali Kelas hanya dapat mengisi biodata siswa di kelasnya, sementara Admin tetap mengelola data inti siswa.
 - [x] Simpan foto pada bucket Supabase privat `student-photos` dengan batas JPG/PNG 2 MB, RLS, dan URL sementara; anonymous tidak memiliki akses tabel.

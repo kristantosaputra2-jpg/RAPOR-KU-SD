@@ -201,7 +201,7 @@ export function LegerPage({ userName, schoolName, onBack, onLogout }: Props) {
             <div className="min-w-0">
               <p className="truncate font-bold">Leger Kelas 1–6</p>
               <p className="truncate text-xs text-[var(--rapotku-muted)]">
-                {schoolName ?? "RapotKu"}
+                {schoolName ?? "RaporKu"}
               </p>
             </div>
           </div>

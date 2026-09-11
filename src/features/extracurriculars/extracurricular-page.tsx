@@ -266,7 +266,7 @@ export function ExtracurricularPage({
             <div className="min-w-0">
               <p className="truncate font-bold">Ekstrakurikuler</p>
               <p className="truncate text-xs text-[var(--rapotku-muted)]">
-                {schoolName ?? "RapotKu"}
+                {schoolName ?? "RaporKu"}
               </p>
             </div>
           </div>

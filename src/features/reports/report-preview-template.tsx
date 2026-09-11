@@ -28,7 +28,7 @@ function ReportPageHeader({ report }: Props) {
       )}
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--rapotku-brand)]">
-          RapotKu
+          RaporKu
         </p>
         <h2 className="truncate text-lg font-bold sm:text-xl">
           {report.school.name}

@@ -400,7 +400,7 @@ export function StudentPage({
             <BookOpenCheck aria-hidden="true" size={21} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="font-bold leading-tight">RapotKu</p>
+            <p className="font-bold leading-tight">RaporKu</p>
             <p className="truncate text-xs text-[var(--rapotku-muted)]">
               {schoolName ?? "Admin Sekolah"}
             </p>

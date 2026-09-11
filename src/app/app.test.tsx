@@ -200,7 +200,7 @@ describe("App", () => {
     ).toBeInTheDocument()
     expect(screen.getByText("Akun Admin aktif")).toBeInTheDocument()
     await waitFor(() => {
-      expect(document.title).toBe("RapotKu - SD Negeri Tumbang Kawei")
+      expect(document.title).toBe("RaporKu - SD Negeri Tumbang Kawei")
     })
   })
 

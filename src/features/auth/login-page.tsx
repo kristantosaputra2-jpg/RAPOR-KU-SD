@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from "react"
 import {
-  BookOpenCheck,
   CheckCircle2,
   Eye,
   EyeOff,
@@ -8,6 +7,8 @@ import {
   LockKeyhole,
   ShieldCheck,
 } from "lucide-react"
+
+import { AppLogo } from "@/components/app-logo"
 
 import {
   AuthFlowError,
@@ -59,11 +60,9 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(65,8,11,0.48)_0%,rgba(93,10,14,0.22)_42%,rgba(74,7,11,0.82)_100%)]" />
 
         <div className="relative flex items-center gap-3">
-          <span className="grid size-12 place-items-center rounded-2xl bg-white text-[var(--rapotku-brand)] shadow-lg">
-            <BookOpenCheck aria-hidden="true" size={25} />
-          </span>
+          <AppLogo className="size-12 shadow-lg" />
           <div>
-            <p className="text-xl font-bold">RapotKu</p>
+            <p className="text-xl font-bold">RaporKu</p>
             <p className="text-sm font-medium text-white/90">
               {schoolName ?? "Rapor sekolah lebih mudah"}
             </p>
@@ -105,11 +104,9 @@ export function LoginPage({ schoolName, onLogin }: LoginPageProps) {
             />
           </div>
           <div className="mb-10 flex items-center gap-3 lg:hidden">
-            <span className="grid size-11 place-items-center rounded-xl bg-[var(--rapotku-brand)] text-white shadow-sm">
-              <BookOpenCheck aria-hidden="true" size={22} />
-            </span>
+            <AppLogo className="size-11 shadow-sm" />
             <div>
-              <p className="font-bold">RapotKu</p>
+              <p className="font-bold">RaporKu</p>
               <p className="text-xs text-[var(--rapotku-muted)]">
                 {schoolName ?? "Rapor sekolah lebih mudah"}
               </p>

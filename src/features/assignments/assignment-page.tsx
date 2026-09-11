@@ -287,7 +287,7 @@ export function AssignmentPage({
             <span className="hidden sm:inline">Dashboard</span>
           </button>
           <div className="min-w-0 text-center">
-            <p className="truncate font-bold">RapotKu</p>
+            <p className="truncate font-bold">RaporKu</p>
             <p className="truncate text-xs text-[var(--rapotku-muted)]">
               {schoolName ?? "Admin Sekolah"}
             </p>

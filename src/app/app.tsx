@@ -97,6 +97,11 @@ const ReportPreviewPage = lazy(() =>
     default: module.ReportPreviewPage,
   })),
 )
+const ReportSettingsPage = lazy(() =>
+  import("@/features/reports/report-settings-page").then((module) => ({
+    default: module.ReportSettingsPage,
+  })),
+)
 const LegerPage = lazy(() =>
   import("@/features/leger/leger-page").then((module) => ({
     default: module.LegerPage,
@@ -152,6 +157,7 @@ export function App() {
     | "report-completeness"
     | "leger"
     | "reports"
+    | "report-settings"
   >("dashboard")
   const [homeroomView, setHomeroomView] = useState<
     | "dashboard"
@@ -215,8 +221,8 @@ export function App() {
 
   useEffect(() => {
     document.title = schoolIdentity
-      ? `RapotKu - ${schoolIdentity.schoolName}`
-      : "RapotKu"
+      ? `RaporKu - ${schoolIdentity.schoolName}`
+      : "RaporKu"
   }, [schoolIdentity])
 
   async function handleLogin(credentials: LoginCredentials) {
@@ -257,6 +263,21 @@ export function App() {
   const { profile } = appState.account
 
   if (profile.role === "admin") {
+    if (adminView === "report-settings") {
+      return (
+        <Suspense fallback={<PageLoadingState />}>
+          <ReportSettingsPage
+            userId={appState.account.user.id}
+            userName={profile.full_name}
+            schoolName={schoolIdentity?.schoolName}
+            onBack={() => setAdminView("dashboard")}
+            onLogout={handleLogout}
+            onOpenAcademicPeriods={() => setAdminView("academic-periods")}
+          />
+        </Suspense>
+      )
+    }
+
     if (adminView === "leger") {
       return (
         <Suspense fallback={<PageLoadingState />}>
@@ -525,6 +546,7 @@ export function App() {
         onOpenReportCompleteness={() => setAdminView("report-completeness")}
         onOpenLeger={() => setAdminView("leger")}
         onOpenReports={() => setAdminView("reports")}
+        onOpenReportSettings={() => setAdminView("report-settings")}
       />
     )
   }
@@ -715,7 +737,7 @@ export function App() {
       <section className="w-full max-w-lg rounded-3xl border border-[var(--rapotku-border)] bg-white p-6 shadow-[0_24px_64px_rgba(66,20,23,0.09)] sm:p-8">
         {schoolIdentity ? (
           <p className="mb-4 text-sm font-bold text-[var(--rapotku-muted)]">
-            RapotKu - {schoolIdentity.schoolName}
+            RaporKu - {schoolIdentity.schoolName}
           </p>
         ) : null}
         <p className="mb-2 text-sm font-semibold text-[var(--rapotku-brand)]">

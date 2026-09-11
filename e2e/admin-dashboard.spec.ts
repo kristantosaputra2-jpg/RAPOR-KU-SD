@@ -407,7 +407,7 @@ async function openAuthenticatedDashboard(
     ).toBeVisible()
   }
   await expect(
-    page.getByText("RapotKu - SD Negeri Tumbang Kawei"),
+    page.getByText("RaporKu - SD Negeri Tumbang Kawei"),
   ).toBeVisible()
 }
 

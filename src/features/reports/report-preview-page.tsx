@@ -243,7 +243,7 @@ export function ReportPreviewPage({
             <div className="min-w-0">
               <p className="truncate font-bold">Preview Rapor</p>
               <p className="truncate text-xs text-[var(--rapotku-muted)]">
-                {schoolName ?? "RapotKu"}
+                {schoolName ?? "RaporKu"}
               </p>
             </div>
           </div>

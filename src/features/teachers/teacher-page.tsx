@@ -301,7 +301,7 @@ export function TeacherPage({
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate font-bold">
-              {schoolName ? `RapotKu - ${schoolName}` : "RapotKu"}
+              {schoolName ? `RaporKu - ${schoolName}` : "RaporKu"}
             </p>
             <p className="truncate text-xs text-[var(--rapotku-muted)]">
               {userName} · Admin

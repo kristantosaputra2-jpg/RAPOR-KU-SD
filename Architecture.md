@@ -829,6 +829,7 @@ Keputusan formula yang disetujui pada 3 September 2026:
 - panjang interval predikat adalah `ceil((100 - KKM) / 3)`;
 - nilai di bawah KKM mendapat D (Kurang), kemudian C (Cukup), B (Baik), dan A (Sangat Baik);
 - ambang A–D dihitung saat digunakan dan tidak ditanam sebagai angka tetap.
+- Admin mengelola mode KKM, nilai Single KKM, atau KKM per mata pelajaran melalui halaman Pengaturan Rapor untuk semester aktif; halaman ini hanya menjadi antarmuka bagi `grading_settings` dan `subject_kkm_rules`, bukan tempat business logic predikat.
 
 Nilai mentah disimpan pada `grade_entries` dan dibedakan dengan `assessment_component_id`. Constraint gabungan memastikan satu siswa hanya memiliki satu nilai untuk kombinasi kelas, mapel, CP, komponen, dan semester; siswa benar-benar berada di kelas tersebut; serta CP cocok dengan mata pelajaran, jenjang kelas, dan semester. Admin atau guru dengan penugasan aktif dapat mengubah nilai; wali kelas dapat membaca nilai kelasnya untuk monitoring.
 

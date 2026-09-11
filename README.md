@@ -1,6 +1,6 @@
-# RapotKu — Aplikasi Rapor SD
+# RaporKu — Aplikasi Rapor SD
 
-RapotKu adalah aplikasi web rapor SD kelas 1–6 yang dirancang agar mudah digunakan guru dari HP dan tetap ringan pada koneksi internet terbatas.
+RaporKu adalah aplikasi web rapor SD kelas 1–6 yang dirancang agar mudah digunakan guru dari HP dan tetap ringan pada koneksi internet terbatas.
 
 Repository GitHub: [kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei](https://github.com/kristantosaputra2-jpg/rapotku-sdn-tumbang-kawei)
 

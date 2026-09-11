@@ -32,6 +32,11 @@ export type LoadedGradingConfiguration = Readonly<{
   effectiveKkm: number | null
 }>
 
+export type ReportGradingSettings = Readonly<{
+  setting: StoredGradingSetting | null
+  subjectRules: ReadonlyArray<SubjectKkmRule>
+}>
+
 export async function getAssessmentComponents(
   client: RapotKuSupabaseClient = getSupabaseClient(),
 ): Promise<ReadonlyArray<AssessmentComponent>> {
@@ -80,6 +85,138 @@ export async function getGradingConfiguration(
     }
   }
   return { setting, subjectRule, effectiveKkm }
+}
+
+export async function getReportGradingSettings(
+  semesterId: string,
+  client: RapotKuSupabaseClient = getSupabaseClient(),
+): Promise<ReportGradingSettings> {
+  const [settingResult, rulesResult] = await Promise.all([
+    client
+      .from("grading_settings")
+      .select("id,semester_id,kkm_mode,single_kkm")
+      .eq("semester_id", semesterId)
+      .maybeSingle(),
+    client
+      .from("subject_kkm_rules")
+      .select("id,semester_id,subject_id,minimum_mastery_score")
+      .eq("semester_id", semesterId),
+  ])
+
+  if (settingResult.error || rulesResult.error) {
+    throw new GradeError("Pengaturan rapor belum dapat dimuat.")
+  }
+
+  return {
+    setting: settingResult.data,
+    subjectRules: rulesResult.data,
+  }
+}
+
+export async function saveReportGradingSettings(
+  userId: string,
+  input: Readonly<{
+    semesterId: string
+    mode: KkmMode
+    singleKkm: number | null
+    subjectKkms: ReadonlyArray<
+      Readonly<{ subjectId: string; minimumMasteryScore: number }>
+    >
+  }>,
+  client: RapotKuSupabaseClient = getSupabaseClient(),
+): Promise<void> {
+  const uniqueSubjectIds = new Set(
+    input.subjectKkms.map((item) => item.subjectId),
+  )
+  if (uniqueSubjectIds.size !== input.subjectKkms.length) {
+    throw new GradeError(
+      "Mata pelajaran pada pengaturan KKM tidak boleh ganda.",
+    )
+  }
+
+  const singleKkm =
+    input.mode === "single"
+      ? validateMinimumMasteryScore(input.singleKkm ?? Number.NaN)
+      : null
+  const subjectKkms =
+    input.mode === "multi"
+      ? input.subjectKkms.map((item) => ({
+          subjectId: item.subjectId,
+          minimumMasteryScore: validateMinimumMasteryScore(
+            item.minimumMasteryScore,
+          ),
+        }))
+      : []
+
+  if (input.mode === "multi" && subjectKkms.length === 0) {
+    throw new GradeError("Isi KKM untuk setiap mata pelajaran aktif.")
+  }
+
+  const { data: existingSetting, error: settingLookupError } = await client
+    .from("grading_settings")
+    .select("id")
+    .eq("semester_id", input.semesterId)
+    .maybeSingle()
+  if (settingLookupError) {
+    throw new GradeError("Pengaturan rapor belum dapat disimpan.")
+  }
+
+  if (input.mode === "multi") {
+    const { data: existingRules, error: ruleLookupError } = await client
+      .from("subject_kkm_rules")
+      .select("id,subject_id")
+      .eq("semester_id", input.semesterId)
+    if (ruleLookupError) {
+      throw new GradeError("Pengaturan rapor belum dapat disimpan.")
+    }
+    const existingRuleBySubject = new Map(
+      existingRules.map((rule) => [rule.subject_id, rule.id]),
+    )
+
+    const ruleResults = await Promise.all(
+      subjectKkms.map((item) => {
+        const existingId = existingRuleBySubject.get(item.subjectId)
+        return existingId
+          ? client
+              .from("subject_kkm_rules")
+              .update({
+                minimum_mastery_score: item.minimumMasteryScore,
+                updated_by: userId,
+              })
+              .eq("id", existingId)
+          : client.from("subject_kkm_rules").insert({
+              semester_id: input.semesterId,
+              subject_id: item.subjectId,
+              minimum_mastery_score: item.minimumMasteryScore,
+              created_by: userId,
+              updated_by: userId,
+            })
+      }),
+    )
+    if (ruleResults.some((result) => result.error)) {
+      throw new GradeError("KKM mata pelajaran belum dapat disimpan.")
+    }
+  }
+
+  const settingValues = {
+    kkm_mode: input.mode,
+    single_kkm: singleKkm,
+    updated_by: userId,
+  }
+  const settingResult = existingSetting
+    ? await client
+        .from("grading_settings")
+        .update(settingValues)
+        .eq("id", existingSetting.id)
+    : await client.from("grading_settings").insert({
+        semester_id: input.semesterId,
+        ...settingValues,
+        created_by: userId,
+      })
+
+  if (settingResult.error) {
+    throw new GradeError("Pengaturan rapor belum dapat disimpan.")
+  }
 }
 
 export async function saveGradingConfiguration(

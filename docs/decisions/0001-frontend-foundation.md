@@ -6,7 +6,7 @@ Disetujui pada 2 September 2026.
 
 ## Konteks
 
-RapotKu membutuhkan frontend yang ringan, mudah dipelihara, nyaman untuk aplikasi dengan banyak form, dan dapat di-deploy ke Cloudflare.
+RaporKu membutuhkan frontend yang ringan, mudah dipelihara, nyaman untuk aplikasi dengan banyak form, dan dapat di-deploy ke Cloudflare.
 
 ## Keputusan
 

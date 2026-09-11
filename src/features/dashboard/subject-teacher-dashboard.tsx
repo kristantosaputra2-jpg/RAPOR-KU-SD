@@ -147,7 +147,7 @@ export function SubjectTeacherDashboard({
       <aside className="app-sidebar hidden max-h-screen flex-col overflow-hidden border-r border-[var(--rapotku-border)] bg-white p-5 lg:sticky lg:top-0 lg:flex lg:h-screen">
         <div>
           <p className="text-xl font-extrabold text-[var(--rapotku-brand)]">
-            RapotKu
+            RaporKu
           </p>
           <p className="mt-1 text-xs font-semibold leading-5 text-[var(--rapotku-muted)]">
             {schoolName ?? "Identitas sekolah"}
@@ -171,7 +171,7 @@ export function SubjectTeacherDashboard({
         <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-[var(--rapotku-border)] bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
           <div>
             <p className="font-extrabold text-[var(--rapotku-brand)] lg:hidden">
-              RapotKu
+              RaporKu
             </p>
             <p className="hidden text-sm text-[var(--rapotku-muted)] lg:block">
               Ruang kerja Guru Mata Pelajaran
@@ -231,7 +231,7 @@ export function SubjectTeacherDashboard({
             <div className="relative bg-[linear-gradient(135deg,#9f151b_0%,#c91d24_100%)] p-5 sm:flex sm:min-h-64 sm:max-w-[62%] sm:flex-col sm:justify-center sm:bg-none sm:p-8">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/75">
                 {schoolName
-                  ? `RapotKu - ${schoolName}`
+                  ? `RaporKu - ${schoolName}`
                   : "Dashboard Guru Mata Pelajaran"}
               </p>
               <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
@@ -393,7 +393,7 @@ export function SubjectTeacherDashboard({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xl font-extrabold text-[var(--rapotku-brand)]">
-                  RapotKu
+                  RaporKu
                 </p>
                 <p className="mt-1 text-xs font-semibold text-[var(--rapotku-muted)]">
                   Menu Guru Mata Pelajaran

@@ -251,7 +251,7 @@ export function StudentImportPage({
             <FileSpreadsheet aria-hidden="true" size={21} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="font-bold leading-tight">RapotKu</p>
+            <p className="font-bold leading-tight">RaporKu</p>
             <p className="truncate text-xs text-[var(--rapotku-muted)]">
               {schoolName ?? "Admin Sekolah"}
             </p>
@@ -451,7 +451,7 @@ export function StudentImportPage({
                   <div>
                     <h2 className="font-bold">3. Cocokkan kolom Excel</h2>
                     <p className="mt-1 text-sm text-[var(--rapotku-muted)]">
-                      Pastikan setiap data RapotKu mengambil kolom yang benar.
+                      Pastikan setiap data RaporKu mengambil kolom yang benar.
                     </p>
                   </div>
                 </div>

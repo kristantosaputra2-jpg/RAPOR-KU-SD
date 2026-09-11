@@ -238,7 +238,7 @@ export function ReportCompletenessPage({
             <div className="min-w-0">
               <p className="truncate font-bold">Kelengkapan Rapor</p>
               <p className="truncate text-xs text-[var(--rapotku-muted)]">
-                {schoolName ?? "RapotKu"}
+                {schoolName ?? "RaporKu"}
               </p>
             </div>
           </div>

@@ -28,6 +28,7 @@ import {
   type ActiveAcademicPeriod,
 } from "@/features/academic-periods/academic-periods.service"
 import { MotionHeroImage } from "@/components/motion-hero-image"
+import { AppLogo } from "@/components/app-logo"
 import {
   getAdminDashboardSummary,
   type AdminDashboardSummary,
@@ -53,6 +54,7 @@ type AdminDashboardProps = Readonly<{
   onOpenReportCompleteness?: () => void
   onOpenLeger?: () => void
   onOpenReports?: () => void
+  onOpenReportSettings?: () => void
 }>
 
 type NavigationItem = Readonly<{
@@ -76,6 +78,7 @@ type NavigationItem = Readonly<{
     | "report-completeness"
     | "leger"
     | "reports"
+    | "report-settings"
 }>
 
 const navigationGroups: ReadonlyArray<
@@ -131,7 +134,7 @@ const navigationGroups: ReadonlyArray<
       },
       { label: "Leger Kelas 1–6", icon: ClipboardList, action: "leger" },
       { label: "Laporan", icon: FileText, action: "reports" },
-      { label: "Pengaturan Rapor", icon: Settings },
+      { label: "Pengaturan Rapor", icon: Settings, action: "report-settings" },
     ],
   },
 ]
@@ -185,11 +188,9 @@ const setupSteps = [
 function Brand({ schoolName }: Readonly<{ schoolName?: string }>) {
   return (
     <div className="flex items-center gap-3">
-      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--rapotku-brand)] text-white shadow-[0_8px_20px_rgba(201,29,36,0.2)]">
-        <BookOpenCheck aria-hidden="true" size={23} />
-      </span>
+      <AppLogo className="size-11 shadow-[0_8px_20px_rgba(201,29,36,0.2)]" />
       <div>
-        <p className="font-bold leading-tight">RapotKu</p>
+        <p className="font-bold leading-tight">RaporKu</p>
         <p className="mt-0.5 max-w-44 truncate text-xs text-[var(--rapotku-muted)]">
           {schoolName ?? "Admin Sekolah"}
         </p>
@@ -215,6 +216,7 @@ function DashboardNavigation({
   onOpenReportCompleteness,
   onOpenLeger,
   onOpenReports,
+  onOpenReportSettings,
 }: Readonly<{
   onOpenSchoolSettings: () => void
   onOpenAcademicPeriods: () => void
@@ -232,6 +234,7 @@ function DashboardNavigation({
   onOpenReportCompleteness: () => void
   onOpenLeger: () => void
   onOpenReports: () => void
+  onOpenReportSettings: () => void
 }>) {
   return (
     <nav
@@ -292,6 +295,8 @@ function DashboardNavigation({
                           onOpenLeger()
                         } else if (item.action === "reports") {
                           onOpenReports()
+                        } else if (item.action === "report-settings") {
+                          onOpenReportSettings()
                         } else {
                           onOpenSubjects()
                         }
@@ -375,6 +380,7 @@ export function AdminDashboard({
   onOpenReportCompleteness = () => undefined,
   onOpenLeger = () => undefined,
   onOpenReports = () => undefined,
+  onOpenReportSettings = () => undefined,
 }: AdminDashboardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -525,6 +531,7 @@ export function AdminDashboard({
           onOpenReportCompleteness={onOpenReportCompleteness}
           onOpenLeger={onOpenLeger}
           onOpenReports={onOpenReports}
+          onOpenReportSettings={onOpenReportSettings}
         />
         <div className="mt-auto pt-6">
           <AccountPanel
@@ -627,7 +634,7 @@ export function AdminDashboard({
               <div>
                 {schoolName ? (
                   <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-white/75">
-                    RapotKu - {schoolName}
+                    RaporKu - {schoolName}
                   </p>
                 ) : null}
                 <h2 id="setup-warning-title" className="text-xl font-bold">
@@ -926,6 +933,10 @@ export function AdminDashboard({
               onOpenReports={() => {
                 setIsMenuOpen(false)
                 onOpenReports()
+              }}
+              onOpenReportSettings={() => {
+                setIsMenuOpen(false)
+                onOpenReportSettings()
               }}
             />
             <div className="mt-auto pt-6">
