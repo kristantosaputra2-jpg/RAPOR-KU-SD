@@ -98,6 +98,8 @@ Sesuai keputusan produk terbaru, template MVP tidak memuat:
 - Foto memakai `object-fit: cover` agar rasio 3×4 tetap rapi.
 - Kontrol aplikasi tidak ikut tercetak.
 - Cetak satu siswa dan satu kelas menggunakan template yang sama.
+- Jalur PDF MVP menggunakan fitur `Save as PDF` dari Chrome tanpa engine atau layanan berbayar tambahan.
+- Pengujian otomatis dilakukan pada Google Chrome desktop dan simulasi Chrome Android Pixel 5; pemeriksaan singkat pada HP fisik tetap dilakukan sebelum penggunaan produksi.
 
 ## 6. Sumber Data
 

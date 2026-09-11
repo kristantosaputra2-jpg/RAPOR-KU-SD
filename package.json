@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "qa:report-pdf": "node scripts/render-report-pdf.mjs",
+    "qa:report-browsers": "node scripts/verify-report-browsers.mjs",
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview"
   },

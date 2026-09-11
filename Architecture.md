@@ -1019,13 +1019,14 @@ Prioritas MVP:
 
 PDF engine:
 
-**TBD**
+**Final untuk MVP**
 
-Rekomendasi awal:
+Gunakan HTML print, print CSS, dialog cetak browser, dan pilihan `Save as PDF`
+yang tersedia di Chrome. Tidak ada engine PDF server-side atau layanan berbayar
+tambahan pada MVP.
 
-gunakan HTML print dahulu.
-
-Tambahkan engine PDF server-side hanya jika browser print tidak cukup.
+Engine khusus hanya boleh diusulkan kembali jika pengujian format rapor nyata
+menemukan hasil browser print yang tidak dapat diterima.
 
 ---
 
@@ -1962,9 +1963,10 @@ menjadi tahap terpisah setelah preview.
 Sub-tahap cetak satu siswa memakai komponen presentasi yang sama dengan preview.
 Media cetak menyembunyikan kontrol aplikasi, menetapkan kertas A4 portrait,
 memisahkan setiap bagian utama dengan page break, dan mempertahankan header tabel
-ketika halaman hasil belajar harus berlanjut. Browser print menjadi jalur MVP;
-batch print, validasi Chrome/Android nyata, dan keputusan engine PDF tetap
-dikerjakan terpisah.
+ketika halaman hasil belajar harus berlanjut. Browser print menjadi jalur MVP.
+Batch print sudah memakai jalur yang sama. Google Chrome desktop dan simulasi
+Chrome Android Pixel 5 telah diverifikasi; uji singkat pada HP fisik tetap menjadi
+bagian pemeriksaan sebelum penggunaan produksi.
 
 Struktur output resmi MVP disetujui pada 11 September 2026 dan didokumentasikan
 di `docs/report-templates.md`. Sampul menempatkan judul lengkap di atas lambang

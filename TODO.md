@@ -398,9 +398,12 @@ Fungsinya:
 - [x] Format A4
 - [x] Page break
 - [x] Test browser print
-- [ ] Test Chrome desktop
-- [ ] Test browser Android
-- [ ] Finalisasi PDF engine
+- [x] Test Chrome desktop
+  - Google Chrome desktop 1280×900 lolos: urutan sampul benar, tidak ada horizontal overflow, dan media cetak tetap A4 210×297 mm.
+- [x] Test browser Android
+  - Simulasi Chrome Android Pixel 5 lolos: tidak ada horizontal overflow dan tabel lebar tetap berada di area gulir; smoke test HP fisik tetap masuk checklist produksi.
+- [x] Finalisasi PDF engine
+  - MVP memakai HTML print dan `Save as PDF` dari Chrome tanpa engine server-side atau layanan berbayar tambahan.
 - [x] Print satu siswa
 - [x] Batch print satu kelas
 - [x] Pastikan hasil preview = hasil cetak
@@ -653,9 +656,9 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 | Supabase            | In Progress |      99% | Auth, seluruh master data, penugasan guru, master CP, audit, explicit grants, dan RLS terkait sudah tersedia                |
 | Master Data         | Done        |     100% | Identitas sekolah, periode akademik, guru, kelas, siswa, mata pelajaran, penugasan, dan master CP selesai                   |
 | Grade Engine        | In Progress |      90% | Input seluruh CP kelas 1–6, komponen terpisah, Single/Multi KKM, rata-rata, predikat, dan deskripsi editable sudah tersedia |
-| Report Engine       | In Progress |      95% | Struktur dan field template resmi A4 telah disetujui serta didokumentasikan; validasi cetak perangkat nyata masih tersisa |
+| Report Engine       | Done        |     100% | Template resmi A4 disetujui; Chrome desktop, simulasi Android, browser print, dan Save as PDF telah diverifikasi           |
 | Leger               | Done        |     100% | Leger kelas 1–6 responsif; cetak A4 landscape dan ekspor CSV tersedia untuk kedua kelompok kelas                            |
-| Testing             | In Progress |      85% | 220 unit/integration test lulus; cetak lima halaman A4 dan build produksi telah diverifikasi                                |
+| Testing             | In Progress |      90% | 220 unit/integration test lulus; Chrome desktop, simulasi Android, cetak A4, dan build produksi telah diverifikasi          |
 | Cloudflare          | Done        |     100% | Pages gratis aktif, terhubung ke GitHub `main`, dan memakai konfigurasi Supabase produksi                                  |
 | Production          | In Progress |      20% | Deployment awal aktif; audit RLS, periode akademik, preview rapor, cetak, dan backup masih harus diverifikasi             |
 
@@ -684,10 +687,10 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - Mobile-first.
 - Tidak bergantung laptop Dapodik/server lokal.
 - Struktur dan field template rapor A4 resmi telah disetujui serta dicatat pada `docs/report-templates.md`.
+- PDF MVP memakai HTML print dan `Save as PDF` dari Chrome tanpa engine berbayar tambahan.
 
 ## Keputusan yang Masih TBD
 
-- PDF engine.
 - Schema database final.
 - PWA/offline strategy.
 
@@ -828,6 +831,7 @@ Task di bawah ini tidak boleh dikerjakan sebelum MVP selesai kecuali ada perubah
 - [x] Koreksi halaman sampul dan identitas: lambang Tut Wuri berada di tengah, judul lengkap menjadi headline utama, serta foto 3×4 dipindah ke bawah berdampingan dengan tanda tangan kepala sekolah agar dapat terkena satu stempel.
 - [x] Tukar urutan sampul sesuai koreksi pengguna: judul lengkap berada di atas dan lambang Tut Wuri tepat di tengah di bawah judul.
 - [x] Kunci struktur dan field rapor A4 yang telah disetujui ke `docs/report-templates.md` serta sinkronkan catatan arsitektur.
+- [x] Verifikasi template pada Google Chrome desktop dan simulasi Chrome Android Pixel 5; tetapkan HTML print/Save as PDF sebagai engine gratis MVP.
 
 ---
 
